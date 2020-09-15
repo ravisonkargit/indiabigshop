@@ -1,0 +1,56 @@
+// For increase and decrease in qty 
+
+url: https://api.beldara.com/common/update_cart_test.php,
+method : POST,
+parameters : 
+                { security_token: "", plateform_type: "", cartitemid: "4938", qty: "10", productid: 334496, currency:"INR", country_to:"91",method:"air",country_code:"in",visitor_id:"",sellerid:"8774947",txn_type:"credit" }
+
+
+// For change in currency
+
+url: https://api.beldara.com/common/update_currency_cart.php,
+method: POST,
+parameters:  
+                {sellerid:"8774947",plateform_type:"",security_token:"",visitor_id:"",symbol:"INR",txn_type:"credit"}
+
+
+// For change In country
+
+url: https://api.beldara.com/common/update_country_cart.php`,
+method: POST,
+parameters: 
+                {sellerid:"8774947",plateform_type:"",security_token:"",visitor_id:"",currency:"USD",txn_type:"credit",country_code:"us",country_to:"1"},
+
+
+// Initially receive  cart details
+
+url: https://api.beldara.com/common/receive_cart.php,
+method: POST,
+parameters: 
+            {sellerid:"8774947",plateform_type:"",security_token:"",visitor_id:"",symbol:"INR",country_code:"in",txn_type:"credit"},
+
+ 
+// change in shipping methods
+
+url: https://api.beldara.com/common/update_shipping_cost_method.php,
+method: POST,
+parameters: 
+            {security_token:"",plateform_type:"",visitor_id:"",sellerid:"",symbol:"INR",shipping_array:newarray},
+
+
+// newarray would be an array
+Note: "for more than one array it would be same"
+
+newarray = [0] => {
+            [country] => "india",
+            [countryid] => "91",
+            [currrency] => "INR",
+            [shipping_charge] => "197.68",
+            [shipping_type] => "surface"
+        },
+
+
+
+
+
+                

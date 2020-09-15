@@ -1,0 +1,55 @@
+-------------sass error-----------------
+sudo npm install --unsafe-perm node-sass
+----------------create build------------
+sudo npm run build
+----------kill all node instance--------
+killAll -9 node
+---------------start project------------
+sudo run dev
+--------------install node--------------
+npm install
+---------------COPY CMD-----------------
+sudo cp -R /var/www/beldara.com/public_html/theme/build /var/www/beldara.com/public_html/theme/backup_build
+----------------------------------------
+dir name : /var/www/beldara.com/public_html/
+pm2 status : show status
+pm2 stop 0 1 : stop node server
+pm2 start "npm run server" : to start node and server
+
+if some problems occur  and server not started then there is error in server.js 
+
+step 1:  npm run server 
+step 2 : find and solve the problem then run npm run server 
+step 3 : run all command of pm2 that is shown upward
+----------------------------------------
+1. pm2 status
+	check server status stop and start.
+2. ls 
+	all file show in ls cmd.
+3. pm2 start npm --name qa -- start
+	Eg: pm2 start npm --name "live" -- start
+	start server cmd.
+4. pm2 reload qa
+	reload server cmd.
+5. npm start
+	start server.
+6. service apache2 start
+	start server.
+7. cd ..
+	back one file.
+8. cd /var/www/
+	Enter one file.
+9. sudo service apache2 restart
+	restart server.
+10. sudo service apache2 reload
+	reload server.
+
+
+
+// To upgrade node version on machine
+
+sudo npm cache clean -f  // clear node from terminal
+
+sudo npm install -g n  // install node
+
+sudo n stable // install stable version

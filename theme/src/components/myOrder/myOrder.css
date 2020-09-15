@@ -1,0 +1,31 @@
+.indexedStep {
+  color: white;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  background-color: #24ADEE;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.indexedStep.accomplished {
+  background-color: rgba(0, 116, 217, 1);
+}
+
+/* .__react_component_tooltip{
+  left: 14px !important;
+  right: 14px !important;
+} */
+
+progress{
+  -webkit-transform-origin: 0 100%;
+  -webkit-transform: rotate(90deg);
+  -moz-transform-origin: 0 100%;
+  -moz-transform: rotate(90deg);
+  -ms-transform-origin: 0 100%;
+  -ms-transform: rotate(90deg);
+  transform-origin: 0 100%;
+  transform: rotate(90deg);    
+}

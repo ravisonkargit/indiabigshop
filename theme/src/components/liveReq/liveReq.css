@@ -1,0 +1,87 @@
+
+
+#snackbar, #snackbar2, #snackbar_ty, #askAuction, #snackbar_user, #snackbar_address {
+  visibility: hidden;
+  margin-left: -125px;
+    right: 10% !important;
+    max-width: 250px;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed;
+    z-index: 9;
+    bottom: 10%;
+    font-size: 15px;
+  }
+
+  #snackbar, #snackbar2 , #askAuction, #snackbar_user, #snackbar_address{
+    background-color: #3377FF;
+    color: #fff;
+  }
+  
+  
+  #snackbar.show, #snackbar2.show , #snackbar_ty.show, #askAuction.show, #snackbar_user.show, #snackbar_address.show{
+    visibility: visible;
+    -webkit-animation: fadein 0.5s;
+    animation: fadein 0.5s;
+  }
+
+  #snackbar.hide, #snackbar2.hide , #snackbar_ty.hide, #askAuction.hide, #snackbar_user.hide, #snackbar_address.hide{
+    visibility: hidden;
+    -webkit-animation: fadeout 0.5s 2.5s;
+    animation: fadeout 0.5s 2.5s;
+  }
+  
+  @-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;} 
+    to {bottom: 30px; opacity: 1;}
+  }
+  
+  @keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+  }
+  
+  @-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;} 
+    to {bottom: 0; opacity: 0;}
+  }
+  
+  @keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+  }
+
+  .lh-35{
+      line-height: 35px;
+  }
+
+  .w-90{
+      width: 90%;
+  }
+
+  .rfq{
+    background-color: #ff9944;
+    color: white;
+    transform: rotate(-90deg);
+    z-index:5;
+    position: fixed;
+    right: 0;
+    top: 40%;
+  }
+
+  .rfq:hover {
+    background-color: #b36200;
+  }
+
+  .h_100{
+    max-height: 35px;
+  }
+
+  .intl-tel-input{
+    color:black;
+  }
+
+  .thank_you_auction_submit{
+    left : 70% !important;
+  }

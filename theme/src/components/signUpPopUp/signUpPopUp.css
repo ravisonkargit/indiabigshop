@@ -1,0 +1,17 @@
+.sign_up_modal_font{
+    font-family: 'Open Sans';
+}
+
+.sign_up_text{
+    font-size: 9px;
+}
+
+.loginModal{
+    cursor: pointer;
+}
+#second_tab,#errOtpSignUp,#errFooterlogin,#errFooterSignUp {
+    display: none;
+}
+.styles_closeIcon__1QwbI{
+    display:none;
+}

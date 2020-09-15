@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="utf-8">
+
+    <meta http-equiv="Content-Type" content="text/html">
+    <!--<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> -->
+    <meta name="author" content="beldara.com">
+    <!-- <meta property="og:image" itemprop="image" content="%PUBLIC_URL%/assets/images/landing-page/favicon.png"> -->
+    
+    <title>$OG_META_TITLE</title>
+    <meta id="description" name="description" content="$OG_DESCRIPTION" />
+    <meta id="keywords" name="keywords" content="$OG_KEYWORD" />
+    <!-- <link rel="canonical" href="https://beldara.com/"> -->
+    <!--google font -->
+    
+    <!--<link href="https://fonts.googleapis.com/css?family=Poppins:400,400i,500,500i,600,600i,700,800" rel="stylesheet">-->
+    
+    <!--google site Verification -->
+    <meta property="og:site_name" content="Beldara.com | B2B Marketplace">
+    <meta property="og:title"       content="$OG_TITLE" />
+    <meta property="og:description" content="$OG_DESCRIPTION" />
+    <meta property="og:image"       content="$OG_IMAGE" />
+    <meta property="og:url"       content="$OG_URL" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="Beldara_INDIA" />
+    <meta name="twitter:creator" content="@Beldara_INDIA" />
+    <meta name="twitter:title" content="$OG_TITLE" />
+    <meta name="twitter:description" content="$OG_DESCRIPTION" />
+    <meta name="twitter:image" content="$OG_IMAGE" />
+    <meta name="twitter:url" content="$OG_URL" />
+    <link rel="shortcut icon" href="%PUBLIC_URL%/assets/images/landing-page/favicon.png" type="image/x-icon"/>
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
+    <meta name="google-site-verification" content="GvHxQjLkn1y2IWFezFtiE5Uy1vwWE2UViRgwOI6hz0k" />
+    <link async rel="newer stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link async crossorigin rel="newest stylesheet" type="text/css" href="%PUBLIC_URL%/assets/css/color15.css?v=1" />
+    <link async crossorigin rel="stylesheet" type="text/x-scss" href="%PUBLIC_URL%/assets/scss/color15.scss" />
+</head>
+  <body>
+      <!-- <div class="loader-wrapper">
+          <div class="loader"></div>
+      </div> -->
+
+    <div id="root"></div>
+
+      <!-- <script src="https://checkout.stripe.com/checkout.js"></script> -->
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+      <!-- Theme css -->
+      <!-- <link rel="stylesheet" type="text/css" href="" media="screen" id="color"> -->
+
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"  ></script>
+      <script async src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"  ></script>
+      <script async src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" ></script>
+
+  <script>
+      // var res = document.createElement("link");
+      // res.rel = "preload";
+      // res.as = "style";
+      // res.href = "/assets/css/font-awesome.css";
+      
+      var curLoc = window.location.href;
+      var ele = document.createElement('link');
+      ele.setAttribute("rel","canonical");
+      ele.setAttribute("href",curLoc);
+      document.getElementsByTagName('head')[0].appendChild(ele);
+      // document.head.appendChild(res);
+      // console.log(res)
+      $('head').append( $('<link async rel="old stylesheet" type="text/css" crossorigin/>').attr('href', 'assets/css/float-label.min.css') );
+      // $('head').append( $('<link async rel="stylesheet" type="text/x-scss" crossorigin/>').attr('href', '/index.scss') );
+      $('head').append( $('<link async rel="old stylesheet" type="text/css" crossorigin/>').attr('href', 'assets/css/slick-theme.css') );
+      $('head').append( $('<link async rel="old stylesheet" type="text/css" crossorigin/>').attr('href', 'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css') );
+      $('head').append( $('<link async rel="old stylesheet" type="text/css" crossorigin/>').attr('href', 'https://fonts.googleapis.com/css?family=Lato:300,400,700,900') );
+    </script>
+  </body>
+</html>

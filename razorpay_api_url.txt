@@ -1,0 +1,20 @@
+// fetch customer data
+https://rzp_test_7vcRhUW0TOK8JG:5kGrEuZLoBUvXwW0tnJlpxwI@api.razorpay.com/v1/customers/cust_EGb8iIc9JjiSJg/tokens
+
+
+// fetch all tokens for customer
+https://rzp_live_UnQoaSSQXm7UJw:w1DIBo3VJEr6j3pqc1ud7rMW@api.razorpay.com/v1/customers/cust_EHme1iAnEXmBG0/tokens
+
+// fetch order details
+https://rzp_live_UnQoaSSQXm7UJw:w1DIBo3VJEr6j3pqc1ud7rMW@api.razorpay.com/v1/orders/order_EayfmC8pOfhB5y
+
+
+// fetch all orders
+https://rzp_live_UnQoaSSQXm7UJw:w1DIBo3VJEr6j3pqc1ud7rMW@api.razorpay.com/v1/orders
+
+//fetch payment data
+https://rzp_live_UnQoaSSQXm7UJw:w1DIBo3VJEr6j3pqc1ud7rMW@api.razorpay.com/v1/payments/pay_Ebd0uSycrOFXhy
+
+
+
+//delete tokens

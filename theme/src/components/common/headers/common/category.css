@@ -1,0 +1,134 @@
+#main_categories {
+    position: absolute;
+    z-index: 1;
+    top: 29px;
+    /* left: 288px; */
+    background-color: white;
+    width: 300px !important;
+}
+
+#main_categories li  {
+    display: block;
+ }
+
+#main_categories li a {
+    color: #666;
+    font-size: 14px;
+    font-weight: 550;
+}
+#main_categoris li .submenu
+/* {
+    border:1px solid black;
+    background-color:white
+} */
+
+.submenu  li a {
+    color: #666;
+}
+
+
+
+/* #main_categoris li :hover~.submenu{
+    display: block;
+}  */
+
+.mega-menu{
+    left: 209px;
+    border: 1px solid #ccc;
+    padding: 20px;
+    /* position: absolute; */
+    /* z-index: 90; */
+    /* width: 100%; */
+    /* margin-left: 200px; */
+    top:50px
+}
+
+.mega-menu{
+    display: none;
+}
+
+#main_categories li:hover .mega-menu {display: block;position: absolute;background-color: white;width: 642px;margin-left: 83px;top: 4px;height:439px} 
+
+#main_categories > li:hover {
+    box-shadow: 1px 0px 3px #888;
+    /* font-size: 20px !important; */
+}
+
+#main_categories > li:hover > a{
+    font-size: 15px !important;
+    color:#fb9944
+}
+
+#main_categories > li:hover > a > .arrow-down{
+    border:solid #fb9944;
+    border-width: 0px 1px 1px 0px;
+}
+
+.submenu{
+    padding:5px 14px;
+}
+
+#main_categories {
+    display: none;
+    font-size: 14px;
+}
+
+/* #main_cat_to_hover:hover + #main_categories{
+    display: block;
+} */
+
+#main_cat_to_hover:hover i{
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+}
+
+.custom_text:hover a {
+    color: #fb9944 !important;
+
+}
+
+.custom_text{
+    font-size: 10px !important;
+}
+
+.arrow{
+    border: solid black;
+    border-width: 0px 3px 3px 0px;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+#root_category:hover span{
+        display: block;
+}
+
+/* #root_category span{
+    display: none;
+    } */
+
+ .arrow-down {
+    border: solid black;
+    border-width: 0px 1px 1px 0px;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+ }   
+
+ .hoverclass:hover #main_categories{
+    display: block;
+ }
+
+ .custom_li{
+    padding-top: 5px; 
+    }
+.widthClass{
+    width: 50%;
+}
+
+.subheadcat{
+    font-size: 18px !important;
+    font-weight: 600 !important;
+}

@@ -1,0 +1,6 @@
+.bg_gray{
+    background-color:lightgray;
+}
+.contact_list li:hover{
+    background-color: lightgrey;
+}
