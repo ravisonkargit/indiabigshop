@@ -10,7 +10,7 @@ import $ from "jquery";
 import LogoBlock from "../common/logo-block";
 // import BlogSection from "../common/blogsection";
 import HeaderThree from "../../common/headers/header-three";
-import ls from 'local-storage';
+import ls from "local-storage";
 
 import {
   getAllBanners,
@@ -56,7 +56,9 @@ const HomeCategoryProduct = lazy(() =>
 );
 const PostRequirementModal = lazy(() => import("../../postRequirement"));
 
-const AllowNotifcationPopup = lazy(() => import("../../common/notification-popup"));
+const AllowNotifcationPopup = lazy(() =>
+  import("../../common/notification-popup")
+);
 
 function getSuggestionValue(suggestion) {
   return `${suggestion.name}~${suggestion.id}`;
@@ -99,8 +101,8 @@ class Pets extends Component {
       suggestions: [],
       value: "",
       id: null,
-      openPostRequirementModal : false,
-      allowNotifcationPopup : false
+      openPostRequirementModal: false,
+      allowNotifcationPopup: false,
     };
     // this.getBanners = this.getBanners.bind(this);
     // Translate from English (default) to Spanish (specified)
@@ -168,7 +170,7 @@ class Pets extends Component {
           "https://api.beldara.com/common/get_lp_detail.php",
           {
             url: query,
-            sellerid:ls.get("sellerid"),
+            sellerid: ls.get("sellerid"),
             security_token: "",
             plateform_type: "",
           },
@@ -196,12 +198,12 @@ class Pets extends Component {
     // this.showPostRequirementPopup();
   }
 
-  componentWillMount (){
-    window.addEventListener("load",this.showPostRequirementPopup)
+  componentWillMount() {
+    window.addEventListener("load", this.showPostRequirementPopup);
   }
 
-  componentWillUnmount (){
-    window.removeEventListener("load",this.showPostRequirementPopup)
+  componentWillUnmount() {
+    window.removeEventListener("load", this.showPostRequirementPopup);
   }
 
   // DeviceInfo = () => {
@@ -461,95 +463,98 @@ class Pets extends Component {
       $("#err_cate").removeClass("d-none");
     }
   };
-   //Opening Signup modal
-   openSignUpModal = () => {
+  //Opening Signup modal
+  openSignUpModal = () => {
     this.setState({
-        signup: true,
-        login: false,
+      signup: true,
+      login: false,
     });
-}
-//Opening Login modal   
-openPostRequirementModal = () => {
-  this.setState({
-    openPostRequirementModal:true
-  });
-}
-// Close Modal 
-closePostRequirementModal = () => {
-    setCookie("postPopup","1","1");
+  };
+  //Opening Login modal
+  openPostRequirementModal = () => {
     this.setState({
-        openPostRequirementModal:false
-    });    
-    this.notifcationPopup()
-}
-// open notification modal
-openNotificationModal = () => {
-  this.setState({
-    allowNotifcationPopup:true
-  });
-}
-// close notification modal
-closeNotificationModal = () => {
-  setCookie("NotiPopup","1","1");
+      openPostRequirementModal: true,
+    });
+  };
+  // Close Modal
+  closePostRequirementModal = () => {
+    setCookie("postPopup", "1", "1");
     this.setState({
-      allowNotifcationPopup:false
-    });    
-}
+      openPostRequirementModal: false,
+    });
+    this.notifcationPopup();
+  };
+  // open notification modal
+  openNotificationModal = () => {
+    this.setState({
+      allowNotifcationPopup: true,
+    });
+  };
+  // close notification modal
+  closeNotificationModal = () => {
+    setCookie("NotiPopup", "1", "1");
+    this.setState({
+      allowNotifcationPopup: false,
+    });
+  };
 
-showPostRequirementPopup = async () =>  {
-  console.log('page loaded',473);
+  showPostRequirementPopup = async () => {
+    console.log("page loaded", 473);
     var current_date = new Date();
     var current_day = current_date.getDate();
     var current_month = current_date.getMonth() + 1;
     var current_year = current_date.getFullYear();
-    var current_format_date = current_day + "/" + current_month + "/" + current_year;
-    var check_cookie_with_this_date = getCookie('current_date');
-    if(check_cookie_with_this_date == current_format_date){
-
-    }else{
-        setCookie("current_date", current_format_date, "1");
-        setCookie("postPopup","0","1");
+    var current_format_date =
+      current_day + "/" + current_month + "/" + current_year;
+    var check_cookie_with_this_date = getCookie("current_date");
+    if (check_cookie_with_this_date == current_format_date) {
+    } else {
+      setCookie("current_date", current_format_date, "1");
+      setCookie("postPopup", "0", "1");
     }
-    if(getCookie('postPopup') == '0'){
+    if (getCookie("postPopup") == "0") {
       // window.addEventListener('load', function () {
-        // console.log('page loaded',473);
-        inter = setInterval(()=>{
-          if(getCookie('country_code') != '' && getCookie('countryid') != '' && getCookie('country_code') != null && getCookie('countryid') != null){
-            // this.setState({
-            //   openPostRequirementModal:true
-            // })
-          this.notifcationPopup()
-            clearInterval(inter);
-          }
-      },10000);
+      // console.log('page loaded',473);
+      inter = setInterval(() => {
+        if (
+          getCookie("country_code") != "" &&
+          getCookie("countryid") != "" &&
+          getCookie("country_code") != null &&
+          getCookie("countryid") != null
+        ) {
+          // this.setState({
+          //   openPostRequirementModal:true
+          // })
+          this.notifcationPopup();
+          clearInterval(inter);
+        }
+      }, 10000);
       // }.bind(this));
-        
-    }else if(getCookie('postPopup') == '1'){
-    // console.log('notifcationPopup called',473);
+    } else if (getCookie("postPopup") == "1") {
+      // console.log('notifcationPopup called',473);
       // this.notifcationPopup()
     }
-}
+  };
 
-
-notifcationPopup = async () => {
+  notifcationPopup = async () => {
     var current_date = new Date();
     var current_day = current_date.getDate();
     var current_month = current_date.getMonth() + 1;
     var current_year = current_date.getFullYear();
-    var current_format_date = current_day + "/" + current_month + "/" + current_year;
-    var check_cookie_with_this_date = getCookie('current_date_for_noti');
-    if(check_cookie_with_this_date == current_format_date){
-
-    }else{
-        setCookie("current_date_for_noti", current_format_date, "1");
-        setCookie("NotiPopup","0","1");
+    var current_format_date =
+      current_day + "/" + current_month + "/" + current_year;
+    var check_cookie_with_this_date = getCookie("current_date_for_noti");
+    if (check_cookie_with_this_date == current_format_date) {
+    } else {
+      setCookie("current_date_for_noti", current_format_date, "1");
+      setCookie("NotiPopup", "0", "1");
     }
-        if(getCookie('NotiPopup') == '0'){
-          this.setState({
-            allowNotifcationPopup:true
-          })
-        }
-}
+    if (getCookie("NotiPopup") == "0") {
+      this.setState({
+        allowNotifcationPopup: true,
+      });
+    }
+  };
 
   render() {
     var settings = {
@@ -585,14 +590,21 @@ notifcationPopup = async () => {
           ></div>
           <section className="p-0 small-slider">
             <Slider {...settings} className="slide-1 home-slider">
-              {banners.slice(0, 6).map((item) => (
+              {banners.slice(0, 11).map((item) => (
                 <div key={item.title}>
-                  <a href={item.link} target={"_blank"}>
+                  {item.link != "" ? (
+                    <a href={item.link} target={"_blank"}>
+                      <div
+                        className="home lazyload"
+                        style={{ backgroundImage: `url(${item.image})` }}
+                      ></div>
+                    </a>
+                  ) : (
                     <div
                       className="home lazyload"
                       style={{ backgroundImage: `url(${item.image})` }}
                     ></div>
-                  </a>
+                  )}
                 </div>
               ))}
             </Slider>
@@ -640,7 +652,7 @@ notifcationPopup = async () => {
                         <img
                           src={`${imgUrl}/images/lpnew/start_bidding.jpg`}
                           className="img-fluid blur-up lazyload bg-img"
-                          alt={'Beldara E-auction'}
+                          alt={"Beldara E-auction"}
                         />
                       </div>
                     </div>
@@ -653,7 +665,7 @@ notifcationPopup = async () => {
                         <img
                           src={`${imgUrl}/images/lpnew/Sponsered_Products.png`}
                           className="img-fluid blur-up lazyload bg-img"
-                          alt={'Beldara Bran Promo Product'}
+                          alt={"Beldara Bran Promo Product"}
                         />
                       </div>
                     </div>
@@ -666,7 +678,7 @@ notifcationPopup = async () => {
                         <img
                           src={`${imgUrl}/images/lpnew/EXIBITION_Final.jpg`}
                           className="img-fluid blur-up lazyload bg-img"
-                          alt={'Trade Show beldara'}
+                          alt={"Trade Show beldara"}
                         />
                       </div>
                     </div>
@@ -1242,12 +1254,20 @@ notifcationPopup = async () => {
                 </Modal.Body>
               </Modal>
             )}
-            <Suspense fallback={"Loading"}>
-                <PostRequirementModal openmodal={this.openPostRequirementModal} closemodal={this.closePostRequirementModal} open={this.state}/>
-            </Suspense>
-            <Suspense fallback={"Loading"}>
-              <AllowNotifcationPopup openmodal={this.openNotificationModal} closemodal={this.closeNotificationModal} open={this.state}/>
-            </Suspense>
+        <Suspense fallback={"Loading"}>
+          <PostRequirementModal
+            openmodal={this.openPostRequirementModal}
+            closemodal={this.closePostRequirementModal}
+            open={this.state}
+          />
+        </Suspense>
+        <Suspense fallback={"Loading"}>
+          <AllowNotifcationPopup
+            openmodal={this.openNotificationModal}
+            closemodal={this.closeNotificationModal}
+            open={this.state}
+          />
+        </Suspense>
       </div>
     );
   }

@@ -120,6 +120,8 @@ switch(langDomain){
  const landingPage = asyncComponent(() =>
  import('./components/landingPage').then(module => module.default)
  )
+ 
+
  const offers = asyncComponent(() =>
  import('./components/offers').then(module => module.default)
  )
@@ -162,6 +164,15 @@ import('./components/membership/membership_monthly').then(module => module.defau
  const BuyOnBeldara = asyncComponent(() =>
  import('./components/footerlinks/buyOnBeldara').then(module => module.default)
  )
+ const ProductListingGuidelines = asyncComponent(() =>
+ import('./components/footerlinks/ProductListingGuidelines').then(module => module.default)
+ ) 
+ const BeldaraPolicies = asyncComponent(() =>
+ import('./components/footerlinks/BeldaraPolicies').then(module => module.default)
+ ) 
+ const BeldaraWarehouse = asyncComponent(() =>
+ import('./components/footerlinks/BeldaraWarehouse').then(module => module.default)
+ ) 
  const BannerAds = asyncComponent(() =>
  import('./components/footerlinks/bannerAds').then(module => module.default)
  )
@@ -215,6 +226,18 @@ import('./components/membership/membership_monthly').then(module => module.defau
 
  const Register = asyncComponent(() =>
  import('./components/common/register').then(module => module.default)
+ )
+
+ const landingPageForAndroid = asyncComponent(() =>
+ import('./components/landingPageForAndroid').then(module => module.default)
+ )
+
+ const landingOfferPageForAndroid = asyncComponent(() =>
+ import('./components/landingOfferPageForAndroid').then(module => module.default)
+ )
+
+ const landingOfferPageForWeb = asyncComponent(() =>
+ import('./components/landingOfferPageForAndroid/offerPageForWeb').then(module => module.default)
  )
 
  const wishlist = asyncComponent(() =>
@@ -337,6 +360,8 @@ import('./components/membership/membership_monthly').then(module => module.defau
  <Route exact path={`${process.env.PUBLIC_URL}/`} component={Pets} />
  <Route exact path={`${process.env.PUBLIC_URL}/login.html`} component={Login} />
  <Route exact path={`${process.env.PUBLIC_URL}/register.html`} component={Register} />
+ <Route path={`${process.env.PUBLIC_URL}/lp-app/:id`} component={landingPageForAndroid} />
+ <Route path={`${process.env.PUBLIC_URL}/lp-offer-app/:id`} component={landingOfferPageForAndroid} />
  <Route path={`${process.env.PUBLIC_URL}/return-policy-app.html`} component={ReturnPolicy} />
  <Route path={`${process.env.PUBLIC_URL}/my-order-app-:id.html`} component={myOrder} />
  <Layout>
@@ -400,6 +425,9 @@ import('./components/membership/membership_monthly').then(module => module.defau
 
 
  <Route path={`${process.env.PUBLIC_URL}/lp/:id`} component={landingPage} />
+ <Route path={`${process.env.PUBLIC_URL}/lp-offer/:id`} component={landingOfferPageForWeb} />
+
+
 
  <Route path={`${process.env.PUBLIC_URL}/offers.html`} component={offers} />
 
@@ -419,6 +447,9 @@ import('./components/membership/membership_monthly').then(module => module.defau
  <Route path={`${process.env.PUBLIC_URL}/privacy-policy.html`} component={PrivacyPolicy} />
  <Route path={`${process.env.PUBLIC_URL}/media-release.html`} component={Media} />
  <Route path={`${process.env.PUBLIC_URL}/how-to-sell-fast.html`} component={SellFast} />
+ <Route path={`${process.env.PUBLIC_URL}/product-listing-guidelines.html`} component={ProductListingGuidelines} />
+ <Route path={`${process.env.PUBLIC_URL}/policies.html`} component={BeldaraPolicies} />
+ <Route path={`${process.env.PUBLIC_URL}/warehouse-services.html`} component={BeldaraWarehouse} />
  <Route path={`${process.env.PUBLIC_URL}/buy-now-on-beldara.html`} component={BuyOnBeldara} />
  <Route path={`${process.env.PUBLIC_URL}/banner-ads.html`} component={BannerAds} />
  <Route path={`${process.env.PUBLIC_URL}/promot-your-business.html`} component={PromoteBusiness} />

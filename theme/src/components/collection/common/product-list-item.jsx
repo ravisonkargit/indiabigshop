@@ -324,7 +324,7 @@ class ProductListItem extends Component {
 
       <div className="product-box bg-light ">
         {
-          (this.offerExist(product.offer_from_date,product.offer_to_date) && product.offer_percent !== null)
+          (this.offerExist(product.offer_from_date,product.offer_to_date) && product.offer_percent !== null && product.offer_percent !== '0')
           ? <div className="badge badge-danger text-wrap my-1 p-3" style={offer_tag}>
                   {product.offer_percent} % Offer
             </div>
@@ -402,7 +402,7 @@ class ProductListItem extends Component {
                         productCost={this.deadEnd}
                         finalCost={this.finalCost}
                         symbol={product.currency}
-                        start_price={product.start_price}
+                        start_price={product.offer_price}
                         end_price=""
                         price_in={product.price_in}
                         price_us={product.price_us}
@@ -414,13 +414,13 @@ class ProductListItem extends Component {
               {
               (product.qty) ?
                 <div className="small">{`${translate('MOQ')} : ${product.offer_min_qty} - ${product.unit}`}</div>
-                : <div className="small">{`${translate('MOQ')} : 1 unit`}</div>
+                : ''
                }
-               {
+               {/* {
               (product.offer_stock > 0 || product.offer_stock === null) ?
                 <div className="small">{`${translate('Stock')} : ${product.offer_stock} - ${product.unit}`}</div>
                 : <div className="small text-danger">OUT OF STOCK</div>
-               }
+               } */}
               </div>
               :(!this.offerExist(product.offer_from_date,product.offer_to_date))
               ?
@@ -431,7 +431,7 @@ class ProductListItem extends Component {
                  {
               (product.qty) ?
                 <div className="small">{`${translate('MOQ')} : ${product.qty} - ${product.unit}`}</div>
-                : <div className="small">{`${translate('MOQ')} : 1 unit`}</div>
+                : ''
             }
               </div>
                : ''  
@@ -446,14 +446,14 @@ class ProductListItem extends Component {
         <div className="row mb-2 mx-0">
           {product.start_price && parseFloat(product.start_price) > parseFloat(0) && !this.offerExist(product.offer_from_date,product.offer_to_date) ?
             <React.Fragment>
-              <div id={`btn_${product.id}`} className=" col-7 col-md-7 col-sm-7 text-left py-2 px-1 buy1">
+              <div id={`btn_${product.id}`} className=" col-6 col-md-6 col-sm-6 text-left py-2 px-1 buy1">
                 <div className="mouse_pointer btn btn_Pro  btn-orange" id={product.id} onClick={this.validate.bind(this,'buyBtn', product.id, product.qty, (parseFloat(product.start_price) * parseInt(product.qty)), this.props.symbol, product.start_price, product.currency, product.sellerid)}>
                   Buy Now
                 </div>
                 {/* <img className="mouse_pointer" src="https://img.beldara.com/images/buy_now_btn.png" id={product.id} onClick={this.validate.bind(this,'buyBtn', product.id, product.qty, (parseFloat(product.start_price) * parseInt(product.qty)), this.props.symbol, product.start_price, product.currency, product.sellerid)}/> */}
               </div>
               {/* <div className="col-1 col-md-1 d-none d-md-block d-sm-none"></div> */}
-              <div className="col-5  text-center col-md-5 col-sm-5 py-2 px-1">
+              <div className="col-6  text-center col-md-6 col-sm-6 py-2 px-1">
                 <div id={`div_${product.id}`}>
                   <Link onClick={this.event_ask_for_price.bind(this,'go_to_auction', product.id)} id="go_to_auction" className="btn btn_Pro btn-orange" clickevent="go_to_auction" to={{ pathname: `/product/${product.url}.html`, state: { product, askAuctionInit: false } }} > e-Auction </Link>
                 </div>
@@ -463,14 +463,14 @@ class ProductListItem extends Component {
             : (this.offerExist(product.offer_from_date,product.offer_to_date) && product.offer_stock > 0)
             ? 
             <React.Fragment>
-              <div id={`btn_${product.id}`} className=" col-7 col-md-7 col-sm-7 text-left py-2 px-1 buy2">
+              <div id={`btn_${product.id}`} className=" col-6 col-md-6 col-sm-6 text-left py-2 px-1 buy2">
                 <div className="mouse_pointer btn btn_Pro  btn-orange" id={product.id} onClick={this.validate.bind(this,'buyBtn', product.id, product.offer_min_qty,(parseInt(this.state.price) * parseInt(product.offer_min_qty)), this.props.symbol, product.start_price, product.currency, product.sellerid)}>
                   Buy Now
                 </div>
                 {/* <img className="mouse_pointer" src="https://img.beldara.com/images/buy_now_btn.png" id={product.id} onClick={this.validate.bind(this,'buyBtn', product.id, product.offer_min_qty,(parseInt(this.state.price) * parseInt(product.offer_min_qty)), this.props.symbol, product.start_price, product.currency, product.sellerid)}/> */}
               </div>
               {/* <div className="col-1 col-md-1 d-none d-md-block d-sm-none"></div> */}
-              <div className="col-5  text-center col-md-5 col-sm-5 py-2 px-1">
+              <div className="col-6  text-center col-md-6 col-sm-6 py-2 px-1">
                 {/* <div id={`div_${product.id}`}> */}
                   {/* <Link onClick={this.event_ask_for_price.bind(this,'go_to_auction', product.id)} id="go_to_auction" className="btn btn_Pro btn-orange" clickevent="go_to_auction" to={{ pathname: `/product/${product.url}.html`, state: { product, askAuctionInit: false } }} > e-Auction </Link> */}
                 {/* </div> */}

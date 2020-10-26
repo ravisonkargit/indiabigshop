@@ -101,7 +101,7 @@ onMouseOver = (event) => {
                     </ul>
                   </li>
                   {
-                                            index == '5'?
+                                            index == '4'?
                                             <>
                                                 <span className="h5 mx-1 has-submenu text-capitalize text-center" style={{paddingTop:'8px'}}>OTHER CATEGORIES</span>
                                             </>

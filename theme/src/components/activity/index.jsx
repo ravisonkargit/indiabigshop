@@ -126,7 +126,7 @@ class Activity extends Component {
                                             Object.keys(this.state.activityImg).map((item, index) =>
                                                 this.state.activityImg[item] != null && this.state.activityImg[item] != '' ?
                                                     <div key={index} className={`home lazyload`} style={{ backgroundImage: `url(${this.state.activityImg[item]})` }}>
-                                                        <img src={`${this.state.activityImg[item]}`}/>
+                                                        <img src={`${this.state.activityImg[item]}`} style={{width: "100%"}}/>
                                                     </div>
                                                     : ''
                                             )

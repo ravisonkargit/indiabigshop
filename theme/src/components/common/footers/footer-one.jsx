@@ -226,7 +226,7 @@ class FooterOne extends Component {
                     {getCookie('country_code').toLowerCase() == 'in' || getCookie('country_code') == '' ?
                       <React.Fragment>
                         <i className="fa fa-phone mr-2" />
-                      {translate("For Support")}: +91-9667682100
+                      {translate("For Support")}: +91-9555788833
                       </React.Fragment>
                       :
                       <React.Fragment>
@@ -357,6 +357,13 @@ class FooterOne extends Component {
                       </li>
                       <li>
                         <Link
+                          to={`/warehouse-services.html`}
+                        >
+                          {translate("Warehouse Services")}
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
                           to={`/trade-show.html`}
                         >
                           {translate("Trade Show")}
@@ -397,16 +404,16 @@ class FooterOne extends Component {
                         </Link>
                       </li>
                       
-                      <li >
+                      {/* <li >
                       <a target="_blank" rel="noopener noreferrer" className="mouse_pointer" href="https://img.beldara.com/about_img/Beldara-product-listing-guideline.pdf">{translate("Product Listings Guideline")}</a>
-                      </li>
+                      </li> */}
                       <li>
                         <Link
                           to={`${
                             process.env.PUBLIC_URL
-                          }/product-listing-policy.html`}
+                          }/product-listing-guidelines.html`}
                         >
-                          {translate("Product Listings Policy")}
+                          {translate("Product Listings Guideline")}
                         </Link>
                       </li>
                       <li>
@@ -454,13 +461,13 @@ class FooterOne extends Component {
                           {translate("Terms & Conditions")}
                         </Link>
                       </li>
-                      <li>
+                      {/* <li>
                         <Link
                           to={`${process.env.PUBLIC_URL}/privacy-policy.html`}
                         >
                           {translate("Privacy Policy")}
                         </Link>
-                      </li>
+                      </li> */}
                       <li>
                         <Link to={`${process.env.PUBLIC_URL}/Sitemap.html`}>
                           {translate("Sitemap")}
@@ -473,11 +480,20 @@ class FooterOne extends Component {
                           {translate("Media Release")}
                         </Link>
                       </li>
-                      <li>
+                      {/* <li>
                         <Link
                           to={`${process.env.PUBLIC_URL}/return-policy.html`}
                         >
                           {translate("Return Policy")}
+                        </Link>
+                      </li> */}
+                      <li>
+                        <Link
+                          to={`${
+                            process.env.PUBLIC_URL
+                          }/policies.html`}
+                        >
+                          {translate("Beldara Policies")}
                         </Link>
                       </li>
                     </ul>

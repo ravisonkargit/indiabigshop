@@ -745,6 +745,25 @@ export async function categorylist(type) {
   }
 }
 
+export async function getStoreCategory(sellerid) {
+  try {
+    return await axios
+      .post(
+        `${ApiUrl}/common/get_store_category_list.php`,
+        { sellerid: sellerid },
+        { headers: { "Content-Type": "multipart/form-data" } }
+      )
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        const result = error;
+      });
+  } catch (e) {
+    console.log(`😱 Axios request failed: ${e}`);
+  }
+}
+
 export async function auctionDetail(brid, sellerid) {
   try {
     return await axios
@@ -889,6 +908,32 @@ export async function getSellerProducts(sellerid, page) {
           security_token: "",
           plateform_type: "",
           sellerid: sellerid,
+          page: page,
+        },
+        { headers: { "Content-Type": "multipart/form-data" } }
+      )
+      .then((response) => {
+        return response.data.result;
+      })
+      .catch((error) => {
+        const result = error.response;
+        return Promise.reject(result);
+      });
+  } catch (e) {
+    console.log(`😱 File not found: ${e}`);
+  }
+}
+
+export async function getSellerCategoryWiseProducts(sellerid,cat_id, page) {
+  try {
+    return await axios
+      .post(
+        `${ApiUrl}/common/MyProductListSellerCategoryWise.php`,
+        {
+          security_token: "",
+          plateform_type: "",
+          sellerid: sellerid,
+          cat_id:cat_id,
           page: page,
         },
         { headers: { "Content-Type": "multipart/form-data" } }

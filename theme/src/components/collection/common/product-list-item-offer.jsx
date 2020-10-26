@@ -280,7 +280,7 @@ class ProductListItemOffer extends Component {
                       ? this.state.image
                         ? this.state.image
                         : product.variants[0].images
-                      : `${imgUrl}/product_images_thumb/` + product.img
+                      : `${imgUrl}/` + product.prodImg
                   }
                   //fallbackImage={`${imgUrl+'/images/default.jpg'}`}
                   //initialImage={`${imgUrl+'/images/ajax-loader.gif'}`}

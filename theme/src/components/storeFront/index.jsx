@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Slider from "react-slick";
-import $ from 'jquery';
-import {  getSellerProducts } from "../../functions";
+import $ from "jquery";
+import {
+  getSellerProducts,
+  getSellerCategoryWiseProducts,
+} from "../../functions";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { withTranslate } from "react-redux-multilingual";
@@ -10,41 +13,64 @@ import { withTranslate } from "react-redux-multilingual";
 import ProductListItem from "../collection/common/product-list-item";
 import ReactImageFallback from "react-image-fallback";
 import { Helmet } from "react-helmet";
-import ReactPaginate from 'react-paginate';
+import ReactPaginate from "react-paginate";
 import { imgUrl } from "../../constants/variable";
 import LoadingComponent from "../products/common/loading-bar";
-import {getCookie} from '../../functions/index';
-
-function showImageOnlyIfExist(ele){
-  console.log('showImageOnlyIfExist',ele)
-  $('#'+ele).closest('.col-grid-box').addClass('d-none');
+import { getCookie } from "../../functions/index";
+import CategoryComponent from "../common/getStoreCategoryComponent";
+function showImageOnlyIfExist(ele) {
+  $("#" + ele)
+    .closest(".col-grid-box")
+    .addClass("d-none");
 }
+var url1 = window.location.href.split("/");
+var url = url1[4].split(".");
+var cat_id = url1[5];
+// var cat_id2 = cat_id1.split("?");
+// var cat_id = cat_id2[0];
 class StoreFront extends Component {
   constructor(props) {
     super(props);
 
     let search = window.location.search;
     var params = new URLSearchParams(search);
-
     this.state = {
+      pageUrl: "/store/" + url[0],
       sellerDetail: "",
       sellerProducts: "",
       runnable: 0,
-      pageNo: parseInt(params.get('page')) > 0 ? parseInt(params.get('page')) : 0,
+      pageNo:
+        parseInt(params.get("page")) > 0 ? parseInt(params.get("page")) : 0,
       pageCount: 1,
       isProductReceived: 0,
-      sellerData:"",
-      currency:"INR",
-      country_code:"IN"
+      sellerData: "",
+      currency: "INR",
+      country_code: "IN",
     };
   }
 
-  handlePageClick = data => {
-    if (this.state.pageNo != data.selected){
-        let selected = data.selected;
-        window.location.href = window.location.pathname+'?page='+selected;
+  changeArrow = (event) => {
+    if (event.id == "down") {
+      $(".catLabelBtn")
+        .find("i")
+        .removeClass("fa-chevron-down")
+        .addClass("fa-chevron-up");
+      $(".catLabelBtn").attr("id", "up");
+    } else {
+      $(".catLabelBtn")
+        .find("i")
+        .removeClass("fa-chevron-up")
+        .addClass("fa-chevron-down");
+      $(".catLabelBtn").attr("id", "down");
     }
-  }; 
+  };
+
+  handlePageClick = (data) => {
+    if (this.state.pageNo != data.selected) {
+      let selected = data.selected;
+      window.location.href = window.location.pathname + "?page=" + selected;
+    }
+  };
 
   // handlePageClick = data => {
   //   let selected = data.selected;
@@ -59,77 +85,90 @@ class StoreFront extends Component {
 
   checkImage = (setClass) => {
     showImageOnlyIfExist(setClass);
-  }
-    
+  };
+
   componentDidMount = async () => {
-    // console.log(this.props.match);
     await axios
       .post(
         "https://api.beldara.com/common/SFData.php",
         {
           security_token: "",
           plateform_type: "",
-          surl: this.props.match.params.id
+          surl: this.props.match.params.id,
         },
         { headers: { "Content-Type": "multipart/form-data" } }
       )
-      .then(response => {
+      .then((response) => {
         this.setState({
           sellerDetail: response.data.result,
           runnable: response.data.statusId,
-          currency:getCookie('currency'),
-          country_code:getCookie('country_code')
+          currency: getCookie("currency"),
+          country_code: getCookie("country_code"),
           // totalCount:response.data.result.totalcount
         });
-        
       })
-      .catch(error => {
-        
-      });
+      .catch((error) => {});
 
-    await getSellerProducts(this.state.sellerDetail.sellerid, this.state.pageNo).then(async res =>
-      {
-      if(res)
-        this.setState({
-            totalCount: res.count,
-            isProductReceived:1,
-            products: res.products,
-            pageCount : Math.ceil( parseInt(res.count) / 20)
-        })
-    }
-    );
-
-    axios.post(
-      `${imgUrl}/beta_api/get_seller_info_listing.php`,
-      {
-        security_token: "",
-        plateform_type: "web",
-        sellerid:this.state.sellerDetail.sellerid,
-        currency:getCookie('currency'),
-        countrycode:getCookie('country_code').toUpperCase()
-      },
-      { headers: { "Content-Type": "multipart/form-data" } }
-    ).then(response => {
-      // console.log(response.data,11);
-        if(response.data.statusId == 1){
+    if (parseInt(cat_id) > 0) {
+      await getSellerCategoryWiseProducts(
+        this.state.sellerDetail.sellerid,
+        cat_id,
+        this.state.pageNo
+      ).then(async (res) => {
+        if (res)
           this.setState({
-            sellerData:response.data.result[0]
-          })
-        }else{
-          this.setState({sellerData:null})
+            totalCount: res.count,
+            isProductReceived: 1,
+            products: res.products,
+            pageCount: Math.ceil(parseInt(res.count) / 20),
+          });
+      });
+    } else {
+      await getSellerProducts(
+        this.state.sellerDetail.sellerid,
+        this.state.pageNo
+      ).then(async (res) => {
+        if (res)
+          this.setState({
+            totalCount: res.count,
+            isProductReceived: 1,
+            products: res.products,
+            pageCount: Math.ceil(parseInt(res.count) / 20),
+          });
+      });
+    }
+
+    axios
+      .post(
+        `${imgUrl}/beta_api/get_seller_info_listing.php`,
+        {
+          security_token: "",
+          plateform_type: "web",
+          sellerid: this.state.sellerDetail.sellerid,
+          currency: getCookie("currency"),
+          countrycode: getCookie("country_code").toUpperCase(),
+        },
+        { headers: { "Content-Type": "multipart/form-data" } }
+      )
+      .then((response) => {
+        if (response.data.statusId == 1) {
+          this.setState({
+            sellerData: response.data.result[0],
+          });
+        } else {
+          this.setState({ sellerData: null });
         }
-    }).catch(error =>{
-      console.error(error,11);
-    })
-  }
+      })
+      .catch((error) => {
+        console.error(error, 11);
+      });
+  };
 
-
-checkImage = (setClass) => {
-  showImageOnlyIfExist(setClass);
-}
+  checkImage = (setClass) => {
+    showImageOnlyIfExist(setClass);
+  };
 
   render() {
-
     const { symbol } = this.props.symbol;
     const { translate } = this.props;
     return (
@@ -139,18 +178,21 @@ checkImage = (setClass) => {
             {this.state.sellerDetail.company ? (
               <Helmet>
                 <title>
-                  {this.state.sellerDetail.company} on Beldara.com worlds largest B2B marketplace
+                  {this.state.sellerDetail.company} on Beldara.com worlds
+                  largest B2B marketplace
                 </title>
                 <meta
                   name="description"
                   content={
-                    this.state.sellerDetail.company + " on Beldara.com worlds largest B2B marketplace"
+                    this.state.sellerDetail.company +
+                    " on Beldara.com worlds largest B2B marketplace"
                   }
                 />
                 <meta
                   name="keyword"
                   content={
-                    this.state.sellerDetail.company + " on Beldara.com worlds largest B2B marketplace"
+                    this.state.sellerDetail.company +
+                    " on Beldara.com worlds largest B2B marketplace"
                   }
                 />
               </Helmet>
@@ -169,7 +211,7 @@ checkImage = (setClass) => {
             )}
 
             {/*Section Start*/}
-            
+
             <section className="section-b-space py-0">
               <div className="collection-wrapper">
                 <div className="container">
@@ -179,31 +221,29 @@ checkImage = (setClass) => {
                         <div className="container-fluid">
                           <div className="row">
                             <div className="col-sm-12 d-none">
-                            
                               <div className="top-banner-wrapper text-center">
-                              
-                                {
-                                  
-                                  this.state.sellerDetail.banner.length>0? 
+                                {this.state.sellerDetail.banner.length > 0 ? (
                                   <Slider className="slide-1 home-slider">
-                                  {this.state.sellerDetail.banner
-                                    ? this.state.sellerDetail.banner.map(
-                                        item => (
-                                          // (imageExists(item.image) && item.image!==undefined) ?
-                                          <div key={item}>
-                                            <div
-                                              className="home lazyload"
-                                            >
-                                            <img style={{maxHeight: '400px'}} src={item} alt={item}/>
+                                    {this.state.sellerDetail.banner
+                                      ? this.state.sellerDetail.banner.map(
+                                          (item) => (
+                                            // (imageExists(item.image) && item.image!==undefined) ?
+                                            <div key={item}>
+                                              <div className="home lazyload">
+                                                <img
+                                                  style={{ maxHeight: "400px" }}
+                                                  src={item}
+                                                  alt={item}
+                                                />
+                                              </div>
                                             </div>
-                                          </div>
+                                          )
                                         )
-                                    )
-                                    : ""}
-                                </Slider>
-                                  : ''
-                                }
-                                
+                                      : ""}
+                                  </Slider>
+                                ) : (
+                                  ""
+                                )}
                               </div>
                             </div>
                             <div className="col-sm-12 my-3">
@@ -217,7 +257,6 @@ checkImage = (setClass) => {
                                   // src={`${imgUrl+'/images/ajax-loader.gif'}`}
                                   fallbackImage={`${imgUrl +
                                     "/images/company-default-logo.png"}`}
-                                
                                   initialImage={`${imgUrl +
                                     "/images/ajax-loader.gif"}`}
                                   className="align-self-center mr-3"
@@ -257,17 +296,45 @@ checkImage = (setClass) => {
                                         this.state.sellerDetail.country_name
                                       : ""}
                                   </p> */}
-                                    <h6 className="m-0">Price Range: <strong><i
-                                className={
-                                  this.state.currency == "INR" ? "fa fa-inr" : "fa fa-usd"
-                                }
-                              ></i>{" "}{this.state.sellerData.min_price}-<i
-                              className={
-                                this.state.currency == "INR" ? "fa fa-inr" : "fa fa-usd"
-                              }
-                            ></i>{" "}{this.state.sellerData.max_price}</strong></h6>
-                            <h6 className="m-0">Min Order Value: {this.state.sellerData != '' && this.state.sellerData !== null && this.state.sellerData.seller_moq != '' && this.state.sellerData.seller_moq != null ? this.state.sellerData.seller_moq : 'NA'}</h6>
-                            <h6 className="m-0">City : {this.state.sellerData != '' && this.state.sellerData !== null && this.state.sellerData.city != '' && this.state.sellerData.city != null ? this.state.sellerData.city : 'NA'}</h6>
+                                  <h6 className="m-0">
+                                    Price Range:{" "}
+                                    <strong>
+                                      <i
+                                        className={
+                                          this.state.currency == "INR"
+                                            ? "fa fa-inr"
+                                            : "fa fa-usd"
+                                        }
+                                      ></i>{" "}
+                                      {this.state.sellerData.min_price}-
+                                      <i
+                                        className={
+                                          this.state.currency == "INR"
+                                            ? "fa fa-inr"
+                                            : "fa fa-usd"
+                                        }
+                                      ></i>{" "}
+                                      {this.state.sellerData.max_price}
+                                    </strong>
+                                  </h6>
+                                  <h6 className="m-0">
+                                    Min Order Value:{" "}
+                                    {this.state.sellerData != "" &&
+                                    this.state.sellerData !== null &&
+                                    this.state.sellerData.seller_moq != "" &&
+                                    this.state.sellerData.seller_moq != null
+                                      ? this.state.sellerData.seller_moq
+                                      : "NA"}
+                                  </h6>
+                                  <h6 className="m-0">
+                                    City :{" "}
+                                    {this.state.sellerData != "" &&
+                                    this.state.sellerData !== null &&
+                                    this.state.sellerData.city != "" &&
+                                    this.state.sellerData.city != null
+                                      ? this.state.sellerData.city
+                                      : "NA"}
+                                  </h6>
                                   <Link
                                     to={`${process.env.PUBLIC_URL}/post-requirement.html`}
                                     className="btn btn-solid"
@@ -278,9 +345,9 @@ checkImage = (setClass) => {
                                 </div>
                               </div>
                             </div>
-
-                            {this.state.products ? (
-                              this.state.products.length > 0 ? (
+                            {/* ------------ product lenth ----------------- */}
+                            <div className="col-sm-12 my-2">
+                              <div className="row">
                                 <div className="col-sm-12 my-2">
                                   <nav aria-label="breadcrumb">
                                     <ol className="breadcrumb">
@@ -292,61 +359,87 @@ checkImage = (setClass) => {
                                       </li>
                                     </ol>
                                   </nav>
+                                </div>
+                              </div>
+                              <div className="row">
+                                <div className="col-sm-3">
+                                  <CategoryComponent type={this.state} />
+                                </div>
+                                <div className="col-sm-9 my-2">
                                   <div className="product-wrapper-grid row">
                                     <div className="container-fluid">
-                                      <div className="row">
-                                        {/* <ProductItem product={this.state.sellerProducts} /> */}
-                                        {this.state.products.map(
-                                          (item, index) => (
-                                            <div className='col-6 col-lg-3 col-xl-3 col-md-4 col-xs-6 col-sm-6 col-grid-box px-0 px-sm-0 px-md-1' key={index}>
-                                              <ProductListItem
-                                                checkImage={this.checkImage} 
-                                                product={item}
-                                                symbol={symbol}
+                                      {/* <div className="row"> */}
+                                      {/* <ProductItem product={this.state.sellerProducts} /> */}
+                                      {this.state.products ? (
+                                        <div className="row">
+                                          {this.state.products.map(
+                                            (item, index) => (
+                                              <div
+                                                className="col-6 col-lg-4 col-xl-4 col-md-4 col-xs-6 col-sm-6 col-grid-box px-0 px-sm-0 px-md-1"
                                                 key={index}
-                                              />
-                                            </div>
-                                          )
-                                        )}
-                                      </div>
+                                              >
+                                                <ProductListItem
+                                                  checkImage={this.checkImage}
+                                                  product={item}
+                                                  symbol={symbol}
+                                                  key={index}
+                                                />
+                                              </div>
+                                            )
+                                          )}
+                                        </div>
+                                      ) : (
+                                        <div className="row text-center">
+                                          <div className="col-12">
+                                            <img
+                                              src={`${process.env.PUBLIC_URL}/assets/images/empty-search.jpg`}
+                                              className="img-fluid"
+                                            />
+                                            <h3>
+                                              Sorry! No Category Products
+                                              found!!!{" "}
+                                            </h3>
+                                            {/* <Link to={`${process.env.PUBLIC_URL}/`} className="btn btn-solid">continue shopping</Link> */}
+                                          </div>
+                                        </div>
+                                      )}
+                                      {/* </div> */}
                                       <div className="row justify-content-md-center">
-                                        {
-                                          this.state.pageCount ? 
+                                        {this.state.pageCount ? (
                                           <ReactPaginate
                                             initialPage={this.state.pageNo}
-                                            previousLabel={'previous'} 
-                                            nextLabel={'next'} 
-                                            
-                                            breakLabel={'...'}
-                                            breakClassName={'break-me'}
+                                            previousLabel={"previous"}
+                                            nextLabel={"next"}
+                                            breakLabel={"..."}
+                                            breakClassName={"break-me"}
                                             pageCount={this.state.pageCount}
                                             marginPagesDisplayed={2}
                                             pageRangeDisplayed={3}
                                             onPageChange={this.handlePageClick}
-                                            containerClassName={'pagination my-5'}
-                                            subContainerClassName={'pages pagination'}
-                                            pageLinkClassName={'page-link'}
-                                            previousClassName={'page-item'}
-                                            previousLinkClassName={'page-link'}
-                                            nextClassName={'page-item'}
-                                            nextLinkClassName={'page-link'}
-                                            pageClassName={'page-item'}
-                                            activeClassName={'active'}
-                                        />
-                                          
-                                          :''
-                                        }
-                                    
-                                </div>
+                                            containerClassName={
+                                              "pagination my-5"
+                                            }
+                                            subContainerClassName={
+                                              "pages pagination"
+                                            }
+                                            pageLinkClassName={"page-link"}
+                                            previousClassName={"page-item"}
+                                            previousLinkClassName={"page-link"}
+                                            nextClassName={"page-item"}
+                                            nextLinkClassName={"page-link"}
+                                            pageClassName={"page-item"}
+                                            activeClassName={"active"}
+                                          />
+                                        ) : (
+                                          ""
+                                        )}
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
-                              ) : (
-                                ""
-                              )
-                            ) : (
-                              ""
-                            )}
+                              </div>
+                            </div>
+
                             {this.state.sellerDetail.about ? (
                               <div className="col-sm-12 my-2">
                                 <nav aria-label="breadcrumb">
@@ -363,7 +456,7 @@ checkImage = (setClass) => {
                                 <div
                                   className="col-sm-12"
                                   dangerouslySetInnerHTML={{
-                                    __html: this.state.sellerDetail.about
+                                    __html: this.state.sellerDetail.about,
                                   }}
                                 ></div>
                               </div>
@@ -401,7 +494,7 @@ checkImage = (setClass) => {
                                                   alt={`${item}`}
                                                   style={{
                                                     width: "200px",
-                                                    height: "200px"
+                                                    height: "200px",
                                                   }}
                                                 />
                                                 {/* </Link> */}
@@ -423,29 +516,25 @@ checkImage = (setClass) => {
                     </div>
                   </div>
                 </div>
-                
               </div>
             </section>
           </React.Fragment>
         ) : (
-            <LoadingComponent />
-                )
-            
-        }
+          <LoadingComponent />
+        )}
       </React.Fragment>
     );
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   //sellerDetail: state.store.data,
   // products: state.store.products.products,
   // totalCount:state.store.products.count,
   // //products: getSearchProducts(state.store.products, state.filters),
-  perPage:'20',
-  symbol: state.data.symbol
+  perPage: "20",
+  symbol: state.data.symbol,
 });
-
 
 export default withTranslate(connect(mapStateToProps)(StoreFront));
 

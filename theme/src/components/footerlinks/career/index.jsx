@@ -11,7 +11,8 @@ class Career extends Component {
     constructor() {
         super()
         this.state = {
-          data:''
+          data:'',
+          careersData:''
         }
       }
 
@@ -62,6 +63,24 @@ class Career extends Component {
               return Promise.reject(result);
             });
         }
+
+        await axios
+            .post(
+              "https://api.beldara.com/common/career.php",
+              { security_token: "", plateform_type: ""},
+              { headers: { "Content-Type": "multipart/form-data" } }
+            )
+              .then(response => {
+               
+              this.setState({
+                careersData: response.data.result
+              })
+              //console.log("-----------carree-------------",this.state.careers);
+            })
+            .catch(error => {
+              const result = error.response;
+              return Promise.reject(result);
+        });
         
     }
 
@@ -87,8 +106,8 @@ class Career extends Component {
                     <div className="card-box">
                     <div >Interested Candidate can reach out to us at hr@beldara.com</div>
                             {
-                                (this.props.careers)?
-                                this.props.careers.map(item =>
+                                (this.state.careersData)?
+                                this.state.careersData.map(item =>
                                     <div className="card mt-2" key={item.id} >
                                         <div className="card-header text-capitalize">
                                             <h5>Job Position : {item.post} </h5>

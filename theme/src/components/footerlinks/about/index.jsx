@@ -685,7 +685,7 @@ class About extends Component {
 
                                                  {/* kaustubh kale */}
 
-                                                 <div className="row my-5 vision_body" >
+                                                 {/* <div className="row my-5 vision_body" >
                                                     <div className=" p_100 row ml-2 mr-2">
                                                         <div className="col-md-3 text-center">
                                                             <img className="img-leaderdship" src={`${process.env.PUBLIC_URL}/assets/images/kaustubh-kale.jpg`} alt="beldara.com" />
@@ -701,7 +701,7 @@ class About extends Component {
                                                         </div>
 
                                                     </div>
-                                                </div>
+                                                </div> */}
 
                                                 {/* Sejal Malviya */}
 

@@ -56,7 +56,7 @@ class ProductByOffer extends Component {
                 }
             }
             ).then(async res => {
-                // console.log(res,48);
+                console.log(res,48);
                 if(res.data.statusId == 1){
                     await this.setState({
                         products : res.data.result,
@@ -132,7 +132,7 @@ class ProductByOffer extends Component {
                                         <div className="row">
                                             <div className="col-sm-12 text-center section-b-space mt-5 no-found" >
                                                 <img src={`${process.env.PUBLIC_URL}/assets/images/empty-search.jpg`} className="img-fluid mb-4" />
-                                                <h3>Sorry! No Offer Products found!!!    </h3>
+                                                <h3>No offer found </h3>
                                                 <Link to={`${process.env.PUBLIC_URL}/`} className="btn btn-solid">continue shopping</Link>
                                             </div>
                                         </div>

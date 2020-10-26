@@ -194,7 +194,7 @@ class Contact extends Component {
                                             </div>
 
                                             <div className="media-body">
-                                                <p>+91 9667682100</p> 
+                                                <p>+91 9555788833</p> 
                                             </div>
                                         </li>
                                         <li>

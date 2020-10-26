@@ -267,7 +267,7 @@ class Online extends Component {
  <div className="text-center">
  {getCookie("country_code") == "in" ||
  getCookie("country_code") == "IN"
- ? "Call us on +91-9667682100"
+ ? "Call us on +91-9555788833"
  : "Call us on +1-913-289-0433"}
  </div>
  </div>
@@ -510,7 +510,7 @@ class Online extends Component {
  <div className="text-center">
  {getCookie("country_code") == "in" ||
  getCookie("country_code") == "IN"
- ? "Call us on +91-9667682100"
+ ? "Call us on +91-9555788833"
  : "Call us on +1-913-289-0433"}
  </div>
  </div>
