@@ -93,24 +93,20 @@ class HeaderThree extends Component {
        this.textInput.focus(); 
       };
 
-    let mbo
-    if (params.get('mbo')) {
-      mbo = params.get('mbo')
-      setCookie('internal', '1',1)
-    } else if (params.get('mb')) {
-      mbo = params.get('mb')
-      setCookie('internal', '0', 1)
-    }
-    
-      
-    // if (!ls.get('sellerid') || ls.get('sellerid') == '') {
-      if (mbo) {
-        mbo = mbo.split("-")[0];
-        if (getCookie('mhinpbn') != mbo) {
-          setCookie('mhinpbn', mbo, 365)
-          store.dispatch(getUpdateUser(mbo))
-        }
-      }
+    // let mbo
+    // if (params.get('mbo')) {
+    //   mbo = params.get('mbo')
+    //   setCookie('internal', '1',1)
+    // } else if (params.get('mb')) {
+    //   mbo = params.get('mb')
+    //   setCookie('internal', '0', 1)
+    // }
+    // if (mbo) {
+    //     mbo = mbo.split("-")[0];
+    //     if (getCookie('mhinpbn') != mbo) {
+    //       setCookie('mhinpbn', mbo, 365)
+    //       store.dispatch(getUpdateUser(mbo))
+    //     }
     // }
 
       cname = params.get('utm_campaign') ? params.get('utm_campaign') : params.get('campaign');

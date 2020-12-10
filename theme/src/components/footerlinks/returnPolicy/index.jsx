@@ -189,7 +189,7 @@ class ReturnPolicy extends Component {
                       shipment
                     </p>
                     <p>
-                      <b>f. Pharmaceutical : 15 days </b>from the date of
+                      <b>f. Pharmaceutical : 7 days </b>from the date of
                       delivery of shipment
                     </p>
                     <p>
@@ -205,7 +205,7 @@ class ReturnPolicy extends Component {
                       from the date of delivery of shipment
                     </p>
                     <p>
-                      <b>j. Footwear : 14 days </b>from the date of delivery of
+                      <b>j. Footwear : 7 days </b>from the date of delivery of
                       shipment
                     </p>
                     <p>

@@ -8,7 +8,7 @@ import ls from "local-storage";
 import RazorpayForm from "../razorpayForm/razorpay-new";
 import $ from "jquery";
 import "./start-order.css";
-import { ApiUrl, ImgUrl } from "../../constants/ActionTypes";
+import { ApiUrl, ImgUrl, SellerUrl } from "../../constants/ActionTypes";
 import Paytm from "../payment-gateway/paytm-new";
 import PayOnDelivery from "../payment-gateway/pay-on-delivery";
 import { captureEvent, getCookie, setCookie } from "../../functions";
@@ -1040,9 +1040,16 @@ class StartOrderTest extends Component {
 
   closeModal = () => {
     this.setState({ modalOpen: false });
-    window.location.href =
-      "/thankYou.html?type=2&o=1&v=1&e=0&i=&od=" + this.state.order_code;
+    //window.location.href = `${SellerUrl}/my_purchase.html?order=${this.state.order_code}`;
+
+    // window.open(
+    //   `${SellerUrl}/my_purchase.html?order=${this.state.order_code}`,
+    //   '_blank' // <- This is what makes it open in a new window.
+    // );
   };
+
+  //"/thankYou.html?type=2&o=1&v=1&e=0&i=&od=" + this.state.order_code;
+  //`${SellerUrl}/my_purchase.html?order=${this.state.order_code}`
 
   submitPaymentProcess = () => {
     // this.setState({modalOpen:false});
@@ -2461,7 +2468,8 @@ class StartOrderTest extends Component {
                           <div className="d-flex justify-content-center">
                             <div>
                                 <a
-                                  href={`/thankYou.html?type=2&o=1&v=1&e=0&i=&od=${this.state.order_code}`}
+                                  href={`${SellerUrl}/my_purchase.html?order=${this.state.order_code}`}
+                                  target="_blank"
                                   className="btn"
                                   style={custom_button}
                                 >

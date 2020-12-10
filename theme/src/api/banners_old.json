@@ -214,5 +214,29 @@
         "image": "https:\/\/img.beldara.com\/advt_banner\/beldara_flash_sale_offers.png",
         "title": "Offers",
         "lang": "en"
+    },
+    {
+        "link": "https:\/\/beldara.com\/lp\/Autumn-sale-Offer-Footwear.html",
+        "image": "https:\/\/img.beldara.com/advt_banner\/FootwearF.jpg",
+        "title": "Autumn sale Footwear",
+        "lang": "en"
+    },
+    {
+        "link": "https:\/\/beldara.com\/lp\/Mens-womens-wholesale-clothing-suppliers-manufacturers.html",
+        "image": "https:\/\/img.beldara.com/advt_banner\/Fashion-Wear.jpg",
+        "title": "Autumn sale clothing",
+        "lang": "en"
+    },
+    {
+        "link": "https:\/\/beldara.com\/lp\/Electronic-Accessories.html",
+        "image": "https:\/\/img.beldara.com/advt_banner\/ElectronicsFNew.jpg",
+        "title": "Autumn sale Electronics",
+        "lang": "en"
+    },
+    {
+        "link": "\/lp\/Mens-womens-wholesale-clothing-suppliers-manufacturers.html",
+        "image": "https:\/\/img.beldara.com/advt_banner\/Diwali-Dhamaka.jpg",
+        "title": "Autumn sale 2020",
+        "lang": "en"
     }
 ]

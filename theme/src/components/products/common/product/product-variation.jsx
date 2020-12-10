@@ -132,9 +132,9 @@ class ProductVariation extends Component {
       $('#hide_general').addClass('d-none');
     }
   }
-  chooseproduct(product_details) {
+  chooseproduct(product_details,current_colour) {
     var new_data = this.state.productarray[product_details];
-    this.setState({current_product_id:product_details});
+    this.setState({current_product_id:product_details,colour:current_colour});
     this.props.disptach_product(product_details, new_data.url);
   }
   changesize = async (e) => {
@@ -219,7 +219,8 @@ class ProductVariation extends Component {
                               src={`https://img.beldara.com/product_images/${index.main_img}`}
                               onClick={this.chooseproduct.bind(
                                 this,
-                                index.product_id
+                                index.product_id,
+                                index.variation1
                               )}
                             />
                           </span>
@@ -324,7 +325,15 @@ class ProductVariation extends Component {
                   E-Auction{" "}
                 </button>
               </div> */}
-              {this.props.product_mrp !== null &&
+
+              {/* below retailer margin code */}
+                {/* {parseFloat(
+                    (parseFloat(this.state.product_mrp) -
+                      parseFloat(this.state.selling_price)) /
+                      (parseFloat(this.state.product_mrp) * 0.01).toFixed(2)
+                  ).toFixed(2)} */}   
+                             
+              {/* {this.props.product_mrp !== null &&
               this.props.selling_price !== null ? (
               <div className="p-0 mx-2">
                 <div>
@@ -333,18 +342,13 @@ class ProductVariation extends Component {
                 </div>
                 <div>
                   Retail Margin:{" "}
-                  {/* {parseFloat(
-                    (parseFloat(this.state.product_mrp) -
-                      parseFloat(this.state.selling_price)) /
-                      (parseFloat(this.state.product_mrp) * 0.01).toFixed(2)
-                  ).toFixed(2)} */}
                   {parseFloat(((parseFloat(this.props.product_mrp)-parseFloat(this.props.selling_price))/parseFloat(this.props.product_mrp))*100).toFixed(2)}
                   %
                 </div>
               </div>
             ) : (
               ""
-            )}
+            )} */}
             </div>
             <ProductVariantModal varData={this.state} openmodal={this.openAllowVariantPopupModal} closemodal={this.closeAllowVariantPopupModal}/>
           </React.Fragment>

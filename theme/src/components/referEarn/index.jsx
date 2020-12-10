@@ -401,13 +401,13 @@ class index extends Component {
                   
                 </div>
                 <div className="col-3 d-none  d-sm-none d-md-block">
-                  <a href="https://loverlovely.com">
+                  {/* <a href="https://loverlovely.com">
                     <img
                       src={`${ImgUrl}/images/loverlovelyad.png`}
                       alt="LoverLovely Beldara.com"
                       className="mb-2"
                     ></img>
-                  </a>
+                  </a> */}
 
                   <a href="https://limray.com">
                     <img
@@ -523,13 +523,13 @@ class index extends Component {
                   }
                 </div>
                 <div className="col-3 d-none  d-sm-none d-md-block">
-                  <a href="https://loverlovely.com">
+                  {/* <a href="https://loverlovely.com">
                     <img
                       src={`${ImgUrl}/images/loverlovelyad.png`}
                       alt="LoverLovely Beldara.com"
                       className="mb-2"
                     ></img>
-                  </a>
+                  </a> */}
 
                   <a href="https://limray.com">
                     <img
@@ -642,13 +642,13 @@ class index extends Component {
                     {/* </Accordion> */}
                 </div>
                 <div className="col-3 d-none  d-sm-none d-md-block">
-                  <a href="https://loverlovely.com">
+                  {/* <a href="https://loverlovely.com">
                     <img
                       src={`${ImgUrl}/images/loverlovelyad.png`}
                       alt="LoverLovely Beldara.com"
                       className="mb-2"
                     ></img>
-                  </a>
+                  </a> */}
 
                   <a href="https://limray.com">
                     <img

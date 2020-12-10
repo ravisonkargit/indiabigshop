@@ -260,7 +260,7 @@ class FooterOne extends Component {
                       <li>
                         <a
                           target="_blank"
-                          href="https://twitter.com/beldaraonline"
+                          href="https://twitter.com/Beldara_India"
                           rel="nofollow"
                         >
                           <i className="fa fa-twitter" aria-hidden="true" />

@@ -544,11 +544,11 @@ class PostRequirement extends Component {
                                                 <div className="col-4 d-none  d-sm-none d-md-block">
                                                     
 
-                                                    <a href="https://loverlovely.com" >
+                                                    {/* <a href="https://loverlovely.com" >
                                                         <img src={`${imgUrl}/images/loverlovelyad.png`} alt="LoverLovely Beldara.com" className="mb-2">
 
                                                         </img>
-                                                    </a>
+                                                    </a> */}
 
                                                     <a href="https://limray.com">
                                                         <img src={`${imgUrl}/images/limrayad2.png`} alt="Limray Beldara.com" >

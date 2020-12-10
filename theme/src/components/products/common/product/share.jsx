@@ -163,7 +163,7 @@ class Share extends Component {
               </div>
               {/* <a
                 target="_blank"
-                href="https://twitter.com/beldaraonline"
+                href="https://twitter.com/Beldara_India"
                 rel="nofollow"
               >
                 <i

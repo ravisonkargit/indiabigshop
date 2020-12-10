@@ -298,6 +298,7 @@ class StoreFront extends Component {
                                   </p> */}
                                   <h6 className="m-0">
                                     Price Range:{" "}
+                                    {this.state.sellerData ?
                                     <strong>
                                       <i
                                         className={
@@ -316,6 +317,7 @@ class StoreFront extends Component {
                                       ></i>{" "}
                                       {this.state.sellerData.max_price}
                                     </strong>
+                                  :''}
                                   </h6>
                                   <h6 className="m-0">
                                     Min Order Value:{" "}

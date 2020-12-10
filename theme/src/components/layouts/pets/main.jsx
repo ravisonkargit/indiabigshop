@@ -103,6 +103,7 @@ class Pets extends Component {
       id: null,
       openPostRequirementModal: false,
       allowNotifcationPopup: false,
+      Banners1:"",
     };
     // this.getBanners = this.getBanners.bind(this);
     // Translate from English (default) to Spanish (specified)
@@ -149,6 +150,7 @@ class Pets extends Component {
     this.checkUSer();
     this.DeviceInfo();
     //this.DeviceInfo();
+    this.getBanner();
     store.dispatch(getAllLP());
     store.dispatch(getAllBrands());
     store.dispatch(getAllTM());
@@ -288,6 +290,32 @@ class Pets extends Component {
       }
     }
   };
+
+
+  getBanner = () => {
+    try {
+        axios
+        .post(
+              "https://api.beldara.com/common/get_web_home_banner.php",
+              { type: "chk_user", sellerid: getCookie("mhinpbn") },
+              { headers: { "Content-Type": "multipart/form-data" } }
+            )
+            .then(async (response) => {
+              this.setState({
+                Banners1: response.data.result,
+              });
+              console.log("-- benner --",this.state.Banners1);
+            })
+            .catch((error) => {
+              const result = error.response;
+              return Promise.reject(result);
+            });
+        } catch (e) {
+          console.log(`😱 Axios request failed: ${e}`);
+        }
+  };
+
+
   DeviceInfo = () => {
     if (isMobile) {
       if (isAndroid) {
@@ -590,7 +618,24 @@ class Pets extends Component {
           ></div>
           <section className="p-0 small-slider">
             <Slider {...settings} className="slide-1 home-slider">
-              {banners.slice(0, 11).map((item) => (
+              {this.state.Banners1 ? Object.keys(this.state.Banners1).slice(0, 5).map((item, index) => (
+                <div key={this.state.Banners1[item].title}>
+                  {this.state.Banners1[item].link != "" ? (
+                    <a href={this.state.Banners1[item].link} target={"_blank"}>
+                      <div
+                        className="home lazyload"
+                        style={{ backgroundImage: `url(${this.state.Banners1[item].image})` }}
+                      ></div>
+                    </a>
+                  ) : (
+                    <div
+                      className="home lazyload"
+                      style={{ backgroundImage: `url(${this.state.Banners1[item].image})` }}
+                    ></div>
+                  )}
+                </div>
+              )):
+              banners.slice(0, 7).map((item) => (
                 <div key={item.title}>
                   {item.link != "" ? (
                     <a href={item.link} target={"_blank"}>
@@ -607,6 +652,23 @@ class Pets extends Component {
                   )}
                 </div>
               ))}
+               {/* {banners.slice(0, 7).map((item) => (
+                <div key={item.title}>
+                  {item.link != "" ? (
+                    <a href={item.link} target={"_blank"}>
+                      <div
+                        className="home lazyload"
+                        style={{ backgroundImage: `url(${item.image})` }}
+                      ></div>
+                    </a>
+                  ) : (
+                    <div
+                      className="home lazyload"
+                      style={{ backgroundImage: `url(${item.image})` }}
+                    ></div>
+                  )}
+                </div>
+              ))}  */}
             </Slider>
           </section>
 

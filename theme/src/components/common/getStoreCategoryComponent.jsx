@@ -51,7 +51,7 @@ class getStoreCategoryComponent extends Component {
             <div>
                 <a href={`${this.state.pageUrl}.html`} className="showAllCat mouse_pointer"  >Show All </a>
                 <div className="h5 border-bottom mt-2">Category</div>
-                {this.state.isCategoryReceived  == 1 ?
+                {this.state.categoryData ? this.state.isCategoryReceived  == 1 ?
                     this.state.categoryData.length > 0 ?
                     <ul>
                         {
@@ -66,7 +66,7 @@ class getStoreCategoryComponent extends Component {
                         }
                     </ul>
                     : '' 
-                :  <LoadingComponent /> }
+                :  <LoadingComponent /> :''}
             </div>
         )
     }

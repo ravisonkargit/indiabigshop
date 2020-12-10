@@ -40,7 +40,7 @@ var id, realPath;
 var price,
   eachunit = 0;
 var currency = "INR";
-function priceCond(item, ele, deliverable,pincode) {
+function priceCond(item, ele, deliverable, pincode) {
   // console.log(deliverable,44);
   let dataCond = 0;
   if (item.price && item.price !== undefined && item.price.length > 0) {
@@ -78,7 +78,9 @@ function priceCond(item, ele, deliverable,pincode) {
                     class="fa fa-exclamation-circle mr-2"
                     aria-hidden="true"
                   ></i>
-                  {pincode != '' && pincode !==  undefined ? 'Information not found for entered pincode' : ' Please enter pincode'}
+                  {pincode != "" && pincode !== undefined
+                    ? "Information not found for entered pincode"
+                    : " Please enter pincode"}
                 </Tooltip>
               }
             >
@@ -448,7 +450,7 @@ class Details extends Component {
       this.state.currencySymbol != nextProps.symbol ||
       this.state.country_code != getCookie("country_code")
     ) {
-      this.getProdDetails(getCookie("currency"), getCookie("country_code"))
+      this.getProdDetails(getCookie("currency"), getCookie("country_code"));
     }
 
     const { buyer_country, buyer_country_id, buyer_country_code } = this.state;
@@ -557,7 +559,7 @@ class Details extends Component {
           visitorid: getCookie("mhinpbnb"),
           sellerid: ls.get("sellerid"),
           country_to: getCookie("countryid"),
-          pincode:getCookie('pincode')
+          pincode: getCookie("pincode"),
         },
         { headers: { "Content-Type": "multipart/form-data" } }
       )
@@ -871,14 +873,14 @@ class Details extends Component {
     qty = null,
     productid = null
   ) => {
-    if(country_code != 'in'){
-      $('#pincodemodule').addClass('d-none');
-    }else{
-      $('#pincodemodule').removeClass('d-none');
+    if (country_code != "in") {
+      $("#pincodemodule").addClass("d-none");
+    } else {
+      $("#pincodemodule").removeClass("d-none");
     }
     // console.log(currency,country_code,qty,productid);
     $(".common_class_for_spin").removeClass("d-none");
-     axios
+    axios
       .post(
         // `${apiUrl}get_product_details.php`,
         `${apiUrl}get_products_details_test.php`,
@@ -916,8 +918,8 @@ class Details extends Component {
             variation: response.data.result[0].variation,
             // pincodeDeliverable: country_code != 'in' ? true : false
           });
-          if(country_code !== 'in'){
-            await this.setState({pincodeDeliverable:true})
+          if (country_code !== "in") {
+            await this.setState({ pincodeDeliverable: true });
           }
           $(".common_class_for_spin").addClass("d-none");
         } else {
@@ -1006,16 +1008,16 @@ class Details extends Component {
   ChangePincode = (e) => {
     var value = e.target.value;
     // console.log(value);
-    this.setState({pincode:value})
-  }
+    this.setState({ pincode: value });
+  };
 
   allowPincode = (e) => {
-    var value = e.target.value
+    var value = e.target.value;
     // console.log(value.length);
-    if(value.length >= 5){
-      this.setState({pincode:value.substring(0, 5)})
+    if (value.length >= 5) {
+      this.setState({ pincode: value.substring(0, 5) });
     }
-  }
+  };
 
   render() {
     // console.log('render',this.state.eachunit);
@@ -1053,26 +1055,29 @@ class Details extends Component {
           <div className="d-flex align-items-center mt-2 border-bottom">
             <div className="">
               Sold by:{" "}
-              {
-                this.props.item.surl !== undefined && this.props.item.surl != ''
-                ?
-                <a className="h6" href={`/store/${this.props.item.surl}.html`} target="_blank">
-                {item.company}
-                {item.country !== null && item.country !== undefined
-                  ? "/" + item.country
-                  : ""}
-                </a>
-              : 
-                  <span className="h6">
+              {this.props.item.surl !== undefined &&
+              this.props.item.surl != "" ? (
+                <a
+                  className="h6"
+                  href={`/store/${this.props.item.surl}.html`}
+                  target="_blank"
+                >
                   {item.company}
                   {item.country !== null && item.country !== undefined
                     ? "/" + item.country
                     : ""}
-                  </span>
-              }
+                </a>
+              ) : (
+                <span className="h6">
+                  {item.company}
+                  {item.country !== null && item.country !== undefined
+                    ? "/" + item.country
+                    : ""}
+                </span>
+              )}
             </div>
             <div className="mx-3">
-              {this.props.item.company && this.props.item.is_active == '1' ? (
+              {this.props.item.company && this.props.item.is_active == "1" ? (
                 <ReactCSSTransitionGroup
                   transitionName="example"
                   transitionEnterTimeout={500}
@@ -1368,14 +1373,26 @@ class Details extends Component {
               ) : (
                 ""
               )}
+              <div className="">
+              {this.state.product_mrp !== null &&
+              this.state.selling_price !== null ? (
+                <div className="row">
+                  <div className="col font-weight-bold">
+                    {this.state.currency}{" "}
+                    {new Intl.NumberFormat().format(this.state.eachunit)} /{" "}
+                    {item.unit}
+                  </div>
+                </div>
+              ):('')}
+              </div>
             </div>
-            <div className="col-lg-4">
+            {/* <div className="col-lg-4">
               <div className="font-weight-bold">
                 {this.state.currency}{" "}
                 {new Intl.NumberFormat().format(this.state.eachunit)} /{" "}
                 {item.unit}
               </div>
-            </div>
+            </div> */}
             {/* {this.state.gst_val != null ? (
               <div className="col-lg-4">
                 <span className="h6 mouse_pointer" onClick={this.openPrcieCard}>
@@ -1472,7 +1489,7 @@ class Details extends Component {
               /> */}
             </div>
           </div>
-          <div className="d-flex justify-content-end align-items-center mt-2">
+          <div className="row d-flex justify-content-start align-items-center mt-1" style={{marginLeft: "10px", marginRight: "10px"}}>
             {/* <div>
               Shipping Charges:{` `}
               {this.state.currency} {this.state.shipping_cost}
@@ -1480,9 +1497,9 @@ class Details extends Component {
             {this.state.gst_val != null ? (
               <div
                 id="prices_cards"
-                className="bg-grey float-right col-md-5 productBorder"
+                className="bg-grey float-left col-sm-5 text-center productBorder"
               >
-                <div className="row justify-content-between mx-1">
+                <div className="row justify-content-between mx-2">
                   <div className="float-left">Price of items</div>
                   <div className="float-right">
                     {this.state.currency}{" "}
@@ -1491,8 +1508,10 @@ class Details extends Component {
                         parseFloat(this.state.gst_cal)
                     ).toFixed(2)} */}
                     {new Intl.NumberFormat().format(
-                      parseFloat(parseFloat(this.state.price) -
-                      parseFloat(this.state.gst_cal)).toFixed(2)
+                      parseFloat(
+                        parseFloat(this.state.price) -
+                          parseFloat(this.state.gst_cal)
+                      ).toFixed(2)
                     )}
                   </div>
                 </div>
@@ -1520,6 +1539,51 @@ class Details extends Component {
             ) : (
               ""
             )}
+          <div className="float-right col-sm-2 mt-2"></div>
+
+          {this.state.product_mrp !== null &&
+            this.state.selling_price !== null ? (
+              <div
+                id="prices_cards"
+                className="bg-grey float-left col-sm-5 text-center productBorder"
+              >
+                <div className="row justify-content-between mx-2">
+                <div className="row">
+                  <div className="col">
+                    MRP {this.state.currency}{" "}
+                    {new Intl.NumberFormat().format(this.state.product_mrp)}
+                  </div>
+                </div>
+                  
+                </div>
+                <HRLine color="#0e0e0e" />
+                <div className="row justify-content-between mx-1">
+                  
+                <div className="row">
+                  <div className="col">
+                    Retail Margin:{" "}
+                    {/* {parseFloat(
+                    (parseFloat(this.state.product_mrp) -
+                      parseFloat(this.state.selling_price)) /
+                      (parseFloat(this.state.product_mrp) * 0.01).toFixed(2)
+                  ).toFixed(2)} */}
+                    {parseFloat(
+                      ((parseFloat(this.state.product_mrp) -
+                        parseFloat(this.state.selling_price)) /
+                        parseFloat(this.state.product_mrp)) *
+                        100
+                    ).toFixed(2)}
+                    %
+                  </div>
+                </div>
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
+
+            
+          
           </div>
           <ProductVariation
             getProdDetl={this.getProdDetails}
@@ -1535,37 +1599,48 @@ class Details extends Component {
           <div
             className="d-flex justify-content-left align-items-center"
             id="general_products_event"
+            style={{marginLeft: "65px"}}
           >
-            {
-              this.props.item.is_active == '1'
-                ?
-                  priceCond(item, this, this.state.pincodeDeliverable,this.state.pincode)
-                : 
-                  <div className="p-0 mx-2 dangerBorder">
-                    <h5 className="text-danger px-1">Product Unavailable</h5>
-                  </div>
-            }
-            {this.state.product_mrp !== null &&
+            {this.props.item.is_active == "1" ? (
+              priceCond(
+                item,
+                this,
+                this.state.pincodeDeliverable,
+                this.state.pincode
+              )
+            ) : (
+              <div className="p-0 mx-2 dangerBorder">
+                <h5 className="text-danger px-1">Product Unavailable</h5>
+              </div>
+            )}
+            {/* {this.state.product_mrp !== null &&
             this.state.selling_price !== null ? (
-              <div className="p-0 mx-2">
-                <div>
-                  MRP {this.state.currency}{" "}
-                  {new Intl.NumberFormat().format(this.state.product_mrp)}
-                </div>
-                <div>
-                  Retail Margin:{" "}
-                  {/* {parseFloat(
-                    (parseFloat(this.state.product_mrp) -
-                      parseFloat(this.state.selling_price)) /
-                      (parseFloat(this.state.product_mrp) * 0.01).toFixed(2)
-                  ).toFixed(2)} */}
-                  {parseFloat(((parseFloat(this.state.product_mrp)-parseFloat(this.state.selling_price))/parseFloat(this.state.product_mrp))*100).toFixed(2)}
-                  %
+              <div className="col-sm-9 col-md-9">
+                <div className="row">
+                  <div className="col font-weight-bold">
+                    {this.state.currency}{" "}
+                    {new Intl.NumberFormat().format(this.state.eachunit)} /{" "}
+                    {item.unit}
+                  </div>
+                  <div className="col">
+                    MRP {this.state.currency}{" "}
+                    {new Intl.NumberFormat().format(this.state.product_mrp)}
+                  </div>
+                  <div className="col">
+                    Retail Margin:{" "}
+                    {parseFloat(
+                      ((parseFloat(this.state.product_mrp) -
+                        parseFloat(this.state.selling_price)) /
+                        parseFloat(this.state.product_mrp)) *
+                        100
+                    ).toFixed(2)}
+                    %
+                  </div>
                 </div>
               </div>
             ) : (
               ""
-            )}
+            )} */}
             {/* <button className="btn btn-solid ml-2 my-2" onClick={this.create_wishlist} id="wishlist_product" clickevent="add_to_wishlist"> Wishlist </button> */}
           </div>
           <div className="col-sm-12 col-lg-12">

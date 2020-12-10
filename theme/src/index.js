@@ -236,6 +236,10 @@ import('./components/membership/membership_monthly').then(module => module.defau
  import('./components/landingOfferPageForAndroid').then(module => module.default)
  )
 
+ const landingNewArrivalForApp = asyncComponent(() =>
+ import('./components/landingNewArrivalForApp').then(module => module.default)
+ )
+
  const landingOfferPageForWeb = asyncComponent(() =>
  import('./components/landingOfferPageForAndroid/offerPageForWeb').then(module => module.default)
  )
@@ -361,7 +365,11 @@ import('./components/membership/membership_monthly').then(module => module.defau
  <Route exact path={`${process.env.PUBLIC_URL}/login.html`} component={Login} />
  <Route exact path={`${process.env.PUBLIC_URL}/register.html`} component={Register} />
  <Route path={`${process.env.PUBLIC_URL}/lp-app/:id`} component={landingPageForAndroid} />
+ <Route path={`${process.env.PUBLIC_URL}/lp_app/:id`} component={landingPageForAndroid} />  
  <Route path={`${process.env.PUBLIC_URL}/lp-offer-app/:id`} component={landingOfferPageForAndroid} />
+
+ <Route path={`${process.env.PUBLIC_URL}/lp-arrival/:type/:id`} component={landingNewArrivalForApp} />
+
  <Route path={`${process.env.PUBLIC_URL}/return-policy-app.html`} component={ReturnPolicy} />
  <Route path={`${process.env.PUBLIC_URL}/my-order-app-:id.html`} component={myOrder} />
  <Layout>
