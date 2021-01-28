@@ -6,7 +6,7 @@ class Paytm extends Component {
 render() {
     // console.log(this.props);
     const redirect_domain = window.location.host;
-    const { user,amount,sellerid,order_id,order_code,has_coupon,discounted_amount,discount_code} = this.props;
+    const { user,amount,sellerid,order_id,order_code,has_coupon,discounted_amount,discount_code,isToken} = this.props;
     if (user)
         var email = user.email;
     else
@@ -20,8 +20,10 @@ render() {
         // var oid = `ORD_${order_id}_${order_code}_0_NA`;
     // }    
 
-    var custid = `CUST_${sellerid}_${Math.floor(1000 + Math.random() * 9000)}`;
-    var oid = `ORD_${order_code}_${Math.floor(1000 + Math.random() * 9000)}`;
+    // var custid = `CUST_${sellerid}_${Math.floor(1000 + Math.random() * 9000)}`;
+    // var oid = `ORD_${order_code}_${Math.floor(1000 + Math.random() * 9000)}`;
+    var custid = sellerid;
+    var oid = `${order_id}_${sellerid}_${Math.floor(0 + Math.random() * 999)}_Web`;
 
 return (
 <React.Fragment>
@@ -32,6 +34,7 @@ return (
 <input type="hidden" id="MID" name="MID" value="Beldar02827113089473" />
 <input type="hidden" id="WEBSITE" name="WEBSITE" value="WEBPROD" />
 <input type="hidden" id="ORDER_ID" name="ORDER_ID" value={oid} />
+<input type="hidden" id="isToken" name="isToken" value={isToken} />
 <input type="hidden" id="CUST_ID" name="CUST_ID" value={custid} />
 <input type="hidden" id="INDUSTRY_TYPE_ID" name="INDUSTRY_TYPE_ID" value="Retail104" />
 <input type="hidden" id="CHANNEL_ID" name="CHANNEL_ID" value="WEB" /> 

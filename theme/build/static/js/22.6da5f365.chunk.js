@@ -1,2 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[22],{812:function(a,e,c){"use strict";c.r(e);var n=c(1),t=c.n(n);e.default=function(a){return t.a.createElement("a",{href:"".concat("","/")},t.a.createElement("img",{src:"".concat("","/assets/images/icon/").concat(a.logo),alt:"Beldara.com",className:"img-fluid"}))}}}]);
-//# sourceMappingURL=22.6da5f365.chunk.js.map

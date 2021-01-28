@@ -6,5 +6,6 @@
 } */
 
 .each_shopping{
-   border: 1px solid rgba(0,0,0,.125)
+   border: 1px solid rgba(0,0,0,.125);
+   height: 208px;
 }

@@ -330,7 +330,7 @@ class ProductVariantModal extends Component {
       this.state.priceArray.map((val,keys)=>{
         new_array.push(val);
       })
-      console.log('valid qty',new_array);
+    //  console.log('valid qty',new_array);
       // return false;
       Axios.post(
         `${apiUrl}cart_procedure_for_variant_products.php`,
@@ -356,7 +356,7 @@ class ProductVariantModal extends Component {
           }
       })
     } else {
-      console.log('invalid qty')
+      //console.log('invalid qty')
     }
   };
 
@@ -395,7 +395,7 @@ class ProductVariantModal extends Component {
                         ?
                         <div className="col-md-12 d-flex p-0 m-0">
                           <div className="col-md-1 m-0 p-0">Size:</div>
-                          <div className="col-md-9 m-0 p-0">
+                          <div className="col-md-11 m-0 p-0">
                             {
                             this.state.filterSize.map((val, index) => {
                               return (
@@ -414,9 +414,13 @@ class ProductVariantModal extends Component {
                       : ''
                       }
                       
-                      <div className="col-md-12 d-flex p-0 m-0 ">
-                        <div className="col-md-1 m-0 p-0">Color:</div>
-                        <div className="col-md-7 m-0 p-0">
+                      {/* <div className="col-md-12 d-flex p-0 m-0 "> */}
+                        {/* <div className="row"> */}
+
+                        
+                        {/* <div className="col-md-1 m-0 p-0">Color:</div> */}
+                        <div className="col-md-12 m-0 p-0">
+                        <div class="d-flex justify-content-center">
                           <table className="my-2">
                             {this.state.variation.map((value, key) => {
                               return (
@@ -427,6 +431,9 @@ class ProductVariantModal extends Component {
                                     <tr
                                     className={`my-2 mx-2 ${value.variation2} all_prod hoverprice`}
                                   >
+                                    <td>
+                                      {value.variation1}
+                                    </td>
                                     <td>
                                       <span
                                         className={`mx-2 mouse_pointer ${
@@ -478,6 +485,7 @@ class ProductVariantModal extends Component {
                                                     </button>
                                                   </span>
                                                   <NumberFormat
+                                                    format="####"
                                                     name="quantity"
                                                     value={
                                                       this.state.priceArray[
@@ -519,8 +527,11 @@ class ProductVariantModal extends Component {
                               );
                             })}
                           </table>
+                          </div>
                         </div>
-                        <div className="col-md-4 d-block m-0 p-0">
+                        {/* </div>
+                        <div className="row"> */}
+                        <div className="col-md-12 d-block m-0 p-0">
                           <div id="error_label" className="custom-border text-center mb-2 d-none">
                             <i
                                         class="fa fa-exclamation-circle mr-2"
@@ -590,7 +601,8 @@ class ProductVariantModal extends Component {
                             
                           </div>
                         </div>
-                      </div>
+                        {/* </div> */}
+                      {/* </div> */}
                     </div>
                   </div>
                 </div>

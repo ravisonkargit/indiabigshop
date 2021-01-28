@@ -446,18 +446,18 @@ class ProductListItem extends Component {
         <div className="row mb-2 mx-0">
           {product.start_price && parseFloat(product.start_price) > parseFloat(0) && !this.offerExist(product.offer_from_date,product.offer_to_date) ?
             <React.Fragment>
-              <div id={`btn_${product.id}`} className=" col-6 col-md-6 col-sm-6 text-left py-2 px-1 buy1">
+              <div id={`btn_${product.id}`} className=" col-12 col-md-12 col-sm-12 text-center py-2 px-1 buy1">
                 <div className="mouse_pointer btn btn_Pro  btn-orange" id={product.id} onClick={this.validate.bind(this,'buyBtn', product.id, product.qty, (parseFloat(product.start_price) * parseInt(product.qty)), this.props.symbol, product.start_price, product.currency, product.sellerid)}>
                   Buy Now
                 </div>
                 {/* <img className="mouse_pointer" src="https://img.beldara.com/images/buy_now_btn.png" id={product.id} onClick={this.validate.bind(this,'buyBtn', product.id, product.qty, (parseFloat(product.start_price) * parseInt(product.qty)), this.props.symbol, product.start_price, product.currency, product.sellerid)}/> */}
               </div>
               {/* <div className="col-1 col-md-1 d-none d-md-block d-sm-none"></div> */}
-              <div className="col-6  text-center col-md-6 col-sm-6 py-2 px-1">
+              {/* <div className="col-6  text-center col-md-6 col-sm-6 py-2 px-1">
                 <div id={`div_${product.id}`}>
                   <Link onClick={this.event_ask_for_price.bind(this,'go_to_auction', product.id)} id="go_to_auction" className="btn btn_Pro btn-orange" clickevent="go_to_auction" to={{ pathname: `/product/${product.url}.html`, state: { product, askAuctionInit: false } }} > e-Auction </Link>
                 </div>
-              </div>
+              </div> */}
               {/* <div className="col-1 col-md-1 d-none d-md-block d-sm-none"></div> */}
             </React.Fragment>
             : (this.offerExist(product.offer_from_date,product.offer_to_date) && product.offer_stock > 0)
@@ -490,17 +490,17 @@ class ProductListItem extends Component {
             </React.Fragment>
             :
             <React.Fragment>
-              <div id={`btn_${product.id}`} className="col-7 text-left col-md-7 col-sm-7 py-2 px-1">
-                <div className="text-left">
+              <div id={`btn_${product.id}`} className="col-12 text-center col-md-12 col-sm-12 py-2 px-1">
+                <div className="text-center">
                   <Link onClick={this.event_ask_for_price.bind(this,'ask_for_price', product.id)} id="ask_for_price" className="btn btn_Pro btn-orange" clickevent="Ask_for_price" to={{ pathname: "/post-requirement.html", state: product }} > Contact Supplier </Link>
                 </div>
               </div>
               {/* <div className="col-1 col-md-1 d-none d-md-block d-sm-none"></div> */}
-              <div className="col-5 text-center col-md-5 col-sm-5 py-2 px-1">
+              {/* <div className="col-5 text-center col-md-5 col-sm-5 py-2 px-1">
                 <div id={`div_${product.id}`}>
                   <Link onClick={this.event_ask_for_price.bind(this,'go_to_auction', product.id)} id="go_to_auction" className="btn btn_Pro btn-orange" clickevent="go_to_auction" to={{ pathname: `/product/${product.url}.html`, state: { product, askAuctionInit: false } }} > e-Auction </Link>
                 </div>
-              </div>
+              </div> */}
               {/* <div className="col-1 col-md-1 d-none d-md-block d-sm-none"></div> */}
             </React.Fragment>
           }

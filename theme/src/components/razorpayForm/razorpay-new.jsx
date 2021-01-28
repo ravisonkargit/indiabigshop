@@ -8,7 +8,7 @@ class RazorpayForm extends Component {
          const currentdomain = window.location.hostname;
 
          if (currentdomain === 'uat.beldara.com' || currentdomain === 'localhost'){
-            razorpaykey = "rzp_test_8PjcTCtvKLpR6g";
+            razorpaykey = "rzp_live_YHQFULPoYEUSnY";
          }else{
             razorpaykey = "rzp_live_YHQFULPoYEUSnY";
          }

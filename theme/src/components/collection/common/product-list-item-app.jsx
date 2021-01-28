@@ -20,8 +20,10 @@ import store from '../../../store';
 // import './imageloader.css'
 import 'lazysizes';
 import 'lazysizes/plugins/parent-fit/ls.parent-fit';
+import { isAndroid } from 'react-device-detect';
 const PriceCalcOffer = lazy(() => import('./priceCalcOffer'))
 const PriceCalc = lazy(() => import('./priceCalc'))
+
 // const ImageLoader = lazy(() => import('./ImageLoader.js'))
 var Android, showProductPage;
 class ProductListItem extends Component {
@@ -110,12 +112,21 @@ class ProductListItem extends Component {
   };
 
   event_ask_for_price(id, productId){
-    window.Android.showProductPage(productId);
+    //window.Android.showProductPage(productId);
+    if(isAndroid){
+      window.Android.showProductPage(productId);
+    }else{
+      window.location = 'nativeiOSScheme://'+productId;
+    }
     //captureEvent("Product", id, productid, 'click', ls.get("sellerid"), getCookie("mhinpbnb"));
   }
-
   createCart(productId, qty, amount, currency, eachunit, product_currency, product_sellerid){
-    window.Android.showProductPage(productId);
+    if(isAndroid){
+      window.Android.showProductPage(productId);
+    }else{
+      window.location = 'nativeiOSScheme://'+productId;
+    }
+    
     // axios.post(
     //   "https://api.beldara.com/common/create_cart_test.php",
     //   {

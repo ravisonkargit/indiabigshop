@@ -104,6 +104,7 @@ class Pets extends Component {
       openPostRequirementModal: false,
       allowNotifcationPopup: false,
       Banners1:"",
+      getcartBanner1:"",
     };
     // this.getBanners = this.getBanners.bind(this);
     // Translate from English (default) to Spanish (specified)
@@ -149,7 +150,7 @@ class Pets extends Component {
   componentDidMount() {
     this.checkUSer();
     this.DeviceInfo();
-    //this.DeviceInfo();
+    this.getcartBanner();
     this.getBanner();
     store.dispatch(getAllLP());
     store.dispatch(getAllBrands());
@@ -304,7 +305,32 @@ class Pets extends Component {
               this.setState({
                 Banners1: response.data.result,
               });
-              console.log("-- benner --",this.state.Banners1);
+            })
+            .catch((error) => {
+              const result = error.response;
+              return Promise.reject(result);
+            });
+        } catch (e) {
+          console.log(`😱 Axios request failed: ${e}`);
+        }
+  };
+
+  getcartBanner = () => {
+    try {
+        axios
+        .post(
+              "https://api.beldara.com/common/verticle_banner.php",
+              { sellerid: getCookie("mhinpbn"),"currency":"INR",
+                "versionCode":"",
+                "security_token":"",
+                "plateform_type":"",
+                "cat_id":"0" },
+              { headers: { "Content-Type": "multipart/form-data" } }
+            )
+            .then(async (response) => {
+              this.setState({
+                getcartBanner1: response.data.result,
+              });
             })
             .catch((error) => {
               const result = error.response;
@@ -381,10 +407,10 @@ class Pets extends Component {
             )
             .then(async (response) => {
               if (response.data.result[0].id == "1") {
-                window.open(
-                  "https://seller.beldara.com/potential-buyer.php",
-                  "_blank"
-                );
+                // window.open(
+                //   "https://seller.beldara.com/potential-buyer.php",
+                //   "_blank"
+                // );
                 setCookie("mhinpbn", getCookie("mhinpbn"), "365");
               } else if (response.data.result[0].id == "2") {
                 this.setState({
@@ -469,10 +495,10 @@ class Pets extends Component {
             $("#spinnerID").addClass("d-none");
             setTimeout(() => {
               this.setState({ SellerFlowOpen: !this.state.SellerFlowOpen });
-              window.open(
-                "https://seller.beldara.com/potential-buyer.php",
-                "_blank"
-              );
+              // window.open(
+              //   "https://seller.beldara.com/potential-buyer.php",
+              //   "_blank"
+              // );
               setCookie("mhinpbn", getCookie("mhinpbn"), "365");
             }, 2000);
           } else {
@@ -618,7 +644,7 @@ class Pets extends Component {
           ></div>
           <section className="p-0 small-slider">
             <Slider {...settings} className="slide-1 home-slider">
-              {this.state.Banners1 ? Object.keys(this.state.Banners1).slice(0, 5).map((item, index) => (
+              {this.state.Banners1 ? Object.keys(this.state.Banners1).slice(0, 10).map((item, index) => (
                 <div key={this.state.Banners1[item].title}>
                   {this.state.Banners1[item].link != "" ? (
                     <a href={this.state.Banners1[item].link} target={"_blank"}>
@@ -676,17 +702,6 @@ class Pets extends Component {
           <div className="container">
             <div className="row mt-2 mb-2 ">
               <a
-                href="/auction.html"
-                className="col-6 border border-danger card flex-md-row shadow-none px-2"
-              >
-                <i className="fa fa-gavel text-danger flex-auto align-self-center d-none d-lg-block"></i>
-                <div className="card-body d-flex flex-column align-items-start justify-content-center p-1">
-                  <div className="d-inline-block text-danger font-weight-light">
-                    {translate("Lead Auction")}
-                  </div>
-                </div>
-              </a>
-              <a
                 href="/post-requirement.html"
                 className="col-6 border border-danger card flex-md-row shadow-none px-2"
               >
@@ -698,13 +713,24 @@ class Pets extends Component {
                   </div>
                 </div>
               </a>
+              <a
+                href="/trade-show.html"
+                className="col-6 border border-danger card flex-md-row shadow-none px-2"
+              >
+                <i className="fa fa-gavel text-danger flex-auto align-self-center d-none d-lg-block"></i>
+                <div className="card-body d-flex flex-column align-items-start justify-content-center p-1">
+                  <div className="d-inline-block text-danger font-weight-light">
+                    {translate("Trade Show")}
+                  </div>
+                </div>
+              </a>
               <div className="clearfix"></div>
             </div>
           </div>
           {/*Buy Lead & Post Req*/}
 
           {/*Landing Page Top New*/}
-          <section className="pt-2 banner-6 ratio2_1">
+          {/* <section className="pt-2 banner-6 ratio2_1">
             <div className="container">
               <div className="row partition3">
                 <div className="col-md-4 mt-2">
@@ -748,16 +774,31 @@ class Pets extends Component {
                 </div>
               </div>
             </div>
-          </section>
+          </section> */}
           {/*Banner Section End Top New*/}
 
           {/*Landing Page*/}
           <section className="pt-2 banner-6 ratio2_1">
             <div className="container">
               <div className="row partition3">
-                {this.props.lp.lp.slice(0, 6).map((item) => (
+
+                {this.state.getcartBanner1 ? Object.keys(this.state.getcartBanner1).slice(0, 6).map((item) => (
+                  <div className="col-md-4 mt-2" key={this.state.getcartBanner1[item].page_name}>
+                    <a href={`/lp/${this.state.getcartBanner1[item].page_name.replace(/\s+/g, '-').toLowerCase()}-${this.state.getcartBanner1[item].user_cat}.html?type=${this.state.getcartBanner1[item].type}`}>
+                      <div className="collection-banner p-left">
+                        <div className="img-part">
+                          <img
+                            src={`${this.state.getcartBanner1[item].thumb_img}`}
+                            className="img-fluid blur-up lazyload bg-img"
+                            alt={this.state.getcartBanner1[item].keyword}
+                          />
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                )):
+                this.props.lp.lp.slice(0, 6).map((item) => (
                   <div className="col-md-4 mt-2" key={item.page_name}>
-                    {/* <a href={"/lp/" + item.url}> */}
                     <a href={"/lp/" + item.url.toLowerCase()}>
                       <div className="collection-banner p-left">
                         <div className="img-part">
@@ -857,14 +898,14 @@ class Pets extends Component {
             </div>
           </div>
 
-          <div className="text-center">
+          {/* <div className="text-center">
             <img
               className="img-fluid mt-2 mouse_pointer"
               onClick={() => this.askToSearch()}
               src={`${imgUrl}/advt_banner/Beldara_E-auction-get-your-products-at-your-desired_price.png`}
               alt="Beldara E-auction get your products at your desired price"
             />
-          </div>
+          </div> */}
 
           <div className="christmas_offer">
             <div className="container">

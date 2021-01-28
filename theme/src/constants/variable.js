@@ -10,7 +10,7 @@ export const imgUrl = 'https://img.beldara.com'
 
 // Beta API
 
-export const betaApi = 'http://img.beldara.com/beta_api/'
+export const betaApi = 'https://img.beldara.com/beta_api/'
 
 
 //Node Api

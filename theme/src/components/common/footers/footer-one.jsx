@@ -304,13 +304,13 @@ class FooterOne extends Component {
                   </div>
                   <div className="footer-contant">
                     <ul>
-                      <li>
+                      {/* <li>
                         <Link
                           to={`/auction.html`}
                         >
                           {translate("Live E-Auction")}
                         </Link>
-                      </li>
+                      </li> */}
                       <li>
                         <Link
                           to={`${process.env.PUBLIC_URL}/how-to-sell-fast.html`}
@@ -327,11 +327,11 @@ class FooterOne extends Component {
                           {translate("Buy Now On Beldara")}
                         </Link>
                       </li>
-                      <li>
+                      {/* <li>
                         <Link to={`${process.env.PUBLIC_URL}/membership.html`}>
                           {translate("Membership - B2B Marketing Plan")}
                         </Link>
-                      </li>
+                      </li> */}
                       <li>
                         <Link to={`${process.env.PUBLIC_URL}/banner-ads.html`}>
                           {translate("Banner Advertising")}
@@ -414,6 +414,15 @@ class FooterOne extends Component {
                           }/product-listing-guidelines.html`}
                         >
                           {translate("Product Listings Guideline")}
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          to={`${
+                            process.env.PUBLIC_URL
+                          }/beldara-first.html`}
+                        >
+                          {translate("Beldara First")}
                         </Link>
                       </li>
                       <li>

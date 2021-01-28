@@ -136,14 +136,6 @@
         "isDelete": "0"
     },
     {
-        "id": "20",
-        "link": " https:\/\/t.cj.sina.com.cn\/articles\/view\/6968108235\/19f54e4cb00100idll?from=tech&sudaref=ruanwen.lusongsong.com&display=0&retcode=0 ",
-        "img": "sinabeldara.png",
-        "alt": "sina beldara.com",
-        "type": "16",
-        "isDelete": "0"
-    },
-    {
         "id": "1",
         "link": "https:\/\/www.news9.com\/story\/40527729\/beldara-becomes-the-goto-marketplace-with-over-60000-suppliers",
         "img": "n9logo.svg",
@@ -286,22 +278,6 @@
         "alt": "Beldara on Buffalo News",
         "type": "16",
         "isDelete": "1"
-    },
-    {
-        "id": "47",
-        "link": "http:\/\/www.marketwatch.com\/press-release\/beldaracom-american-buyers-look-toward-india-for-diversifying-their-supply-chain-2020-02-11",
-        "img": "0PB9LFBQC-marketwatch-vector-logo.png",
-        "alt": "Beldara on MarketWatch",
-        "type": "16",
-        "isDelete": "0"
-    },
-    {
-        "id": "48",
-        "link": "http:\/\/www.morningstar.com\/news\/business-wire\/20200211005076\/beldaracom-american-buyers-look-toward-india-for-diversifying-their-supply-chain",
-        "img": "D4S029IZX-morningstar-logo-vector.png",
-        "alt": "Beldara on Morningstar",
-        "type": "16",
-        "isDelete": "0"
     },
     {
         "id": "49",

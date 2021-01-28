@@ -16,6 +16,13 @@ import { getAllCurrencyValue } from '../../actions';
 //     // })
 //     const ProductByLP = await module.default
 // })
+function getFileName(url) {
+      var index = url.lastIndexOf("/") + 1;
+      var filenameWithExtension = url.substr(index);
+      var filename = filenameWithExtension.split(".")[0];
+      filename = filename.replace(/(#|\?).*?$/, "");
+      return filename;
+  }
 const ProductByLP = asyncComponent(() =>
     import('./ProductByLP').then(module => module.default)
 )
@@ -28,7 +35,8 @@ class LandingPage extends Component {
         catBanner: '',
         catName: '',
         catDesc:'',
-        imgExist:1
+        imgExist:1,
+        datatype:'',
     }
 
     LayoutViewClicked(colums) {
@@ -38,36 +46,50 @@ class LandingPage extends Component {
     }
     componentDidMount() {
         try {
-            let query = window.location.pathname.split('/').pop();
-            
-            axios.post("https://api.beldara.com/common/get_lp_detail.php",{url:query,sellerid:ls.get('sellerid'),security_token:'',plateform_type:''}, {headers: {'Content-Type': 'multipart/form-data'}})
-            //axios.post(`${localhost}/api/landingPage/getLpDetail`,{url:query,sellerid:ls.get('sellerid'),security_token:'',plateform_type:''}, {headers: {'Content-Type': 'application/json'}})
-            .then(async response => {
-                //result.
-                await this.setState({
-                    catBanner: response.data.result.page_img,
-                    catName: response.data.result.page_name,
-                    catDesc: response.data.result.desc1,
-                    cat_id: response.data.result.cat_id,
-                    keyword: response.data.result.keyword
+            var query='';
+            const query1 = getFileName(window.location.pathname)
+                            .split("/")
+                            .pop()
+                            .replace(".html", "");
+            const val = query1.split("-").splice(-1)[0];
+            if(isNaN(val)){
+                var query = window.location.pathname.split('/').pop();
+                axios.post("https://api.beldara.com/common/get_lp_detail.php",{url:query,sellerid:ls.get('sellerid'),security_token:'',plateform_type:''}, {headers: {'Content-Type': 'multipart/form-data'}})
+                .then(async response => {
+                    //result.
+                    await this.setState({
+                        catBanner: response.data.result.page_img,
+                        catName: response.data.result.page_name,
+                        catDesc: response.data.result.desc1,
+                        cat_id: response.data.result.cat_id,
+                        keyword: response.data.result.keyword,
+                        type:'1',
+                    })
+
                 })
-
-            })
-            .catch(error => {
-                const result = error.response;
-                return Promise.reject(result);
-            });
-
-            console.log(this.state.cat_id)
-
+                .catch(error => {
+                    const result = error.response;
+                    return Promise.reject(result);
+                });
+            }else{
+                var query = window.location.pathname.split('/').pop().replace(".html", "");
+                var x = query.slice(0, query.length - 3);
+                //console.log(300,x);
+                var search = window.location.search;
+                var params = new URLSearchParams(search);
+                var foo = params.get('type');
+                this.setState({
+                    cat_id: val,
+                    catName: x,
+                    type:'2',
+                    datatype:foo,
+                })
+            } 
         } catch (e){
             console.log(`😱 Axios request failed: ${e}`);
         }
         store.dispatch(getAllCurrencyValue())
     }
-    // componentDidMount() {
-    //     store.dispatch(getAllCurrencyValue())
-    // }
     imgError = () => {
         this.setState({
             imgExist: 0
@@ -151,10 +173,9 @@ class LandingPage extends Component {
                                                             <div className="container p-0">
                                                                 <div className="row">
                                                                     <div className="col-12 p-0">
-                                                                       
                                                                         {this.state.cat_id ?
                                                                             <ProductByLP
-                                                                                colSize={this.state.layoutColumns} cat_id={this.state.cat_id} />
+                                                                                colSize={this.state.layoutColumns} cat_id={this.state.cat_id} type={this.state.type} datatype={this.state.datatype} />
                                                                         : ''}
                                                                     </div>
                                                                 </div>

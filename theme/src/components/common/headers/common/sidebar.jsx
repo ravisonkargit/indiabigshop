@@ -237,7 +237,7 @@ class SideBar extends Component {
                         <li>
                             <a href={`${
                                   process.env.PUBLIC_URL
-                                }/cashback-offer.html`}>
+                                }/offers.html`}>
                                 <img src="https://img.beldara.com/assets/images/offer_icon1.png" alt="offers on beldara"/> Offers
                             </a>
                             <ColoredLine color="#f1aa61" />
@@ -247,6 +247,14 @@ class SideBar extends Component {
                                   process.env.PUBLIC_URL
                                 }/bpp.html`}>
                                 <img src="https://img.beldara.com/assets/images/brand_icon1.png" alt="BPP product on beldara"/> PRODUCT PROMOTION
+                            </a>
+                            <ColoredLine color="#f1aa61" />
+                        </li>
+                        <li>
+                            <a href={`${
+                                  process.env.PUBLIC_URL
+                                }/trade-show.html`}>
+                                <img src="https://img.beldara.com/assets/images/brand_icon1.png" alt="trade show product on beldara"/> Trade Show
                             </a>
                             <ColoredLine color="#f1aa61" />
                         </li>

@@ -489,7 +489,7 @@ class PostRequirement extends Component {
 
                                                                     <div className="col-md-6 my-2">
                                                                         <div className="has-float-label ">
-                                                                        <input id="qty" type="tel" placeholder=" " name="qty" value={quantity} onChange={this.changeQty} className="form-control" required/>
+                                                                        <input id="qty" type="number" placeholder=" " name="qty" value={quantity} onChange={this.changeQty} className="form-control" required/>
                                                                             <label htmlFor="qty">{translate('Quantity')}</label>
                                                                         </div>
                                                                     </div>

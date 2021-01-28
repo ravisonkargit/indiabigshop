@@ -30,6 +30,8 @@ import "./product.css";
 import ProductVariation from "./product-variation";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
+import { isMobile } from "react-device-detect";
+import ReactTooltip from "react-tooltip";
 
 const ChatBox = lazy(() => import("../../../live-chat/chatbox"));
 
@@ -308,7 +310,10 @@ class Details extends Component {
         qtyerror: true,
       });
     } else {
-      console.log("changeQty", cqty);
+      await this.setState({
+        quantity: cqty,
+      });
+      //console.log("changeQty", cqty,this.state.min_qty,this.state.quantity);
       if (cqty >= this.state.min_qty) {
         await this.setState({ quantity: cqty, qtyerror: false });
 
@@ -548,7 +553,7 @@ class Details extends Component {
   createCart = (id) => {
     axios
       .post(
-        "https://api.beldara.com/common/create_cart_test.php",
+        "https://api.beldara.com/common/add_to_cart.php",
         {
           security_token: "",
           plateform_type: "",
@@ -883,7 +888,7 @@ class Details extends Component {
     axios
       .post(
         // `${apiUrl}get_product_details.php`,
-        `${apiUrl}get_products_details_test.php`,
+        `${apiUrl}get_seller_product_detail.php`,
         {
           security_token: "",
           plateform_type: "",
@@ -1220,14 +1225,25 @@ class Details extends Component {
                         `required|numeric`
                       )}
                     </div>
-                    <div className="col-sm-1 col-md-1 col-sx-1 p-0 adjust-content">
-                      <span
-                        className="p-text-color mouse_pointer"
-                        onClick={this.checkZipCode.bind(this, null)}
-                      >
-                        CHECK
-                      </span>
-                    </div>
+                    {!isMobile ? (
+                      <div className="col-sm-1 col-md-1 col-sx-1 p-0 adjust-content">
+                        <span
+                          className="p-text-color mouse_pointer"
+                          onClick={this.checkZipCode.bind(this, null)}
+                        >
+                          CHECK
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="col-sm-1 col-md-1 col-sx-1 p-0 adjust-content-end">
+                        <span
+                          className="p-text-color change-pincode-button p-1 mouse_pointer"
+                          onClick={this.checkZipCode.bind(this, null)}
+                        >
+                          CHECK
+                        </span>
+                      </div>
+                    )}
                   </form>
                   <p id="error_pincode" className="text-danger d-none">
                     Please enter valid pincode
@@ -1327,7 +1343,7 @@ class Details extends Component {
                   <table>
                     <tbody>
                       <tr>
-                        <td>{translate("Price")}:</td>
+                        <td>{translate("Quantity")}:</td>
                         <td>
                           <div className="qty-box">
                             <div className="input-group">
@@ -1343,13 +1359,17 @@ class Details extends Component {
                                 </button>
                               </span>
                               <NumberFormat
+                                format="####"
                                 name="quantity"
                                 value={this.state.quantity}
                                 onChange={this.changeQty}
                                 className="form-control input-number"
                               />
                               {/* <input type="text" name="quantity" value={this.state.quantity} onChange={this.changeQty}  /> */}
-                              <span className="input-group-prepend">
+                              <span
+                                className="input-group-prepend"
+                                style={{ marginRight: "-32px" }}
+                              >
                                 <button
                                   type="button"
                                   className="btn quantity-right-plus"
@@ -1374,16 +1394,86 @@ class Details extends Component {
                 ""
               )}
               <div className="">
-              {this.state.product_mrp !== null &&
-              this.state.selling_price !== null ? (
-                <div className="row">
-                  <div className="col font-weight-bold">
-                    {this.state.currency}{" "}
-                    {new Intl.NumberFormat().format(this.state.eachunit)} /{" "}
-                    {item.unit}
-                  </div>
-                </div>
-              ):('')}
+                {this.state.product_mrp !== null &&
+                this.state.selling_price !== null ? (
+                  <>
+                    <div className="d-flex justify-content-between">
+                      <div className="font-weight-bold">
+                        {this.state.currency}{" "}
+                        {new Intl.NumberFormat().format(this.state.eachunit)} /{" "}
+                        {item.unit}
+                      </div>
+                      <div className="font-weight-bold d-flex justify-content-end">
+                        {item.free_shipping == "1" ? (
+                          <>
+                            {item.beldara_first_web !== "" ? (
+                              <Link to="/beldara-first.html" ><img
+                                src={item.beldara_first_web}
+                                alt="Beldara first on beldara.com"
+                                className="imgBeldaraFirst"
+                              ></img></Link>
+                            ) : (
+                              ""
+                            )}
+                            <span
+                              data-tip
+                              data-for="ToolTip"
+                              className="mouse_pointer shippingBeldaraFirst"
+                            >
+                              Free&nbsp;Shipping
+                            </span>
+                            <div>
+                              <ReactTooltip
+                                id="ToolTip"
+                                type="warning"
+                                effect="solid"
+                              >
+                                <span>{item.free_shipping_text}</span>
+                              </ReactTooltip>
+                            </div>
+                          </>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    </div>
+                    <div className="row d-flex justify-content-between">
+                      {/* <div className="col">
+                        {item.beldara_first_web !== "" ? (
+                          <img
+                            src={item.beldara_first_web}
+                            alt="Beldara first on beldara.com"
+                          ></img>
+                        ) : (
+                          ""
+                        )}
+                      </div> */}
+
+                      {/* <div className="col font-weight-bold">
+                        {item.free_shipping == "1" ? (
+                          <>
+                            <span data-tip data-for="ToolTip" className="mouse_pointer" style={{color: "#24adee"}}>
+                              Free&nbsp;Shipping
+                            </span>
+                            <div>
+                              <ReactTooltip
+                                id="ToolTip"
+                                type="warning"
+                                effect="solid"
+                              >
+                                <span>{item.free_shipping_text}</span>
+                              </ReactTooltip>
+                            </div>
+                          </>
+                        ) : (
+                          ""
+                        )}
+                      </div> */}
+                    </div>
+                  </>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
             {/* <div className="col-lg-4">
@@ -1489,7 +1579,10 @@ class Details extends Component {
               /> */}
             </div>
           </div>
-          <div className="row d-flex justify-content-start align-items-center mt-1" style={{marginLeft: "10px", marginRight: "10px"}}>
+          <div
+            className="row d-flex justify-content-start align-items-center mt-1"
+            style={{ marginLeft: "10px", marginRight: "10px" }}
+          >
             {/* <div>
               Shipping Charges:{` `}
               {this.state.currency} {this.state.shipping_cost}
@@ -1516,7 +1609,7 @@ class Details extends Component {
                   </div>
                 </div>
                 <div className="row justify-content-between mx-1">
-                  <div className="float-left">GST @ {this.state.gst_val}%</div>
+                  <div className="float-left">Tax @ {this.state.gst_val}%</div>
                   <div className="float-right">
                     {this.state.currency}{" "}
                     {new Intl.NumberFormat().format(
@@ -1539,51 +1632,46 @@ class Details extends Component {
             ) : (
               ""
             )}
-          <div className="float-right col-sm-2 mt-2"></div>
+            <div className="float-right col-sm-2 mt-2"></div>
 
-          {this.state.product_mrp !== null &&
+            {this.state.product_mrp !== null &&
             this.state.selling_price !== null ? (
               <div
                 id="prices_cards"
                 className="bg-grey float-left col-sm-5 text-center productBorder"
               >
                 <div className="row justify-content-between mx-2">
-                <div className="row">
-                  <div className="col">
-                    MRP {this.state.currency}{" "}
-                    {new Intl.NumberFormat().format(this.state.product_mrp)}
+                  <div className="row">
+                    <div className="col">
+                      MRP {this.state.currency}{" "}
+                      {new Intl.NumberFormat().format(this.state.product_mrp)}
+                    </div>
                   </div>
-                </div>
-                  
                 </div>
                 <HRLine color="#0e0e0e" />
                 <div className="row justify-content-between mx-1">
-                  
-                <div className="row">
-                  <div className="col">
-                    Retail Margin:{" "}
-                    {/* {parseFloat(
+                  <div className="row">
+                    <div className="col">
+                      Retail Margin:{" "}
+                      {/* {parseFloat(
                     (parseFloat(this.state.product_mrp) -
                       parseFloat(this.state.selling_price)) /
                       (parseFloat(this.state.product_mrp) * 0.01).toFixed(2)
                   ).toFixed(2)} */}
-                    {parseFloat(
-                      ((parseFloat(this.state.product_mrp) -
-                        parseFloat(this.state.selling_price)) /
-                        parseFloat(this.state.product_mrp)) *
-                        100
-                    ).toFixed(2)}
-                    %
+                      {parseFloat(
+                        ((parseFloat(this.state.product_mrp) -
+                          parseFloat(this.state.selling_price)) /
+                          parseFloat(this.state.product_mrp)) *
+                          100
+                      ).toFixed(2)}
+                      %
+                    </div>
                   </div>
-                </div>
                 </div>
               </div>
             ) : (
               ""
             )}
-
-            
-          
           </div>
           <ProductVariation
             getProdDetl={this.getProdDetails}
@@ -1599,7 +1687,7 @@ class Details extends Component {
           <div
             className="d-flex justify-content-left align-items-center"
             id="general_products_event"
-            style={{marginLeft: "65px"}}
+            style={{ marginLeft: "65px" }}
           >
             {this.props.item.is_active == "1" ? (
               priceCond(

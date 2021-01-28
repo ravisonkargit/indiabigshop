@@ -61,21 +61,23 @@ class SmallImages extends Component {
             <div className="row parent" id={this.props.item.id}>
                
                 <div className="col-12 p-0">
-                    {/* {this.props.navOne != null && this.props.navOne.innerSlider !== undefined? */}
+                    {/* {console.log("6666666666",this.props.navOne)} */}
+                    {this.props.navOne != null && this.props.navOne.innerSlider !== undefined && this.props.navOne.innerSlider !== null ?
+                    
                         <Slider {...productsnav} asNavFor={this.props.navOne} ref={slider => (this.slider2 = slider)} className="slider-nav" >
-                        
                         <div key={item.img} className="small_images" style={{width:'125px !important'}}>
                             <img src={imgUrl+`/product_images_small/${item.img}`} key={item.img} alt={item.name}  className="img-fluid" />
                         </div>
                     
                         {item.other_images.map((vari, index) =>
                             <div key={index} className="small_images" style={{width:'125px !important'}}>
+                                {/* {console.log("77777777",vari)} */}
                                 <img src={imgUrl+`/product_images_small/${vari}`} key={index} alt={item.name}  className="img-fluid" />
                             </div>
                         )}
                         </Slider>
-                        {/* :'' */}
-                    {/* } */}
+                         :'' }
+                 
                 </div>
             </div>
         );

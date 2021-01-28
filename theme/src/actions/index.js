@@ -642,27 +642,33 @@ export const receiveProductsByLP = ProductsByLP => ({
   ProductsByLP
 });
 
-export const getProductsByLP = cat_id => dispatch => {
-  axios.post("https://api.beldara.com/common/get_prod_by_lp.php",
-   //axios.post(`${localhost}/api/landingPage/getLpProduct`,
+export const getProductsByLP = (cat_id,type,datatype)=> dispatch => {
+  if(type == '1'){
+    axios.post("https://api.beldara.com/common/get_prod_by_lp.php",
       { security_token: "", plateform_type: "", cat_id: cat_id },
       {headers: {'Content-Type': 'multipart/form-data'}}
-       //{ headers: { "Content-Type": "application/json" } }
     )
     .then(response => {
-      //.result
-      console.log('lp',response)
       dispatch(receiveProductsByLP(response.data.result));
-      // this.setState({
-      // products: response.data.result
-      // })
-      // console.log(this.state.products)
-      // return response.data.result;
     })
     .catch(error => {
       const result = error.response;
       return Promise.reject(result);
     });
+  }else{
+    axios.post("https://api.beldara.com/common/get_prod_by_lp_universal.php",
+      { security_token: "", plateform_type: "", term :cat_id,sellerid:ls.get('sellerid'),type:datatype,currency:"INR",user_cat:cat_id},
+      {headers: {'Content-Type': 'multipart/form-data'}}
+    )
+    .then(response => {
+      console.log(200,'lp',response)
+      dispatch(receiveProductsByLP(response.data.result));
+    })
+    .catch(error => {
+      const result = error.response;
+      return Promise.reject(result);
+    });
+  }
 };
 
 //////Get RElated Products
@@ -674,7 +680,7 @@ export const getRelatedProducts = productId => dispatch => {
   try {
     axios
       .post(
-        "https://api.beldara.com/common/get_related_prod1.php",
+        "https://api.beldara.com/common/get_seller_related_prod.php",
         { prod_id: productId, security_token: "", plateform_type: "" },
         { headers: { "Content-Type": "multipart/form-data" } }
       )

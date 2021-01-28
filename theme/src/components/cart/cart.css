@@ -1,0 +1,14 @@
+.btncss{
+    padding: 6px 3px !important;
+    font-size: 13px;
+}
+
+.divcss {
+    margin-right: .25rem!important;
+    margin-left: .75rem!important;
+}
+
+.divcssmob{
+    margin-right: .25rem!important;
+    margin-left: 1.8rem!important;
+}

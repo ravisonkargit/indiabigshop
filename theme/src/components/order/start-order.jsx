@@ -10,6 +10,7 @@ import $ from "jquery";
 import "./start-order.css";
 import { ApiUrl, ImgUrl, SellerUrl } from "../../constants/ActionTypes";
 import Paytm from "../payment-gateway/paytm-new";
+import PaytmToken from "../payment-gateway/paytm-new-token";
 import PayOnDelivery from "../payment-gateway/pay-on-delivery";
 import { captureEvent, getCookie, setCookie } from "../../functions";
 import { priceConversion, minTresholdBarrier } from "../../services";
@@ -44,10 +45,14 @@ import Table from "react-bootstrap/Table";
 var complete_address = "";
 var cashback_value = 0;
 var txn_type = "";
+var amt_final = "";
+var isToken_ = "";
 class StartOrderTest extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      amt_final: "",
+      isToken_: "",
       moqErr: false,
       first_name: "",
       last_name: "",
@@ -90,7 +95,7 @@ class StartOrderTest extends Component {
       delivery_address: "",
       selectedaddressId: "",
       toggled: false,
-      modalOpen:false,
+      modalOpen: false,
       order_code: "",
       order_id: "",
       // order_id:5411,
@@ -102,11 +107,13 @@ class StartOrderTest extends Component {
           ? getCookie("gst_in")
           : "",
       bank_details: null,
-      coupon_val:'',
-      coupon_code:'',
-      validCoupon:false,
-      razorpay_avail:false,
-      is_freeze:0
+      coupon_val: "",
+      coupon_code: "",
+      validCoupon: false,
+      razorpay_avail: false,
+      is_freeze: 0,
+      token_percent: "",
+      token_amt: "",
     };
     this.validator = new SimpleReactValidator();
     this.selectAddress = this.selectAddress.bind(this);
@@ -116,6 +123,8 @@ class StartOrderTest extends Component {
     this.toggleDiv = this.toggleDiv.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.submitPaymentProcess = this.submitPaymentProcess.bind(this);
+    this.submitPaymentProcessToken = this.submitPaymentProcessToken.bind(this);
+    this.submitPaymentProcessRazorPay = this.submitPaymentProcessRazorPay.bind(this);
     this.checkGstCharacter = this.checkGstCharacter.bind(this);
     this.submitOnlineTransfer = this.submitOnlineTransfer.bind(this);
     this.openfileManager = this.openfileManager.bind(this);
@@ -333,7 +342,7 @@ class StartOrderTest extends Component {
         (this.state.gst_in != "" && this.state.gst_validated)
       ) {
         $("#price_validating_start").removeClass("d-none");
-        console.log("valid");
+        //  console.log("valid");
         $(".chkValidate")
           .select()
           .css({ border: "none" });
@@ -382,7 +391,7 @@ class StartOrderTest extends Component {
                     )
                     .then((res) => {
                       if (res.data.statusId == 1) {
-                        console.log("pincode validated");
+                        //  console.log("pincode validated");
                         $("#price_validating_start").addClass("d-none");
                         let product_currency = this.state.symbol;
                         let total_price = this.state.totalCartValue;
@@ -407,7 +416,7 @@ class StartOrderTest extends Component {
                               cartid: this.props.location.state.cartid,
                               finalprice: this.state.totalCartValue,
                               sellerid: ls.get("sellerid"),
-                              currency: this.state.currency,
+                              currency: this.state.symbol,
                               fscharge_total: this.state.finalShippingCost,
                               recipient_email: this.props.user.email,
                               security_token: "",
@@ -422,7 +431,7 @@ class StartOrderTest extends Component {
                               payment_type: 1,
                               cashback_value: this.state.cashback_value,
                               gst_in: this.state.gst_in,
-                              country_id:getCookie('countryid')
+                              country_id: getCookie("countryid"),
                             },
                             {
                               headers: {
@@ -432,16 +441,39 @@ class StartOrderTest extends Component {
                           )
                           .then((res) => {
                             $(".unique_class").removeAttr("disabled");
-                            console.log(res, "statusid");
+                            //  console.log(res, "statusid");
                             if (res.data.message == 1) {
-                              // console.log('inside if');
+                              //console.log('inside if',res.data.result.min_payment_percent);
                               this.setState({
                                 modalOpen: true,
                                 order_code: res.data.result.order_code,
                                 order_id: res.data.result.order_id,
                                 bank_details: res.data.result.bank_info,
-                                razorpay_avail:parseInt(res.data.result.razorpay) == 1 ? true : false
+                                token_percent:
+                                  res.data.result.min_payment_percent,
+                                token_amt:
+                                  (this.state.totalCartValue / 100) *
+                                  res.data.result.min_payment_percent,
+                                razorpay_avail:
+                                  parseInt(res.data.result.razorpay) == 1
+                                    ? true
+                                    : false,
                               });
+                              if (this.state.totalCartValue > 299) {
+                                if (this.state.token_amt <= 299) {
+                                  this.setState({
+                                    token_amt: 299,
+                                  });
+                                } else {
+                                  this.setState({
+                                    token_amt: this.state.token_amt,
+                                  });
+                                }
+                              } else {
+                                this.setState({
+                                  token_amt: this.state.totalCartValue,
+                                });
+                              }
                               // this.setState({order_code:res.data.result.order_code,order_id:res.data.result.order_id});
                             }
                           })
@@ -473,7 +505,7 @@ class StartOrderTest extends Component {
                 // return
               })
               .catch((error) => {
-                console.log(error, 192);
+                //  console.log(error, 192);
                 const result = error.response;
                 return Promise.reject(result);
               });
@@ -532,7 +564,7 @@ class StartOrderTest extends Component {
         // return
       })
       .catch((error) => {
-        console.log(error, 192);
+        //  console.log(error, 192);
         const result = error.response;
         return Promise.reject(result);
       });
@@ -652,14 +684,14 @@ class StartOrderTest extends Component {
             // console.log(response.data.result,128);
           } else {
             $(".common_class_for_spin").addClass("d-none");
-            console.log("error occured");
+            //  console.log("error occured");
             await this.setState({
               cartItems: null,
             });
           }
         })
         .catch((error) => {
-          console.log(error);
+          //  console.log(error);
         });
     }
 
@@ -720,7 +752,7 @@ class StartOrderTest extends Component {
             $(".common_class_for_spin").addClass("d-none");
             // console.log(response.data.result,170);
           } else {
-            console.log("error occured");
+            //  console.log("error occured");
             await this.setState({
               cartItems: null,
               isPageLoaded: 1,
@@ -728,7 +760,7 @@ class StartOrderTest extends Component {
           }
         })
         .catch((error) => {
-          console.log(error);
+          //  console.log(error);
         });
     }
 
@@ -828,7 +860,7 @@ class StartOrderTest extends Component {
           this.setDefaultAddress(response.data.result.address);
           // console.log(response.data.result,115);
         } else {
-          console.log("error occured");
+          // console.log("error occured");
           await this.setState({
             cartItems: null,
             isPageLoaded: 1,
@@ -836,7 +868,7 @@ class StartOrderTest extends Component {
         }
       })
       .catch((error) => {
-        console.log(error);
+        //  console.log(error);
       });
     if (this.state.cashback_value > 0) {
       txn_type = "debit";
@@ -900,11 +932,11 @@ class StartOrderTest extends Component {
             }
             // console.log('success');
           } else {
-            console.log("fail");
+            //  console.log("fail");
           }
         })
         .catch((error) => {
-          console.log("error:" + error);
+          //  console.log("error:" + error);
         });
     }
     // console.log('working...',e,'deleteAddress');
@@ -982,13 +1014,13 @@ class StartOrderTest extends Component {
             .then((res) => {
               // console.log(res);
               if (res.data.statusId == "1") {
-                console.log("success");
+                //  console.log("success");
               } else {
-                console.log("fail");
+                //  console.log("fail");
               }
             })
             .catch((error) => {
-              console.log("error:" + error);
+              //  console.log("error:" + error);
             });
         } else {
           axios
@@ -1014,13 +1046,13 @@ class StartOrderTest extends Component {
             .then((res) => {
               // console.log(res);
               if (res.data.statusId == "1") {
-                console.log("success");
+                //  console.log("success");
               } else {
-                console.log("fail");
+                //  console.log("fail");
               }
             })
             .catch((error) => {
-              console.log("error:" + error);
+              //  console.log("error:" + error);
             });
         }
       }
@@ -1052,11 +1084,31 @@ class StartOrderTest extends Component {
   //`${SellerUrl}/my_purchase.html?order=${this.state.order_code}`
 
   submitPaymentProcess = () => {
-    // this.setState({modalOpen:false});
     if (this.state.checked === "razorpay") {
       $(".razorpay-payment-button").click();
     } else if (this.state.checked === "paytm") {
       $(".paytmBtn").click();
+    } else {
+      $(".payondeliver").click();
+    }
+  };
+
+  submitPaymentProcessRazorPay = () => {
+    $(".razorpay-payment-button").click();
+    // if (this.state.checked === "razorpay") {
+    //   $(".razorpay-payment-button").click();
+    // } else if (this.state.checked === "paytm") {
+    //   $(".paytmBtn").click();
+    // } else {
+    //   $(".payondeliver").click();
+    // }
+  };
+
+  submitPaymentProcessToken = () => {
+    if (this.state.checked === "razorpay") {
+      $(".razorpay-payment-button").click();
+    } else if (this.state.checked === "paytm") {
+      $(".paytmBtnToken").click();
     } else {
       $(".payondeliver").click();
     }
@@ -1117,7 +1169,7 @@ class StartOrderTest extends Component {
         .removeClass("d-none")
         .html("File type must be jpeg or jpg or png");
       document.getElementById("upload_receipt").value = "";
-      console.log("others are not allowed");
+      //  console.log("others are not allowed");
     }
     // console.log(formData);
   };
@@ -1195,56 +1247,79 @@ class StartOrderTest extends Component {
   };
 
   checkCoupon = async () => {
-    $('#err_coupon').addClass('d-none');
-    await this.setState({coupon_code:this.state.coupon_val,is_freeze:1})
-    $('#validateCoupon').attr('readonly', true); 
-    axios.post(
-      `${imgUrl}/beta_api/validate_coupon.php`,
-      {
-        orderid:this.state.order_id,
-        coupon_code:this.state.coupon_val,
-        security_token:'',
-        plateform_type:'web'
-      },
-      { headers: { "Content-Type": "multipart/form-data" } }
-    ).then(response =>{
-      // console.log(response.data,parseFloat(response.data.result[0].order_amount),parseInt(response.data.result[0].order_amount));
-      if(response.data.result[0].status == '1'){
-        $('#err_coupon').addClass('d-none');
-        this.setState({validCoupon:true,totalCartValue:parseFloat(response.data.result[0].order_amount)})
-      }else{
-        $('#err_coupon').removeClass('d-none');
-        this.setState({validCoupon:false,totalCartValue:this.state.totalCartStaticValue})
-      }
-    }).catch(error =>{
-      console.error(error);
-    })
-  } 
+    if (this.state.coupon_val !== "") {
+      $("#err_coupon").addClass("d-none");
+      $("#enter_coupon").addClass("d-none");
+      await this.setState({ coupon_code: this.state.coupon_val, is_freeze: 1 });
+      $("#validateCoupon").attr("readonly", true);
+      axios
+        .post(
+          `${imgUrl}/beta_api/validate_coupon.php`,
+          {
+            orderid: this.state.order_id,
+            coupon_code: this.state.coupon_val,
+            security_token: "",
+            plateform_type: "web",
+          },
+          { headers: { "Content-Type": "multipart/form-data" } }
+        )
+        .then((response) => {
+          // console.log(response.data,parseFloat(response.data.result[0].order_amount),parseInt(response.data.result[0].order_amount));
+          if (response.data.result[0].status == "1") {
+            $("#err_coupon").addClass("d-none");
+            this.setState({
+              validCoupon: true,
+              totalCartValue: parseFloat(response.data.result[0].order_amount),
+            });
+          } else {
+            $("#err_coupon").removeClass("d-none");
+            this.setState({
+              validCoupon: false,
+              totalCartValue: this.state.totalCartStaticValue,
+            });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      $("#enter_coupon").removeClass("d-none");
+    }
+  };
 
   changeCouponValue = (e) => {
     var value = e.target.value;
-    if(value == ''){
-      $('#err_coupon').addClass('d-none');
-      this.setState({coupon_code:''});
-    }  
+    if (value == "") {
+      $("#err_coupon").addClass("d-none");
+      $("#enter_coupon").addClass("d-none");
+      this.setState({ coupon_code: "" });
+    }
     // console.log(value);
     this.setState({
-      coupon_val:value
-    })
-  }
+      coupon_val: value,
+    });
+  };
 
   removeCoupon = (e) => {
-    this.setState({coupon_val:'',coupon_code:'',is_freeze:0,totalCartValue:this.state.totalCartStaticValue,validCoupon:false})
-    $('#validateCoupon').removeAttr('readonly');
-    $('#err_coupon').addClass('d-none');
+    this.setState({
+      coupon_val: "",
+      coupon_code: "",
+      is_freeze: 0,
+      totalCartValue: this.state.totalCartStaticValue,
+      validCoupon: false,
+    });
+    $("#validateCoupon").removeAttr("readonly");
+    $("#err_coupon").addClass("d-none");
+    $("#enter_coupon").addClass("d-none");
     // console.log(e);
-  }
+  };
 
   render() {
     // console.log('render',this.state.checked);
     const { cartItems, cartid } = this.props.location.state;
     const {
       totalCartValue,
+      token_amt,
       totalProductCost,
       finalShippingCost,
       countryName,
@@ -1372,6 +1447,7 @@ class StartOrderTest extends Component {
                                         <div className="col-md-6">
                                           <div className="has-float-label">
                                             <NumberFormat
+                                              format="######"
                                               id="pincode"
                                               name="pincode"
                                               placeholder=" "
@@ -2121,7 +2197,46 @@ class StartOrderTest extends Component {
                   has_coupon={this.state.validCoupon ? 1 : 0}
                   discounted_amount={totalCartValue}
                   discount_code={this.state.coupon_code}
+                  isToken="2"
                 />
+
+                <PaytmToken
+                  user={this.props.user}
+                  amount={token_amt}
+                  sellerid={sellerid}
+                  order_id={this.state.order_id}
+                  order_code={this.state.order_code}
+                  has_coupon={this.state.validCoupon ? 1 : 0}
+                  discounted_amount={token_amt}
+                  discount_code={this.state.coupon_code}
+                  isToken="1"
+                />
+                {/* {this.state.payAmtType2 == 2 ?
+                <Paytm
+                    user={this.props.user}
+                    amount={totalCartValue}
+                    sellerid={sellerid}
+                    order_id={this.state.order_id}
+                    order_code={this.state.order_code}
+                    has_coupon={this.state.validCoupon ? 1 : 0}
+                    discounted_amount={totalCartValue}
+                    discount_code={this.state.coupon_code}
+                    isToken={this.state.payAmtType2}
+                  />
+                :''}
+                {this.state.payAmtType1 == 1 ?
+                  <Paytm
+                  user={this.props.user}
+                  amount={this.state.token_amt}
+                  sellerid={sellerid}
+                  order_id={this.state.order_id}
+                  order_code={this.state.order_code}
+                  has_coupon={this.state.validCoupon ? 1 : 0}
+                  discounted_amount={this.state.token_amt}
+                  discount_code={this.state.coupon_code}
+                  isToken={this.state.payAmtType1}
+              />
+                :''} */}
                 <PayOnDelivery
                   totalCost={totalCartValue}
                   name={name}
@@ -2216,6 +2331,7 @@ class StartOrderTest extends Component {
                                   className="form-control"
                                   onChange={this.changeCouponValue}
                                   value={this.state.coupon_val}
+                                  required="true"
                                 />
                                 <label htmlFor="validateCoupon">
                                   {"Coupon Code"}
@@ -2223,19 +2339,55 @@ class StartOrderTest extends Component {
                               </div>
                             </div>
                             <div className="mx-2">
-                              {this.state.is_freeze == 0 ? <button className="btn" id="checkCoupon" onClick={this.checkCoupon} style={custom_button}>Apply</button> :  <button className="btn" id="removeCoupon" onClick={this.removeCoupon} style={custom_button}>Remove</button>}
+                              {this.state.is_freeze == 0 ? (
+                                <button
+                                  className="btn"
+                                  id="checkCoupon"
+                                  onClick={this.checkCoupon}
+                                  style={custom_button}
+                                >
+                                  Apply
+                                </button>
+                              ) : (
+                                <button
+                                  className="btn"
+                                  id="removeCoupon"
+                                  onClick={this.removeCoupon}
+                                  style={custom_button}
+                                >
+                                  Remove
+                                </button>
+                              )}
                             </div>
                           </div>
-                            <div className="err-bod font-icon my-2 d-none" id="err_coupon">
+                          <div
+                            className="err-bod font-icon my-2 d-none"
+                            id="err_coupon"
+                          >
                             <div>
-                              <i class="fa fa-exclamation-circle font-icon" aria-hidden="true"></i>
+                              <i
+                                class="fa fa-exclamation-circle font-icon"
+                                aria-hidden="true"
+                              ></i>
                               <span className="mx-2">Invalid Coupon</span>
                             </div>
+                          </div>
+                          <div
+                            className="err-bod font-icon my-2 d-none"
+                            id="enter_coupon"
+                          >
+                            <div>
+                              <i
+                                class="fa fa-exclamation-circle font-icon"
+                                aria-hidden="true"
+                              ></i>
+                              <span className="mx-2">Please Enter Coupon</span>
                             </div>
-                          {
-                            this.state.coupon_code == 'razorpay' || this.state.coupon_code == 'paytm' || this.state.coupon_code == ''
-                            ?
-                              <div className="card mt-4">
+                          </div>
+                          {this.state.coupon_code == "razorpay" ||
+                          this.state.coupon_code == "paytm" ||
+                          this.state.coupon_code == "" ? (
+                            <div className="card mt-4">
                               <div className="card-header text-dark py-1">
                                 <i className="fa fa-dolly" />
                                 Preferred Payment Method
@@ -2245,49 +2397,73 @@ class StartOrderTest extends Component {
                                   <div className="upper-box">
                                     <div className="payment-options">
                                       <ul>
-                                        {
-                                        (this.state.coupon_code == 'razorpay' || this.state.coupon_code == '') && this.state.razorpay_avail
-                                        ?
-                                        <li>
-                                          <div className="radio-option stripe">
-                                            <input
-                                              type="radio"
-                                              name="payment-group"
-                                              method="razorpay"
-                                              id="payment-2"
-                                              // defaultChecked={true}
-                                              onClick={() =>
-                                                this.changeMethod("razorpay")
-                                              }
-                                            />
-                                            <label htmlFor="payment-2">
-                                              Pay using Cards/Net
-                                              Banking,/Wallet/UPI/QR
-                                            </label>
-                                          </div>
-                                        </li>
-                                        : ''}
-                                        {((this.state.coupon_code == 'paytm' || this.state.coupon_code == '' ) && currency == "INR" )
-                                          ? 
+                                        {(this.state.coupon_code ==
+                                          "razorpay" ||
+                                          this.state.coupon_code == "") &&
+                                        this.state.razorpay_avail ? (
                                           <li>
-                                          <div className="radio-option paypal">
-                                            <input
-                                              type="radio"
-                                              name="payment-group"
-                                              method="paytm"
-                                              id="payment-1"
-                                              defaultChecked={true}
-                                              onClick={() =>
-                                                this.changeMethod("paytm")
-                                              }
-                                            />
-                                            <label htmlFor="payment-1">
-                                              Pay using Paytm
-                                            </label>
-                                          </div>
-                                        </li>
-                                          : ''
-                                        }
+                                            <div className="radio-option stripe">
+                                              <input
+                                                type="radio"
+                                                name="payment-group"
+                                                method="razorpay"
+                                                id="payment-2"
+                                                defaultChecked={true}
+                                                onClick={() =>
+                                                  this.changeMethod("razorpay")
+                                                }
+                                              />
+                                              <label htmlFor="payment-2">
+                                                Pay using Cards/Net
+                                                Banking,/Wallet/UPI/QR
+                                              </label>
+                                            </div>
+                                          </li>
+                                        ) : (
+                                          ""
+                                        )}
+                                        {(this.state.coupon_code == "paytm" ||
+                                          this.state.coupon_code == "") &&
+                                        currency == "INR" ? (
+                                          <>
+                                            <li>
+                                              <div className="radio-option paypal">
+                                                <input
+                                                  type="radio"
+                                                  name="payment-group"
+                                                  method="paytm"
+                                                  id="payment-1"
+                                                  defaultChecked={true}
+                                                  onClick={() =>
+                                                    this.changeMethod("paytm")
+                                                  }
+                                                />
+                                                <label htmlFor="payment-1">
+                                                  Pay using Paytm
+                                                </label>
+                                              </div>
+                                            </li>
+                                          </>
+                                        ) : (
+                                          <li>
+                                            <div className="radio-option stripe">
+                                              <input
+                                                type="radio"
+                                                name="payment-group"
+                                                method="razorpay"
+                                                id="payment-2"
+                                                defaultChecked={true}
+                                                onClick={() =>
+                                                  this.changeMethod("razorpay")
+                                                }
+                                              />
+                                              <label htmlFor="payment-2">
+                                                Pay using Cards/Net
+                                                Banking,/Wallet/UPI/QR
+                                              </label>
+                                            </div>
+                                          </li>
+                                        )}
                                         {/* {currency == "INR" ? (
                                             <li>
                                             <div className="radio-option paypal ">
@@ -2334,16 +2510,58 @@ class StartOrderTest extends Component {
                                 </div>
                               </div>
                             </div>
-                            :''
-                          }
+                          ) : (
+                            ""
+                          )}
                           {this.state.coupon_code == "razorpay" ||
                           this.state.coupon_code == "paytm" ||
-                          this.state.coupon_code == ''
-                          ? (
+                          (this.state.coupon_code == "" &&
+                            currency == "INR") ? (
+                            <>
+                              <button
+                                className="btn btn-solid my-3 mr-2"
+                                id={cartItems.cartitemid}
+                                data-id="1"
+                                onClick={this.submitPaymentProcessToken}
+                              >
+                                <i
+                                  className={
+                                    currency == "INR"
+                                      ? "fa fa-inr"
+                                      : "fa fa-usd"
+                                  }
+                                ></i>{" "}
+                                Pay Token{" "}
+                                {new Intl.NumberFormat().format(
+                                  this.state.token_amt
+                                )}{" "}
+                                now
+                              </button>
+
+                              <button
+                                className="btn btn-solid my-3 mr-2"
+                                id={cartItems.cartitemid}
+                                data-id="2"
+                                onClick={this.submitPaymentProcess}
+                              >
+                                <i
+                                  className={
+                                    currency == "INR"
+                                      ? "fa fa-inr"
+                                      : "fa fa-usd"
+                                  }
+                                ></i>{" "}
+                                Pay{" "}
+                                {new Intl.NumberFormat().format(totalCartValue)}{" "}
+                                now
+                              </button>
+                            </>
+                          ) : (
                             <button
-                              className="btn btn-solid my-3"
+                              className="btn btn-solid my-3 mr-2"
                               id={cartItems.cartitemid}
-                              onClick={this.submitPaymentProcess}
+                              data-id="2"
+                              onClick={this.submitPaymentProcessRazorPay}
                             >
                               <i
                                 className={
@@ -2354,8 +2572,6 @@ class StartOrderTest extends Component {
                               {new Intl.NumberFormat().format(totalCartValue)}{" "}
                               now
                             </button>
-                          ) : (
-                            ""
                             // <button
                             //   className="btn btn-solid  mb-5 my-3"
                             //   id={cartItems.cartitemid}
@@ -2364,15 +2580,17 @@ class StartOrderTest extends Component {
                             //   {"Place order"}
                             // </button>
                           )}
-                          {this.state.bank_details !== null && (this.state.coupon_code == 'beldara' || this.state.coupon_code == '') ? (
+                          {this.state.bank_details !== null &&
+                          (this.state.coupon_code == "beldara" ||
+                            this.state.coupon_code == "") ? (
                             <>
-                              {this.state.coupon_code == '' 
-                              ?
-                              <span className="d-flex justify-content-center h6">
-                              OR
-                              </span>
-                              : ''
-                             }
+                              {this.state.coupon_code == "" ? (
+                                <span className="d-flex justify-content-center h6">
+                                  OR
+                                </span>
+                              ) : (
+                                ""
+                              )}
                               <div className="card mt-4">
                                 <div className="card-header text-dark py-1">
                                   <i className="fa fa-dolly" />
@@ -2454,7 +2672,6 @@ class StartOrderTest extends Component {
                                 >
                                   Please Upload File
                                 </span>
-                                
                               </div>
                             </>
                           ) : (
@@ -2467,16 +2684,16 @@ class StartOrderTest extends Component {
                           </div>
                           <div className="d-flex justify-content-center">
                             <div>
-                                <a
-                                  href={`${SellerUrl}/my_purchase.html?order=${this.state.order_code}`}
-                                  target="_blank"
-                                  className="btn"
-                                  style={custom_button}
-                                >
-                                  Go to my Order
-                                </a>
-                              </div>
+                              <a
+                                href={`${SellerUrl}/my_purchase.html?order=${this.state.order_code}`}
+                                target="_blank"
+                                className="btn"
+                                style={custom_button}
+                              >
+                                Go to my Order
+                              </a>
                             </div>
+                          </div>
                         </div>
                       </div>
                     </div>

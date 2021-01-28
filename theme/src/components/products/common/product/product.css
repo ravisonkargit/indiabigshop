@@ -57,9 +57,31 @@
     border: 1px solid #f5821e;
 }
 .min-modal-size{
-    min-width: 571px;
+    min-width: 356px;
 }
 
 .dangerBorder{
     border: 2px solid red;
+}
+
+.modal-dialog-centered{
+    margin-left: -36px;
+}
+
+.imgBeldaraFirst{
+    margin-right: 9px;
+}
+.shippingBeldaraFirst{
+    color: #24adee;
+    margin-right: -116px;
+}
+
+@media only screen and (max-width: 600px) {
+    .imgBeldaraFirst{
+        margin-right: 15px;
+    }
+    .shippingBeldaraFirst{
+        color: #24adee;
+        margin-right: 0px;
+    }
 }

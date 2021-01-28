@@ -173,6 +173,9 @@ import('./components/membership/membership_monthly').then(module => module.defau
  const BeldaraWarehouse = asyncComponent(() =>
  import('./components/footerlinks/BeldaraWarehouse').then(module => module.default)
  ) 
+ const BeldaraFirst = asyncComponent(() =>
+ import('./components/footerlinks/beldaraFirst').then(module => module.default)
+ )
  const BannerAds = asyncComponent(() =>
  import('./components/footerlinks/bannerAds').then(module => module.default)
  )
@@ -334,6 +337,10 @@ import('./components/membership/membership_monthly').then(module => module.defau
  const myOrder = asyncComponent(() =>
  import('./components/myOrder').then(module => module.default)
  )
+
+ const ViewImage = asyncComponent(() =>
+ import('./components/products/view-product-image').then(module => module.default)
+ )
  
 
  class Root extends React.Component {
@@ -365,8 +372,12 @@ import('./components/membership/membership_monthly').then(module => module.defau
  <Route exact path={`${process.env.PUBLIC_URL}/login.html`} component={Login} />
  <Route exact path={`${process.env.PUBLIC_URL}/register.html`} component={Register} />
  <Route path={`${process.env.PUBLIC_URL}/lp-app/:id`} component={landingPageForAndroid} />
- <Route path={`${process.env.PUBLIC_URL}/lp_app/:id`} component={landingPageForAndroid} />  
+ <Route path={`${process.env.PUBLIC_URL}/lp_app/:id`} component={landingPageForAndroid} /> 
+ <Route path={`${process.env.PUBLIC_URL}/app-terms-and-condition.html`} component={TermCondition} /> 
+ <Route path={`${process.env.PUBLIC_URL}/app-policies.html`} component={BeldaraPolicies} />
  <Route path={`${process.env.PUBLIC_URL}/lp-offer-app/:id`} component={landingOfferPageForAndroid} />
+ <Route path={`${process.env.PUBLIC_URL}/app-terms-and-condition.html`} component={TermCondition} />
+ <Route path={`${process.env.PUBLIC_URL}/beldara-first-app.html`} component={BeldaraFirst} />
 
  <Route path={`${process.env.PUBLIC_URL}/lp-arrival/:type/:id`} component={landingNewArrivalForApp} />
 
@@ -377,6 +388,7 @@ import('./components/membership/membership_monthly').then(module => module.defau
  <Route path={`${process.env.PUBLIC_URL}/store/:id.html`} component={StoreFront} />
 
  <Route path={`${process.env.PUBLIC_URL}/product/:id`} component={ColumnLeftNew} />
+ <Route path={`${process.env.PUBLIC_URL}/view-image.html`} component={ViewImage} />
  {/* <Route path={`${process.env.PUBLIC_URL}/product-test/:id`} component={ColumnLeft} /> */}
 
  <Route path={`${process.env.PUBLIC_URL}/search`} component={Search} />
@@ -458,6 +470,7 @@ import('./components/membership/membership_monthly').then(module => module.defau
  <Route path={`${process.env.PUBLIC_URL}/product-listing-guidelines.html`} component={ProductListingGuidelines} />
  <Route path={`${process.env.PUBLIC_URL}/policies.html`} component={BeldaraPolicies} />
  <Route path={`${process.env.PUBLIC_URL}/warehouse-services.html`} component={BeldaraWarehouse} />
+ <Route path={`${process.env.PUBLIC_URL}/beldara-first.html`} component={BeldaraFirst} />
  <Route path={`${process.env.PUBLIC_URL}/buy-now-on-beldara.html`} component={BuyOnBeldara} />
  <Route path={`${process.env.PUBLIC_URL}/banner-ads.html`} component={BannerAds} />
  <Route path={`${process.env.PUBLIC_URL}/promot-your-business.html`} component={PromoteBusiness} />

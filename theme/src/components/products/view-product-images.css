@@ -1,0 +1,72 @@
+.modal-content-1 {
+  width: 1000px;
+  height: 500px;
+}
+
+.img-wrapper {
+  overflow: hidden;
+}
+
+img.hover-zoom {
+  transition: all 0.3s ease 0s;
+  width: 300px;
+}
+
+img.hover-zoom:hover {
+  transform: scale(1.25);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+.modal-dialog-centered-1 {
+  width: 1000px;
+  margin-left: -120px !important;
+}
+
+.active-1 {
+  border: 2px solid #f5821e;
+}
+
+.__react_component_tooltip {
+  width: 25%;
+}
+
+
+@media only screen and (max-width: 600px) {
+  .modal-dialog-centered-1 {
+    width: 400px;
+  }
+  .modal-dialog-centered-1 {
+    margin-left: -36px !important;
+  }
+
+  .modal-content-1 {
+    width: 300px;
+    height: 500px;
+  }
+  img.hover-zoom {
+    transition: all 0.3s ease 0s;
+    width: 300px;
+  }
+  img.hover-zoom:hover {
+    transform: scale(1.25);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+  .img-wrapper {
+    margin-top: 31px;
+  }
+  .active-1 {
+    border-color: red;
+  }
+
+  .modal-header-1 {
+    height: 65px;
+  }
+  .modal-title-1 {
+    height: 35px;
+  }
+
+  .__react_component_tooltip {
+    left: 24px !important;
+    top: 11px;
+    width: 311px;
+  }
+}

@@ -1,7 +1,9 @@
-import React, { Component,Suspense,lazy } from "react";
+import React, { Component, Suspense, lazy } from "react";
 import Slider from "react-slick";
 import "../common/index.scss";
 import { connect } from "react-redux";
+import Modal from "react-responsive-modal";
+import "./view-product-images.css";
 
 // import custom Components
 //import RelatedProduct from "../common/related-product";
@@ -13,7 +15,7 @@ import {
   addToCart,
   addToCartUnsafe,
   addToWishlist,
-  getRelatedProducts
+  getRelatedProducts,
 } from "../../actions";
 import SmallImages from "./common/product/small-image";
 import store from "../../store";
@@ -26,12 +28,13 @@ import axios from "axios";
 import { ApiUrl } from "../../constants/ActionTypes";
 import ls from "local-storage";
 import LoadingComponent from "./common/loading-bar";
-import OfferTimer from './common/product/offer-timer';
+import OfferTimer from "./common/product/offer-timer";
 import { getRelatedItems } from "../../services";
-import {offerExist} from '../../functions/index';
+import { offerExist } from "../../functions/index";
 import "./common/product/product.css";
 import { getCookie, captureEvent } from "../../functions";
- 
+//import 'react-inner-image-zoom/lib/InnerImageZoom/styles.css';
+//import { InnerImageZoom }  from "react-inner-image-zoom";
 
 // import RatingChart from '../collection/common/ratingChart';
 
@@ -39,9 +42,9 @@ import { getCookie, captureEvent } from "../../functions";
 
 //
 function getFileName(url) {
-  if(is_variant && prod_variant_url !== null){
+  if (is_variant && prod_variant_url !== null) {
     return prod_variant_url;
-  }else{
+  } else {
     var index = url.lastIndexOf("/") + 1;
     var filenameWithExtension = url.substr(index);
     var filename = filenameWithExtension.split(".")[0];
@@ -49,7 +52,7 @@ function getFileName(url) {
     return filename;
   }
 }
-var isFetching=0
+var isFetching = 0;
 var get_offer_condition = false;
 var is_variant = false;
 var prod_variant_url = null;
@@ -67,16 +70,17 @@ class ColumnLeft extends Component {
       avgRating: 0,
       RelatedProduct: null,
       isFetched: false,
-      isFetching:false,
-      buyer_country_id:'',
-      is_variant:false,
-      prod_url:''
+      isFetching: false,
+      buyer_country_id: "",
+      is_variant: false,
+      prod_url: "",
+      open: false,
+      ids: "",
     };
-   
+    this.onOpenModal = this.onOpenModal.bind(this);
   }
 
   UNSAFE_componentWillMount() {
-  
     // console.log('product: UNSAFE_componentWillMount')
     if (window.innerWidth > 576) {
       this.setState({ vertical: true });
@@ -85,7 +89,7 @@ class ColumnLeft extends Component {
     }
   }
 
-  getReview = async getReview => {
+  getReview = async (getReview) => {
     try {
       if (getReview.item.id) {
         await axios
@@ -95,19 +99,19 @@ class ColumnLeft extends Component {
               sellerid: ls.get("sellerid"),
               productid: getReview.item.id,
               plateform_type: "",
-              security_token: ""
+              security_token: "",
             },
             { headers: { "Content-Type": "multipart/form-data" } }
           )
-          .then(async response => {
+          .then(async (response) => {
             if (response.data.statusId == 1 && response.data.result.review) {
               await this.setState({
                 review: response.data.result.review,
                 reviewCount: response.data.result.review.length,
-                reviewRead: 1
+                reviewRead: 1,
               });
               let avgRatingTemp = 0.0;
-              response.data.result.review.forEach(item => {
+              response.data.result.review.forEach((item) => {
                 avgRatingTemp += parseFloat(item.star_no);
               });
               avgRatingTemp = this.round_to_precision(
@@ -115,17 +119,17 @@ class ColumnLeft extends Component {
                 0.5
               );
               await this.setState({
-                avgRating: avgRatingTemp
+                avgRating: avgRatingTemp,
               });
             } else {
               await this.setState({
                 review: [1],
                 reviewCount: 0,
-                avgRating: 0
+                avgRating: 0,
               });
             }
           })
-          .catch(error => {
+          .catch((error) => {
             const result = error.response;
           });
       }
@@ -153,7 +157,6 @@ class ColumnLeft extends Component {
     document
       .getElementsByClassName("section-b-space")[0]
       .scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
-   
   };
 
   dataFromRating = () => {
@@ -165,14 +168,12 @@ class ColumnLeft extends Component {
       // console.log('called',this.slider1.innerSlider,this.slider2);
       await this.setState({
         nav1: this.slider1,
-        nav2: this.slider2
+        nav2: this.slider2,
       });
     }
   };
 
-
-
-  UNSAFE_componentWillReceiveProps = async nextProps => {
+  UNSAFE_componentWillReceiveProps = async (nextProps) => {
     // console.log('UNSAFE_componentWillReceiveProps',183,'outside',this.props,nextProps);
     // console.log('product: UNSAFE_componentWillReceiveProps')
     if (nextProps.item) {
@@ -181,53 +182,50 @@ class ColumnLeft extends Component {
       isFetching = 0;
     }
 
-  if (this.props.item && nextProps.item) {
-    if (this.props.item.id != nextProps.item.id) {
-      // console.log('UNSAFE_componentWillReceiveProps',183);
-      
+    if (this.props.item && nextProps.item) {
+      if (this.props.item.id != nextProps.item.id) {
+        // console.log('UNSAFE_componentWillReceiveProps',183);
 
-      this.setState({
-        RelatedProduct: null
-      });
-      import("../common/related-product").then(module => {
         this.setState({
-          RelatedProduct: module.default
+          RelatedProduct: null,
         });
-      });
+        import("../common/related-product").then((module) => {
+          this.setState({
+            RelatedProduct: module.default,
+          });
+        });
 
+        if (nextProps.item) {
+          await this.getReview(nextProps);
+          this.setState({ loadSmallImage: 1 });
+          this.setSlider();
+        } else if (this.props.item) {
+          await this.getReview(this.props);
+          this.setState({ loadSmallImage: 1 });
+          this.setSlider();
+        }
+      }
+    } else {
       if (nextProps.item) {
         await this.getReview(nextProps);
         this.setState({ loadSmallImage: 1 });
         this.setSlider();
-        
       } else if (this.props.item) {
         await this.getReview(this.props);
         this.setState({ loadSmallImage: 1 });
         this.setSlider();
       }
     }
-  } else {
-
-    if (nextProps.item) {
-      await this.getReview(nextProps);
-      this.setState({ loadSmallImage: 1 });
-      this.setSlider();
-    } else if (this.props.item) {
-      await this.getReview(this.props);
-      this.setState({ loadSmallImage: 1 });
-      this.setSlider();
-    }
-  }
   };
 
-  componentDidMount = async nextProps => {
+  componentDidMount = async (nextProps) => {
     // console.log('componentDidMoun called');
-      // console.log(this.props.item,nextProps)
+    // console.log(this.props.item,nextProps)
     // this.props.mixpanel.track('product_detail');
-    import("../common/related-product").then(module => {
+    import("../common/related-product").then((module) => {
       this.setState({
         RelatedProduct: module.default,
-        buyer_country_id:getCookie('countryid')
+        buyer_country_id: getCookie("countryid"),
       });
     });
 
@@ -236,63 +234,84 @@ class ColumnLeft extends Component {
       await this.getReview(nextProps);
       this.setState({ loadSmallImage: 1 });
       this.setSlider();
-
     } else {
       // console.log(1,'slider');
       await this.getReview(this.props);
       this.setState({ loadSmallImage: 1 });
       this.setSlider();
-
     }
     if (this.slider1 !== undefined && this.slider1 != "")
-      // console.log(2,'slider',this.slider);
       this.setState({
         nav1: this.slider1,
-        nav2: this.slider2
+        nav2: this.slider2,
       });
-  const query = getFileName(window.location.pathname)
-            .split("/")
-            .pop()
-            .replace(".html", "");
-  const val = query.split("-").splice(-1)[0];
-  // console.log(val,241);
-  await store.dispatch(getSingleProduct(val));
-  await store.dispatch(getRelatedProducts(val))
+    const query = getFileName(window.location.pathname)
+      .split("/")
+      .pop()
+      .replace(".html", "");
+    const val = query.split("-").splice(-1)[0];
+    // console.log(val,241);
+    await store.dispatch(getSingleProduct(val));
+    await store.dispatch(getRelatedProducts(val));
   };
 
-  dispatch_variant_products = async (prod_id,prod_url) => {
+  dispatch_variant_products = async (prod_id, prod_url) => {
     // console.log('function called',prod_id,prod_url);
     is_variant = true;
     prod_variant_url = prod_url;
-    await this.setState({is_variant:true,prod_url:prod_url})
+    await this.setState({ is_variant: true, prod_url: prod_url });
     await store.dispatch(getSingleProduct(prod_id));
-  }
+  };
 
   UNSAFE_componentWillUpdate = async (nextProps) => {
     // console.log('UNSAFE_componentWillUpdate',this.props.item,isFetching);
-    if(this.state.buyer_country_id != getCookie('countryid')){
-      this.setState({buyer_country_id:getCookie('countryid')})
+    if (this.state.buyer_country_id != getCookie("countryid")) {
+      this.setState({ buyer_country_id: getCookie("countryid") });
       // console.log('changed');
     }
     const query = getFileName(window.location.pathname)
-            .split("/")
-            .pop()
-            .replace(".html", "");
+      .split("/")
+      .pop()
+      .replace(".html", "");
     const val = query.split("-").splice(-1)[0];
-    if ((this.props.item === null || this.props.item === undefined) && isFetching === 0 && !this.state.is_variant) {
-          isFetching = 1;
-          await store.dispatch(getSingleProduct(val));
-        }
-  }
+    if (
+      (this.props.item === null || this.props.item === undefined) &&
+      isFetching === 0 &&
+      !this.state.is_variant
+    ) {
+      isFetching = 1;
+      await store.dispatch(getSingleProduct(val));
+    }
+  };
+
+  onOpenModal = (e) => {
+    this.setState({
+      open: true,
+    });
+  };
+
+  getImage = (e) => {
+    this.setState({
+      ids: e.target.id,
+      activeIndex: e.target.id,
+    });
+  };
+
+  onCloseModal = () => {
+    this.setState({
+      open: false,
+    });
+  };
 
   render() {
+    //console.log('----------222',this.slider1);
     const {
       symbol,
       item,
       addToCart,
       addToCartUnsafe,
       addToWishlist,
-      translate
+      translate,
     } = this.props;
     // console.log(this.props,261,'column-left','render');
 
@@ -302,33 +321,36 @@ class ColumnLeft extends Component {
       slidesToScroll: 1,
       dots: true,
       arrows: true,
-      fade: true
+      fade: true,
     };
     var productsnav = {
       slidesToShow: 6,
       swipeToSlide: true,
       arrows: false,
       dots: false,
-      focusOnSelect: true
+      focusOnSelect: true,
     };
 
     const offer_tag = {
-      width:'6rem',
-      zIndex:'11111',
-      position:'absolute',
-      webkitTransform: 'rotate(-45deg)',
-      left:'-11px',
+      width: "6rem",
+      zIndex: "11111",
+      position: "absolute",
+      webkitTransform: "rotate(-45deg)",
+      left: "-11px",
     };
-    if(this.props.item !== null && this.props.item !== undefined){
+    if (this.props.item !== null && this.props.item !== undefined) {
       // console.log(this.props.item);
-      var find_offer = offerExist(this.props.item.offer_from_date,this.props.item.offer_to_date);
+      var find_offer = offerExist(
+        this.props.item.offer_from_date,
+        this.props.item.offer_to_date
+      );
 
-      find_offer.then((result)=> {
+      find_offer.then((result) => {
         get_offer_condition = result;
-      })
+      });
     }
-    console.log('render',item,this.props);
-    
+    //console.log('render',item,this.props);
+
     return (
       <div>
         {item ? (
@@ -337,10 +359,7 @@ class ColumnLeft extends Component {
 
             <div className="breadcrumb-section py-1">
               <Helmet>
-                <meta
-                  property="og:type"
-                  content="product"
-                />
+                <meta property="og:type" content="product" />
                 <meta property="product:brand" content="Beldara" />
 
                 <meta property="product:availability" content="in stock" />
@@ -453,26 +472,30 @@ class ColumnLeft extends Component {
                   </div>
                   <div className="row">
                     <div className="col-lg-4 product-thumbnail">
-                    {
-                      (get_offer_condition)
-                      ? <div className="badge badge-danger text-wrap my-1 p-3" style={offer_tag}>
+                      {get_offer_condition ? (
+                        <div
+                          className="badge badge-danger text-wrap my-1 p-3"
+                          style={offer_tag}
+                        >
                           {item.offer_percent} % Offer
                         </div>
-                      : ''
-                    }
+                      ) : (
+                        ""
+                      )}
                       <Slider
                         {...products}
                         asNavFor={this.state.nav2}
-                        ref={slider => (this.slider1 = slider)}
+                        ref={(slider) => (this.slider1 = slider)}
                         className="product-right-slick"
                       >
                         {
                           <div key={item.img}>
                             <img
                               src={imgUrl + `/product_images/` + item.img}
-                              className="img-fluid image_zoom_cls-0"
+                              className="img-fluid image_zoom_cls-0 mouse_pointer"
                               alt={item.img}
                               style={{ margin: "0 auto", height: "400px" }}
+                              onClick={this.onOpenModal}
                             />
                           </div>
                         }
@@ -481,9 +504,11 @@ class ColumnLeft extends Component {
                             <div key={index}>
                               <img
                                 src={imgUrl + `/product_images/` + vari}
-                                className="img-fluid image_zoom_cls-0"
+                                className="img-fluid image_zoom_cls-0 mouse_pointer"
                                 alt={vari}
+                                id={index}
                                 style={{ margin: "0 auto", height: "400px" }}
+                                onClick={this.onOpenModal}
                               />
                             </div>
                           ) : (
@@ -495,17 +520,159 @@ class ColumnLeft extends Component {
                         <SmallImages
                           item={item}
                           settings={productsnav}
-                          navOne={this.state.nav1}
+                          navOne={this.slider1}
                         />
                       ) : (
                         ""
                       )}
+                      <>
+                        <div>
+                          <Modal
+                            open={this.state.open}
+                            onClose={() => ""}
+                            center
+                            className="cart-modal"
+                          >
+                            <div
+                              className="modal-dialog modal-xl modal-dialog-centered modal-dialog-centered-1"
+                              role="document"
+                            >
+                              <div className="modal-content min-modal-size modal-content-1">
+                                <div className="modal-header modal-header-1">
+                                  <h5 className="modal-title modal-title-1">{item.name}</h5>
+                                  <button
+                                    type="button"
+                                    className="close"
+                                    onClick={this.onCloseModal}
+                                  >
+                                    &times;
+                                  </button>
+                                </div>
+                                <div className="modal-body modal1">
+                                  <div className="container-fluid p-0">
+                                    {/* <div className="row mx-2 my-2"> */}
+                                    <div className="d-flex justify-content-end">
+                                      {item.other_images.length > 0 ? (
+                                        item.other_images.map((vari, index) =>
+                                          vari ? (
+                                            <div key={index}>
+                                              <img
+                                                src={
+                                                  imgUrl +
+                                                  `/product_images/` +
+                                                  vari
+                                                }
+                                                alt={vari}
+                                                id={index}
+                                                style={{
+                                                  margin: "0 auto",
+                                                  height: "40px",
+                                                  width: "54.09px",
+                                                }}
+                                                //className="img-thumbnail mr-1"
+                                                className={`img-thumbnail mr-1 ${
+                                                  index ==
+                                                  this.state.activeIndex
+                                                    ? "active-1"
+                                                    : "inactive"
+                                                }`}
+                                                onClick={this.getImage}
+                                              />
+                                            </div>
+                                          ) : (
+                                            ""
+                                          )
+                                        )
+                                      ) : (
+                                        <div key={item.img}>
+                                          <img
+                                            src={
+                                              imgUrl +
+                                              `/product_images/` +
+                                              item.img
+                                            }
+                                            alt={item.img}
+                                            id={item.img}
+                                            style={{
+                                              margin: "0 auto",
+                                              height: "40px",
+                                              width: "54.09px",
+                                            }}
+                                            //className="img-thumbnail mr-1"
+                                            className="img-thumbnail mr-1 active-1"
+                                          />
+                                        </div>
+                                      )}
+                                    </div>
+                                    {/* </div>
+                                    <div className="row mx-2 my-2"> */}
+                                    <div className="d-flex justify-content-center">
+                                      {item.other_images.length > 0 ? (
+                                        item.other_images.map((vari, index) =>
+                                          vari && index == this.state.ids ? (
+                                            <div
+                                              key={index}
+                                              className="img-wrapper"
+                                            >
+                                              <img
+                                                src={
+                                                  imgUrl +
+                                                  `/product_images/` +
+                                                  vari
+                                                }
+                                                alt={vari}
+                                                id={index}
+                                                style={{
+                                                  margin: "0 auto",
+                                                  width: "340px",
+                                                  height: "350px",
+                                                }}
+                                                className="mr-2 mr-2 hover-zoom"
+                                              />
+                                            </div>
+                                          ) : (
+                                            ""
+                                          )
+                                        )
+                                      ) : (
+                                        <div
+                                          key={item.img}
+                                          className="img-wrapper"
+                                        >
+                                          <img
+                                            src={
+                                              imgUrl +
+                                              `/product_images/` +
+                                              item.img
+                                            }
+                                            alt={item.img}
+                                            id="0"
+                                            style={{
+                                              margin: "0 auto",
+                                              width: "340px",
+                                              height: "350px",
+                                            }}
+                                            className="mr-2 mr-2 hover-zoom"
+                                          />
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            {/* </div> */}
+                          </Modal>
+                        </div>
+                      </>
                       <div className="border-top single-product-tables border-product detail-section pb-0 my-2">
                         <table>
                           <tbody>
                             <tr>
                               <td>{translate("Free Sample")}:</td>
-                              <td>{item.free_sample == "0" ? "On Demand" : "Yes"}</td>
+                              <td>
+                                {item.free_sample == "0" ? "On Demand" : "Yes"}
+                              </td>
                             </tr>
                             <tr>
                               <td>{translate("Avalibility")}:</td>
@@ -514,7 +681,9 @@ class ColumnLeft extends Component {
                             {parseFloat(item.weight) > parseFloat(0) ? (
                               <tr>
                                 <td>{translate("Weight")}:</td>
-                            <td>{item.weight} {item.available_stock_unit}</td>
+                                <td>
+                                  {item.weight} {item.available_stock_unit}
+                                </td>
                               </tr>
                             ) : (
                               ""
@@ -523,13 +692,13 @@ class ColumnLeft extends Component {
                         </table>
                       </div>
                       <div className="">
-                          <img
-                            src={`${imgUrl}/images/payment-protection-icon.png`}
-                            style={{ width: "40px" }}
-                          />
-                          <small style={{ color: "#ff9944" }}>
-                            Beldara Pay helps keep your transactions secure
-                          </small>
+                        <img
+                          src={`${imgUrl}/images/payment-protection-icon.png`}
+                          style={{ width: "40px" }}
+                        />
+                        <small style={{ color: "#ff9944" }}>
+                          Beldara Pay helps keep your transactions secure
+                        </small>
                       </div>
                       <div className="accordion" id="accordionExample">
                         {/* Surface Or Ocean*/}
@@ -576,7 +745,10 @@ class ColumnLeft extends Component {
                               </div>
                             </div> */}
                             <div className="card py-0 border shadow-none">
-                              <div className="card-header py-0" id="headingThree">
+                              <div
+                                className="card-header py-0"
+                                id="headingThree"
+                              >
                                 <h2 className="mb-0">
                                   <button
                                     className="btn btn-link collapsed"
@@ -608,7 +780,10 @@ class ColumnLeft extends Component {
                               </div>
                             </div>
                             <div className="card py-0 border shadow-none">
-                              <div className="card-header py-0" id="headingfour">
+                              <div
+                                className="card-header py-0"
+                                id="headingfour"
+                              >
                                 <h2 className="mb-0">
                                   <button
                                     className="btn btn-link collapsed"
@@ -634,10 +809,29 @@ class ColumnLeft extends Component {
                                 data-parent="#accordionExample"
                               >
                                 <div className="card-body">
-                                  <div> - Return with in 10 days of delivery</div>
-                                  <div> - Return pickup time with in 72 hours hours return booking</div>
-                                  <div> - Get money refunded with in 48 hours if pickup</div>
-                                  <div><a target="blank" href="/return-policy.html" > View all </a></div>
+                                  <div>
+                                    {" "}
+                                    - Return with in 10 days of delivery
+                                  </div>
+                                  <div>
+                                    {" "}
+                                    - Return pickup time with in 72 hours hours
+                                    return booking
+                                  </div>
+                                  <div>
+                                    {" "}
+                                    - Get money refunded with in 48 hours if
+                                    pickup
+                                  </div>
+                                  <div>
+                                    <a
+                                      target="blank"
+                                      href="/return-policy.html"
+                                    >
+                                      {" "}
+                                      View all{" "}
+                                    </a>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -715,7 +909,10 @@ class ColumnLeft extends Component {
                               </div>
                             </div> */}
                             <div className="card py-0 border shadow-none">
-                              <div className="card-header py-0" id="headingThree">
+                              <div
+                                className="card-header py-0"
+                                id="headingThree"
+                              >
                                 <h2 className="mb-0">
                                   <button
                                     className="btn btn-link collapsed"
@@ -747,7 +944,10 @@ class ColumnLeft extends Component {
                               </div>
                             </div>
                             <div className="card py-0 border shadow-none">
-                              <div className="card-header py-0" id="headingfour">
+                              <div
+                                className="card-header py-0"
+                                id="headingfour"
+                              >
                                 <h2 className="mb-0">
                                   <button
                                     className="btn btn-link collapsed"
@@ -773,84 +973,103 @@ class ColumnLeft extends Component {
                                 data-parent="#accordionExample"
                               >
                                 <div className="card-body">
-                                  <div> - Return with in 10 days of delivery</div>
-                                  <div> - Return pickup time with in 72 hours hours return booking</div>
-                                  <div> - Get money refunded with in 48 hours if pickup</div>
-                                  <div><a target="blank" href="/return-policy.html" > View all </a></div>
+                                  <div>
+                                    {" "}
+                                    - Return with in 10 days of delivery
+                                  </div>
+                                  <div>
+                                    {" "}
+                                    - Return pickup time with in 72 hours hours
+                                    return booking
+                                  </div>
+                                  <div>
+                                    {" "}
+                                    - Get money refunded with in 48 hours if
+                                    pickup
+                                  </div>
+                                  <div>
+                                    <a
+                                      target="blank"
+                                      href="/return-policy.html"
+                                    >
+                                      {" "}
+                                      View all{" "}
+                                    </a>
+                                  </div>
                                 </div>
                               </div>
                             </div>
                           </React.Fragment>
                         )}
                         <div className="border-product">
-            <h6 className="product-title">
-              {translate("100% SECURE PAYMENT")}
-            </h6>
-            <div className="payment-card-bottom">
-              <ul>
-                <li>
-                  <a
-                    onClick={(e) => {
-                      e.preventDefault();
-                    }}
-                  >
-                    <img
-                      src={`${process.env.PUBLIC_URL}/assets/images/icon/visa.png`}
-                      alt="beldara.com"
-                    />
-                  </a>
-                </li>
-                <li>
-                  <a
-                    onClick={(e) => {
-                      e.preventDefault();
-                    }}
-                  >
-                    <img
-                      src={`${process.env.PUBLIC_URL}/assets/images/icon/mastercard.png`}
-                      alt="beldara.com"
-                    />
-                  </a>
-                </li>
-                <li>
-                  <a
-                    onClick={(e) => {
-                      e.preventDefault();
-                    }}
-                  >
-                    <img
-                      src={`${process.env.PUBLIC_URL}/assets/images/icon/paypal.png`}
-                      alt="beldara.com"
-                    />
-                  </a>
-                </li>
-                <li>
-                  <a
-                    onClick={(e) => {
-                      e.preventDefault();
-                    }}
-                  >
-                    <img
-                      src={`${process.env.PUBLIC_URL}/assets/images/icon/american-express.png`}
-                      alt="beldara.com"
-                    />
-                  </a>
-                </li>
-                <li>
-                  <a
-                    onClick={(e) => {
-                      e.preventDefault();
-                    }}
-                  >
-                    <img
-                      src={`${process.env.PUBLIC_URL}/assets/images/icon/discover.png`}
-                      alt="beldara.com"
-                    />
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
+                          <h6 className="product-title">
+                            {translate("100% SECURE PAYMENT")}
+                          </h6>
+                          <div className="payment-card-bottom">
+                            <ul>
+                              <li>
+                                <a
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                  }}
+                                >
+                                  <img
+                                    src={`${process.env.PUBLIC_URL}/assets/images/icon/visa.png`}
+                                    alt="beldara.com"
+                                  />
+                                </a>
+                              </li>
+                              <li>
+                                <a
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                  }}
+                                >
+                                  <img
+                                    src={`${process.env.PUBLIC_URL}/assets/images/icon/mastercard.png`}
+                                    alt="beldara.com"
+                                  />
+                                </a>
+                              </li>
+                              <li>
+                                <a
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                  }}
+                                >
+                                  <img
+                                    src={`${process.env.PUBLIC_URL}/assets/images/icon/paypal.png`}
+                                    alt="beldara.com"
+                                  />
+                                </a>
+                              </li>
+                              <li>
+                                <a
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                  }}
+                                >
+                                  <img
+                                    src={`${process.env.PUBLIC_URL}/assets/images/icon/american-express.png`}
+                                    alt="beldara.com"
+                                  />
+                                </a>
+                              </li>
+                              <li>
+                                <a
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                  }}
+                                >
+                                  <img
+                                    src={`${process.env.PUBLIC_URL}/assets/images/icon/discover.png`}
+                                    alt="beldara.com"
+                                  />
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <Details
@@ -886,7 +1105,6 @@ class ColumnLeft extends Component {
               </div>
             </section> */}
 
-            
             {RelatedProduct ? (
               <RelatedProduct product={item} />
             ) : (
@@ -911,53 +1129,70 @@ class ColumnLeft extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   let url = ownProps.match.params.id;
-    let productId = getFileName(url);
-  console.log(state.singleProduct,511,productId,is_variant,prod_variant_url);
+  let productId = getFileName(url);
+  //  console.log(state.singleProduct,511,productId,is_variant,prod_variant_url);
   try {
-    if (state.singleProduct.product.url === productId) {
+    if (state.singleProduct.product.url === productId.toLowerCase()) {
       return {
         item: state.singleProduct.product,
-        symbol: state.data.symbol
+        symbol: state.data.symbol,
       };
     } else if (
-      state.data.products.find(el => el.url == productId) !== undefined
-    ) {
-      return {
-        item: state.data.products.find(el => el.url == productId),
-        symbol: state.data.symbol
-      };
-    } else if (
-      state.data.searchProducts.find(el => el.url == productId) !== undefined
-    ) {
-      return {
-        item: state.data.searchProducts.find(el => el.url == productId),
-        symbol: state.data.symbol
-      };
-    } else if (
-      state.data.productsByCategory.find(el => el.url == productId) !==
+      state.data.products.find((el) => el.url == productId.toLowerCase()) !==
       undefined
     ) {
       return {
-        item: state.data.productsByCategory.find(el => el.url == productId),
-        symbol: state.data.symbol
+        item: state.data.products.find(
+          (el) => el.url == productId.toLowerCase()
+        ),
+        symbol: state.data.symbol,
       };
     } else if (
-      state.store.products.find(el => el.url == productId) !== undefined
+      state.data.searchProducts.find(
+        (el) => el.url == productId.toLowerCase()
+      ) !== undefined
     ) {
       return {
-        item: state.store.products.find(el => el.url == productId),
-        symbol: state.data.symbol
+        item: state.data.searchProducts.find(
+          (el) => el.url == productId.toLowerCase()
+        ),
+        symbol: state.data.symbol,
       };
     } else if (
-      state.data.relatedProducts.find(el => el.url == productId) !== undefined
+      state.data.productsByCategory.find(
+        (el) => el.url == productId.toLowerCase()
+      ) !== undefined
     ) {
       return {
-        item: state.data.relatedProducts.find(el => el.url == productId),
-        symbol: state.data.symbol
+        item: state.data.productsByCategory.find(
+          (el) => el.url == productId.toLowerCase()
+        ),
+        symbol: state.data.symbol,
+      };
+    } else if (
+      state.store.products.find((el) => el.url == productId.toLowerCase()) !==
+      undefined
+    ) {
+      return {
+        item: state.store.products.find(
+          (el) => el.url == productId.toLowerCase()
+        ),
+        symbol: state.data.symbol,
+      };
+    } else if (
+      state.data.relatedProducts.find(
+        (el) => el.url == productId.toLowerCase()
+      ) !== undefined
+    ) {
+      return {
+        item: state.data.relatedProducts.find(
+          (el) => el.url == productId.toLowerCase()
+        ),
+        symbol: state.data.symbol,
       };
     } else {
       return {
-        item: null
+        item: null,
       };
     }
   } catch (e) {
@@ -966,8 +1201,10 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 export default withTranslate(
-  connect(
-    mapStateToProps,
-    { addToCart, addToCartUnsafe, addToWishlist,getSingleProduct }
-  )(ColumnLeft)
+  connect(mapStateToProps, {
+    addToCart,
+    addToCartUnsafe,
+    addToWishlist,
+    getSingleProduct,
+  })(ColumnLeft)
 );

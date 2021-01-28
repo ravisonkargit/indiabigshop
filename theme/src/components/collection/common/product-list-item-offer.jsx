@@ -458,9 +458,9 @@ class ProductListItemOffer extends Component {
               <React.Fragment>
                 <div
                   id={`btn_${product.id}`}
-                  className="col-7 text-left col-md-7 col-sm-7 py-2 px-1"
+                  className="col-12 text-center col-md-12 col-sm-12 py-2 px-1"
                 >
-                  <div className="text-left">
+                  <div className="text-center">
                     <Link
                       onClick={this.event_ask_for_price.bind(
                         this,
@@ -481,7 +481,7 @@ class ProductListItemOffer extends Component {
                   </div>
                 </div>
                 {/* <div className="col-1 col-md-1 d-none d-md-block d-sm-none"></div> */}
-                <div className="col-5 text-center col-md-5 col-sm-5 py-2 px-1">
+                {/* <div className="col-5 text-center col-md-5 col-sm-5 py-2 px-1">
                   <div id={`div_${product.id}`}>
                     <Link
                       onClick={this.event_ask_for_price.bind(
@@ -501,7 +501,7 @@ class ProductListItemOffer extends Component {
                       e-Auction{" "}
                     </Link>
                   </div>
-                </div>
+                </div> */}
                 {/* <div className="col-1 col-md-1 d-none d-md-block d-sm-none"></div> */}
               </React.Fragment>
             )}

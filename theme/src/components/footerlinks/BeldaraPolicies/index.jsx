@@ -68,12 +68,14 @@ class BeldaraPolicies extends Component {
     const { title, head, content, desc1, keyword } = this.state.data;
     return (
       <div>
+        {(this.props.location.pathname) !== '/app-policies.html' ?
         <Breadcrumb
           title={"Beldara Policies"}
           metaTitle={title}
           metaDesc={desc1}
           metaKeyword={keyword}
         />
+        :''}
         <section className="faq-section section-b-space">
           <div className="container">
             <div className="row">

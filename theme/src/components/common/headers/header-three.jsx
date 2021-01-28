@@ -93,21 +93,34 @@ class HeaderThree extends Component {
        this.textInput.focus(); 
       };
 
-    // let mbo
-    // if (params.get('mbo')) {
-    //   mbo = params.get('mbo')
-    //   setCookie('internal', '1',1)
-    // } else if (params.get('mb')) {
-    //   mbo = params.get('mb')
-    //   setCookie('internal', '0', 1)
-    // }
-    // if (mbo) {
-    //     mbo = mbo.split("-")[0];
-    //     if (getCookie('mhinpbn') != mbo) {
-    //       setCookie('mhinpbn', mbo, 365)
-    //       store.dispatch(getUpdateUser(mbo))
-    //     }
-    // }
+      // let mbo
+      // if (params.get('mbo')) {
+      //   mbo = params.get('mbo')
+      //   setCookie('internal', '1',1)
+      // } else if (params.get('mb')) {
+      //   mbo = params.get('mb')
+      //   setCookie('internal', '0', 1)
+      // }
+      // if (mbo) {
+      //     mbo = mbo.split("-")[0];
+      //     if (getCookie('mhinpbn') != mbo) {
+      //       setCookie('mhinpbn', mbo, 365)
+      //       store.dispatch(getUpdateUser(mbo))
+      //     }
+      // }
+
+      let mbo
+      if (params.get('mb')) {
+        mbo = params.get('mb')
+        setCookie('internal', '0', 1)
+      }
+      if (mbo) {
+          mbo = mbo.split("-")[0];
+          if (getCookie('mhinpbn') != mbo) {
+            setCookie('mhinpbn', mbo, 365)
+            store.dispatch(getUpdateUser(mbo))
+          }
+      }
 
       cname = params.get('utm_campaign') ? params.get('utm_campaign') : params.get('campaign');
       target = params.get('utm_target') ? params.get('utm_target') : params.get('target');
@@ -330,7 +343,7 @@ class HeaderThree extends Component {
           {/* <TopBarDark /> */}
           {/* <Category/> */}
           <div className="container">
-          {(this.props.user.user && (window.location.href == "http://localhost:3000/" || window.location.href == "http://localhost:3000" || window.location.href == "https://uat.beldara.com/" || window.location.href == "http://uat.beldara.com" || window.location.href == "https://beldara.com/" || window.location.href == "http://beldara.com") && !isMobile) 
+          {/* {(this.props.user.user && (window.location.href == "http://localhost:3000/" || window.location.href == "http://localhost:3000" || window.location.href == "https://uat.beldara.com/" || window.location.href == "http://uat.beldara.com" || window.location.href == "https://beldara.com/" || window.location.href == "http://beldara.com") && !isMobile) 
                     ? 
                        ((this.props.user.user.user_type == 'seller' || this.props.user.user.user_type == 'both') && (this.props.user.user.package_id == '0' || this.props.user.user.package_id == 'null')) 
                         ? 
@@ -341,7 +354,7 @@ class HeaderThree extends Component {
                             </div>
                           </div>
                               : ''
-                              : '' }
+                              : '' } */}
             <div className="row">
               <div className="col-sm-12">
                 <div className="main-menu border-section border-top-0">

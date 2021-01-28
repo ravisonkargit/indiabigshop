@@ -206,14 +206,14 @@ class TopBarDark extends Component {
             <div className="col-lg-6">
               <div className="header-contact">
                 <ul>
-                  <li>
+                  {/* <li>
                     <Link
                       to={`${process.env.PUBLIC_URL}/membership.html`}
                       className="text-white"
                     >
                       {translate("Membership ")}
                     </Link>
-                  </li>
+                  </li> */}
                   <li>
                     <a
                      href={`${sellerUrl+""+this.state.sellonbeldara}`}

@@ -11,7 +11,7 @@ class ShippingDetails extends Component {
         super(props)
         this.state = {
             shippingDet: [
-                {'image' : `${ImgUrl}/images/Worth_Value.png`, 'title':'Worth Value', 'info':'1M + product range with competitive prices.'},
+                {'image' : `${ImgUrl}/images/Worth_Value.png`, 'title':'Worth Value', 'info':'1M + product range with competitive prices.        '},
                 {'image' : `${ImgUrl}/images/Shipping.png`, 'title':'Global Delivery & Multilingual', 'info':'Worldwide logistic support & 5+ international languages.'},
                 {'image' : `${ImgUrl}/images/Payment_Security.png`, 'title':'Payment Security', 'info':'The fully protected payment methods with safety.'},
                 {'image' : `${ImgUrl}/images/Shop_with_No_worries.png`, 'title':'Shop with No worries', 'info':'From click to delivery we handle the process with security.'},

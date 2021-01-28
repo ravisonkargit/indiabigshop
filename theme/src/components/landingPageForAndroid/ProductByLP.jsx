@@ -32,7 +32,7 @@ class ProductByLP extends Component {
     //     await store.dispatch(getProductsByLP(this.props.cat_id))
     // }
     componentDidMount() {
-        store.dispatch(getProductsByLP(this.props.cat_id))
+        store.dispatch(getProductsByLP(this.props.cat_id,'1',''))
         // store.dispatch(getAllCurrencyValue())
     }
 

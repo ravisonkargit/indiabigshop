@@ -63,7 +63,9 @@ class TermCondition extends Component {
     return (
       <div>
         {/* <Breadcrumb title={"Terms And Conditions Of Use"} metaTitle={title} metaDesc={desc1}/> */}
+        {(this.props.location.pathname) !== '/app-terms-and-condition.html' ?
         <Breadcrumb title={'Terms & Conditions'} metaDesc={this.state.data.desc1} metaKeyword={this.state.data.keyword} metaTitle={this.state.data.title}/>
+        :''}
 
         <section className="faq-section section-b-space">
           <div className="container">

@@ -9,7 +9,7 @@ import "./product.css";
 import { getCookie, captureEvent } from "../../../../functions";
 import store from "../../../../store";
 import { getSingleProduct } from "../../../../actions";
-import ProductVariantModal from './product-variant-modal';
+import ProductVariantModal from "./product-variant-modal";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 
@@ -25,9 +25,9 @@ class ProductVariation extends Component {
       err: false,
       validator: "",
       selectedLabel: null,
-      allowVariantPopup:false,
-      filterSize:null,
-      filteredArray:null
+      allowVariantPopup: false,
+      filterSize: null,
+      filteredArray: null,
     };
     this.chooseproduct = this.chooseproduct.bind(this);
     this.changesize = this.changesize.bind(this);
@@ -64,8 +64,8 @@ class ProductVariation extends Component {
             await this.setState({
               productarray: response.data.result["child_products"],
               variation: response.data.result["parent_products"]["variation"],
-              parentproductarray:response.data.result["parent_products"],
-              current_product_id:response.data.result["child_access_products"]
+              parentproductarray: response.data.result["parent_products"],
+              current_product_id: response.data.result["child_access_products"],
             });
             response.data.result["parent_products"]["variation"].filter(
               (variants) => {
@@ -80,7 +80,7 @@ class ProductVariation extends Component {
                     colour: variants.variation1,
                     currentselectedProduct: variants,
                     selectedLabel: selectedlabel,
-                    current_product_id:variants.product_id
+                    current_product_id: variants.product_id,
                   });
                 }
               }
@@ -93,7 +93,7 @@ class ProductVariation extends Component {
             //     value: elem.variation2,
             //   };
             // });
-            this.filterSize()
+            this.filterSize();
           }
           // console.log('inside if',700,sizedropDown,this.state);
         } else {
@@ -113,14 +113,16 @@ class ProductVariation extends Component {
     });
     var filteredArray = arr.filter(function(item, pos) {
       // console.log(arr.indexOf(item),item,pos,117);
-      if (item != null && item != '' && arr.indexOf(item) == pos) return item
+      if (item != null && item != "" && arr.indexOf(item) == pos) return item;
       // return arr.indexOf(item) && item != null && item != '' == pos;
     });
     // console.log(arr,116);
-    filteredArray.map((val,i)=>{arr1.push({'label':val,'value':val})})
+    filteredArray.map((val, i) => {
+      arr1.push({ label: val, value: val });
+    });
     this.setState({
       filterSize: arr1,
-      filteredArray:filteredArray
+      filteredArray: filteredArray,
     });
     // console.log(arr1,118);
     // console.log( filteredArray,119);
@@ -128,13 +130,21 @@ class ProductVariation extends Component {
   // componentWillReceiveProps() {}
   componentDidUpdate() {
     if (this.state.variation !== null) {
-      $('#general_products_event').removeClass('d-flex').addClass('d-none')
-      $('#hide_general').addClass('d-none');
+      $("#general_products_event")
+        .removeClass("d-flex")
+        .addClass("d-none");
+      $("#hide_general").addClass("d-none");
     }
   }
-  chooseproduct(product_details,current_colour) {
+
+  chooseproduct(product_details, current_colour) {
     var new_data = this.state.productarray[product_details];
-    this.setState({current_product_id:product_details,colour:current_colour});
+    this.setState({
+      current_product_id: product_details,
+      colour: current_colour,
+      nav1: this.slider1,
+      nav2: this.slider2,
+    });
     this.props.disptach_product(product_details, new_data.url);
   }
   changesize = async (e) => {
@@ -164,18 +174,18 @@ class ProductVariation extends Component {
   // open modal
   openAllowVariantPopupModal = () => {
     // console.log(this.props);
-    if(this.props.deliverable){
+    if (this.props.deliverable) {
       this.setState({
-        allowVariantPopup:true
+        allowVariantPopup: true,
       });
     }
-  }
+  };
   // close  modal
   closeAllowVariantPopupModal = () => {
-      this.setState({
-        allowVariantPopup:false
-      });    
-  }
+    this.setState({
+      allowVariantPopup: false,
+    });
+  };
   render() {
     // console.log(this.state, "render");
     const InputProps = {
@@ -192,7 +202,8 @@ class ProductVariation extends Component {
       <div className="row mx-2 my-2">
         {this.state.variation !== null ? (
           <React.Fragment>
-            {this.state.colour !== null && this.state.variation[0].color == '1'? (
+            {this.state.colour !== null &&
+            this.state.variation[0].color == "1" ? (
               <div className="col-md-12">colour: {this.state.colour}</div>
             ) : (
               ""
@@ -204,9 +215,7 @@ class ProductVariation extends Component {
                 ? this.state.variation.map((index, key) => {
                     return (
                       <React.Fragment>
-                        {
-                          this.state.variation[0].color == '1'
-                          ?
+                        {this.state.variation[0].color == "1" ? (
                           <span
                             className={`mx-2 mouse_pointer ${
                               this.props.prodId == index.product_id
@@ -224,8 +233,9 @@ class ProductVariation extends Component {
                               )}
                             />
                           </span>
-                          : ''
-                        }
+                        ) : (
+                          ""
+                        )}
                       </React.Fragment>
                     );
                   })
@@ -234,15 +244,20 @@ class ProductVariation extends Component {
             <div className="col-md-12 d-flex align-items-center">
               <div className="col-md-2 my-2">
                 {this.state.variation !== null &&
-                this.state.selectedLabel !== null && this.state.filterSize !== null && this.state.filterSize.length > 0 ? (
-                  <Select
-                    isOptionSelected="true"
-                    options={this.state.filterSize}
-                    onChange={this.changesize}
-                    headingProps={InputProps}
-                    placeholder={"Size"}
-                    defaultValue={this.state.selectedLabel}
-                  />
+                this.state.selectedLabel !== null &&
+                this.state.filterSize !== null &&
+                this.state.filterSize.length > 0 ? (
+                  <>
+                    <span>Size:</span>
+                    <Select
+                      isOptionSelected="true"
+                      options={this.state.filterSize}
+                      onChange={this.changesize}
+                      headingProps={InputProps}
+                      placeholder={"Size"}
+                      defaultValue={this.state.selectedLabel}
+                    />
+                  </>
                 ) : (
                   ""
                 )}
@@ -256,14 +271,25 @@ class ProductVariation extends Component {
                 ""
               )}
             </div>
-            <div
-              class="d-flex justify-content-left align-items-center"
-              id=""
-            >
-              {
-                this.props.deliverable && this.props.prodData.is_active == '1'
-                ?
+            <div class="d-flex justify-content-left align-items-center" id="">
+              {this.props.deliverable &&
+              this.props.prodData.is_active == "1" ? (
                 <div>
+                  {this.state.variation !== null &&
+                  this.state.filterSize !== null &&
+                  this.state.variation[0].color !== "1" ? (
+                    <button
+                      class="btn btn-solid my-2 ml-2 "
+                      id="expressCheckOut"
+                      clickevent="Express_checkout"
+                      onClick={this.openAllowVariantPopupModal}
+                    >
+                      {" "}
+                      Choose Size{" "}
+                    </button>
+                  ) : (
+                    ""
+                  )}
                   <button
                     class="btn btn-solid my-2 ml-2 "
                     id="expressCheckOut"
@@ -274,8 +300,7 @@ class ProductVariation extends Component {
                     Buy Now{" "}
                   </button>
                 </div>
-                : (this.props.prodData.is_active == '1')
-                ?
+              ) : this.props.prodData.is_active == "1" ? (
                 <OverlayTrigger
                   // key="top"
                   placement="top"
@@ -285,36 +310,39 @@ class ProductVariation extends Component {
                         class="fa fa-exclamation-circle mr-2"
                         aria-hidden="true"
                       ></i>
-                      {this.props.pincode != '' &&  this.props.pincode !== undefined ? 'Information not found for entered pincode' : 'Please enter pincode'}
+                      {this.props.pincode != "" &&
+                      this.props.pincode !== undefined
+                        ? "Information not found for entered pincode"
+                        : "Please enter pincode"}
                     </Tooltip>
                   }
                 >
                   <div>
-                  <button
-                    class="btn btn-solid my-2 ml-2 "
-                    id="expressCheckOut"
-                    clickevent="Express_checkout"
-                    onClick={this.openAllowVariantPopupModal}
-                  >
-                    {" "}
-                    Buy Now{" "}
-                  </button>
-                </div>
+                    <button
+                      class="btn btn-solid my-2 ml-2 "
+                      id="expressCheckOut"
+                      clickevent="Express_checkout"
+                      onClick={this.openAllowVariantPopupModal}
+                    >
+                      {" "}
+                      Buy Now{" "}
+                    </button>
+                  </div>
                 </OverlayTrigger>
-                :""
-              }
+              ) : (
+                ""
+              )}
 
-              {
-                 this.props.prodData.is_active != '1'
-                 ? 
-                    <>
-                      <div className="p-0 mx-2 productBorder">
-                        <h5 className="p-text-color px-1">Product Unavailable</h5>
-                      </div>
-                    </>
-                 : ''
-              }
-              
+              {this.props.prodData.is_active != "1" ? (
+                <>
+                  <div className="p-0 mx-2 productBorder">
+                    <h5 className="p-text-color px-1">Product Unavailable</h5>
+                  </div>
+                </>
+              ) : (
+                ""
+              )}
+
               {/* <div>
                 <button
                   class="btn btn-solid my-2 ml-2 "
@@ -327,12 +355,12 @@ class ProductVariation extends Component {
               </div> */}
 
               {/* below retailer margin code */}
-                {/* {parseFloat(
+              {/* {parseFloat(
                     (parseFloat(this.state.product_mrp) -
                       parseFloat(this.state.selling_price)) /
                       (parseFloat(this.state.product_mrp) * 0.01).toFixed(2)
-                  ).toFixed(2)} */}   
-                             
+                  ).toFixed(2)} */}
+
               {/* {this.props.product_mrp !== null &&
               this.props.selling_price !== null ? (
               <div className="p-0 mx-2">
@@ -350,10 +378,13 @@ class ProductVariation extends Component {
               ""
             )} */}
             </div>
-            <ProductVariantModal varData={this.state} openmodal={this.openAllowVariantPopupModal} closemodal={this.closeAllowVariantPopupModal}/>
+            <ProductVariantModal
+              varData={this.state}
+              openmodal={this.openAllowVariantPopupModal}
+              closemodal={this.closeAllowVariantPopupModal}
+            />
           </React.Fragment>
         ) : (
-          
           ""
         )}
       </div>
