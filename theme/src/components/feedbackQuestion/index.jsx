@@ -201,7 +201,6 @@ class FeedbackQuestion extends Component{
                                             id={item.id}
                                             placeholder=" "
                                             className="form-control"
-                                            required
                                             />
                                             <label className="text-dark" htmlFor={item.id}>
                                             {"Enter feedback"}
@@ -316,7 +315,6 @@ class FeedbackQuestion extends Component{
                                         id={item.id}
                                         placeholder=" "
                                         className="form-control"
-                                        required
                                         />
                                         <label className="text-dark" htmlFor={item.id}>
                                         {"Enter feedback"}

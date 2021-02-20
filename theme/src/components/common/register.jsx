@@ -40,14 +40,14 @@ class Register extends Component {
       pixeldata: "",
       shippingCharges: "",
       inrValue: "",
-      //time: {},
-      //seconds: 0,
+      time: {},
+      seconds: 0,
       DispalySkipResend: true,
-      //timer: 0,
+      timer: 0,
     };
     //this.timer = 0;
-    //this.startTimer = this.startTimer.bind(this);
-    //this.countDown = this.countDown.bind(this);
+    this.startTimer = this.startTimer.bind(this);
+    this.countDown = this.countDown.bind(this);
     this.validator = new SimpleReactValidator();
   }
 
@@ -133,8 +133,8 @@ class Register extends Component {
         inrValue: this.props.location.state.inrValue,
       });
 
-    // let timeLeftVar = this.secondsToTime(this.state.seconds);
-    // this.setState({ time: timeLeftVar });
+    let timeLeftVar = this.secondsToTime(this.state.seconds);
+    this.setState({ time: timeLeftVar });
   };
 
   ResendOtp = () => {
@@ -176,7 +176,7 @@ class Register extends Component {
           $(".resendBtn")
             .val("Submit")
             .prop("disabled", false);
-          //this.startTimer();
+          this.startTimer();
         }
       })
       .catch((error) => {
@@ -272,7 +272,7 @@ class Register extends Component {
             //   const result = error.response;
             //   return Promise.reject(result);
             // });
-            //this.startTimer();
+            this.startTimer();
           }
           $(".regBtn")
             .val("Submit")
@@ -411,49 +411,49 @@ class Register extends Component {
     });
   };
 
-  // secondsToTime(secs) {
-  //   let hours = Math.floor(secs / (60 * 60));
+  secondsToTime(secs) {
+    let hours = Math.floor(secs / (60 * 60));
 
-  //   let divisor_for_minutes = secs % (60 * 60);
-  //   let minutes = Math.floor(divisor_for_minutes / 60);
+    let divisor_for_minutes = secs % (60 * 60);
+    let minutes = Math.floor(divisor_for_minutes / 60);
 
-  //   let divisor_for_seconds = divisor_for_minutes % 60;
-  //   let seconds = Math.ceil(divisor_for_seconds);
+    let divisor_for_seconds = divisor_for_minutes % 60;
+    let seconds = Math.ceil(divisor_for_seconds);
 
-  //   let obj = {
-  //     h: hours,
-  //     m: minutes,
-  //     s: seconds,
-  //   };
-  //   return obj;
-  // }
+    let obj = {
+      h: hours,
+      m: minutes,
+      s: seconds,
+    };
+    return obj;
+  }
 
-  // startTimer() {
-  //   this.setState({
-  //     seconds: 30,
-  //     timer: 0,
-  //   });
-  //   if (this.state.timer == 0 && this.state.seconds > 0) {
-  //     this.state.timer = setInterval(this.countDown, 1000);
-  //   }
-  // }
+  startTimer() {
+    this.setState({
+      seconds: 30,
+      timer: 0,
+    });
+    if (this.state.timer == 0 && this.state.seconds > 0) {
+      this.state.timer = setInterval(this.countDown, 1000);
+    }
+  }
 
-  // countDown() {
-  //   // Remove one second, set state so a re-render happens.
-  //   let seconds = this.state.seconds - 1;
-  //   this.setState({
-  //     time: this.secondsToTime(seconds),
-  //     seconds: seconds,
-  //   });
+  countDown() {
+    // Remove one second, set state so a re-render happens.
+    let seconds = this.state.seconds - 1;
+    this.setState({
+      time: this.secondsToTime(seconds),
+      seconds: seconds,
+    });
 
-  //   // Check if we're at zero.
-  //   if (seconds == 0) {
-  //     clearInterval(this.state.timer);
-  //     this.setState({
-  //       DispalySkipResend: true,
-  //     });
-  //   }
-  // }
+    // Check if we're at zero.
+    if (seconds == 0) {
+      clearInterval(this.state.timer);
+      this.setState({
+        DispalySkipResend: true,
+      });
+    }
+  }
   render() {
     const { mobile, company, email, country } = this.state;
 
@@ -646,9 +646,9 @@ class Register extends Component {
                     </div>
                     
                     <div className="form-group">
-                      {/* <div className="d-flex justify-content-center">
+                      <div className="d-flex justify-content-center">
                         Remaining Time : 00:{this.state.time.s}
-                      </div> */}
+                      </div>
                       <div className="form-group text-center">
                         <button
                           className="btn btn-lg btn-primary rounded-1  text-capitalize mr-1 form-control"

@@ -128,7 +128,7 @@ class ProductListItem extends Component {
     }
     
     // axios.post(
-    //   "https://api.beldara.com/common/create_cart_test.php",
+    //   "https://api.beldara.com/common/add_to_create_cart.php",
     //   {
     //     security_token: "",
     //     plateform_type: "",

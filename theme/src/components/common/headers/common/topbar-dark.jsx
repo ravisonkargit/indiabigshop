@@ -1,17 +1,16 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import ls from "local-storage"; 
+import ls from "local-storage";
 import store from "../../../../store";
 import { getUpdateUser, getAllCurrencyValue } from "../../../../actions";
 import { changeCurrency } from "../../../../actions";
 import { IntlActions, withTranslate } from "react-redux-multilingual";
 import { sellerUrl } from "../../../../constants/variable";
-import  Location  from "./geolocation";
+import Location from "./geolocation";
 import { getCookie, setCookie } from "../../../../functions";
 import CountrySelector from "../../countrySelector";
-import {isMobile} from 'react-device-detect';
-
+import { isMobile } from "react-device-detect";
 
 var sellerid, langDomain, domain_language_code, hostname, country_name;
 var language = "English";
@@ -21,11 +20,11 @@ class TopBarDark extends Component {
     this.state = {
       lang: "en",
       changeLanguageOnReload: 1,
-      cartCount:0,
+      cartCount: 0,
       askCountry: false,
-      country_code: '',
+      country_code: "",
       forceAsk: false,
-      sellonbeldara: ''
+      sellonbeldara: "",
     };
     sellerid = ls.get("sellerid");
     var hostname = window.location.hostname;
@@ -34,14 +33,12 @@ class TopBarDark extends Component {
     langDomain = hostname.split("beldara.com")[0];
     langDomain = langDomain.replace(".", "");
     //store.dispatch(getUpdateUser(sellerid));
-    store.dispatch(getAllCurrencyValue())
+    store.dispatch(getAllCurrencyValue());
   }
-
- 
 
   async UNSAFE_componentWillMount() {
     if (this.state.changeLanguageOnReload == 1) {
-      this.props.languageMaster.forEach(element => {
+      this.props.languageMaster.forEach((element) => {
         if (element.main_language.toLowerCase() == langDomain.toLowerCase())
           domain_language_code = element.code;
       }, this);
@@ -53,136 +50,153 @@ class TopBarDark extends Component {
         // await store.dispatch(getAllBanners("en"))
       }
       this.setState({
-        changeLanguageOnReload: 0
+        changeLanguageOnReload: 0,
       });
     }
   }
 
   componentDidMount = async () => {
     // console.log(this.props,60);
-    if ( getCookie('currency') === undefined || getCookie('currency') == '' ){
-      setCookie('currency','INR', 365);
+    if (getCookie("currency") === undefined || getCookie("currency") == "") {
+      setCookie("currency", "INR", 365);
     }
 
-    if (getCookie('country_code') === undefined || getCookie('country_code') == '') {
-      this.select_country(true, false)
+    if (
+      getCookie("country_code") === undefined ||
+      getCookie("country_code") == ""
+    ) {
+      setCookie('country_name', "india","1")
+      setCookie('country_code', "in","1")
+      setCookie('countryid', "91","1")
+      //this.select_country(true, false);
     } else {
       await this.setState({
         askCountry: false,
-        country_code: getCookie('country_code')
-      })
+        country_code: getCookie("country_code"),
+      });
     }
-  }
+  };
 
   select_country = async (ask, force) => {
-
-      await this.setState({
-        askCountry: ask,
-        forceAsk: force
-      })
-  }
+    await this.setState({
+      askCountry: ask,
+      forceAsk: force,
+    });
+  };
 
   closeModal = async () => {
     await this.setState({
       askCountry: false,
-      forceAsk: false
-    })
+      forceAsk: false,
+    });
   };
-  
+
   currencyChanger(curr) {
-    setCookie('currency',curr, 365);
+    setCookie("currency", curr, 365);
     const resultOfCurrencyChanger = this.props.changeCurrency(curr);
   }
 
   UNSAFE_componentWillReceiveProps = async (nextProps) => {
-  //  console.log('UNSAFE_componentWillReceiveProps called',95);
-   this.props.changeCountryCode(getCookie('country_code'));
-    if (this.state.sellonbeldara != '/business-listing.html' && (!ls.get('sellerid') || ls.get('sellerid')=='')){
+    //  console.log('UNSAFE_componentWillReceiveProps called',95);
+    this.props.changeCountryCode(getCookie("country_code"));
+    if (
+      this.state.sellonbeldara != "/business-listing.html" &&
+      (!ls.get("sellerid") || ls.get("sellerid") == "")
+    ) {
       this.setState({
-        sellonbeldara: '/business-listing.html'
-      })
+        sellonbeldara: "/business-listing.html",
+      });
     }
 
-    if (((getCookie('country_code') === undefined || getCookie('country_code') == '') && !this.state.askCountry)) {
-      this.select_country(true, false)
-    }
-    
-    if ( this.state.country_code != getCookie('country_code')) {
-      this.setState({
-        country_code: getCookie('country_code')
-      })
+    if (
+      (getCookie("country_code") === undefined ||
+        getCookie("country_code") == "") &&
+      !this.state.askCountry
+    ) {
+      setCookie('country_name', "india","1")
+      setCookie('country_code', "in","1")
+      setCookie('countryid', "91","1")
+      //this.select_country(true, false);
     }
 
-    if (country_name===undefined || country_name=='' || country_name != getCookie('country_name')){
-      country_name = getCookie('country_name')
+    if (this.state.country_code != getCookie("country_code")) {
+      this.setState({
+        country_code: getCookie("country_code"),
+      });
+    }
+
+    if (
+      country_name === undefined ||
+      country_name == "" ||
+      country_name != getCookie("country_name")
+    ) {
+      country_name = getCookie("country_name");
     }
     if (nextProps.cartList) {
       // console.log('next',124);
       this.setState({
         // cartCount: Object.keys(nextProps.cartList).length
-        cartCount:nextProps.cartList
-      })
-    } else { 
+        cartCount: nextProps.cartList,
+      });
+    } else {
       // console.log('no receive',124);
       this.setState({
-        cartCount: 0
-      })
+        cartCount: 0,
+      });
     }
-  }
+  };
 
   countrySelectorData = (data) => {
     this.setState({
       country_code: data,
-      forceAsk: false
-    })
+      forceAsk: false,
+    });
     if (data) {
-      if (data.toLowerCase() == 'in') {
-        setCookie('currency', 'INR', 365)
-        store.dispatch(changeCurrency('INR'))
+      if (data.toLowerCase() == "in") {
+        setCookie("currency", "INR", 365);
+        store.dispatch(changeCurrency("INR"));
       } else {
-        setCookie('currency', 'USD', 365)
-        store.dispatch(changeCurrency('USD'))
+        setCookie("currency", "USD", 365);
+        store.dispatch(changeCurrency("USD"));
       }
     }
-
-  }
+  };
 
   dataFromLocation = (code, country_name) => {
-
     this.setState({
       country_code: code,
       country_name: country_name,
-      forceAsk: false
-    })
+      forceAsk: false,
+    });
 
     if (code) {
-      if (code.toLowerCase() == 'in') {
-        setCookie('currency', 'INR')
-        store.dispatch(changeCurrency('INR'))
-      }else {
-        setCookie('currency', 'USD')
-        store.dispatch(changeCurrency('USD'))
+      if (code.toLowerCase() == "in") {
+        setCookie("currency", "INR");
+        store.dispatch(changeCurrency("INR"));
+      } else {
+        setCookie("currency", "USD");
+        store.dispatch(changeCurrency("USD"));
       }
-      }
-  }
-  truncateText(Text){
+    }
+  };
+  truncateText(Text) {
     // if(Text.length > 5){
     //   return Text.substring(0,5) + '..';
     // }else{
     //   return Text
     // }
-    if(Text.indexOf(' ') >= 0){
-      var first_str = Text.split(' ')[0];
+    if (Text.indexOf(" ") >= 0) {
+      var first_str = Text.split(" ")[0];
       // console.log(Text,first_str,Text.indexOf(' '),171,'truncateText');
-        if(first_str.length > 10){
-          return first_str.substring(0,10) + '..';
-        }else{
-          return first_str;
-        }
-    }else{
-      if(Text.length > 10){
-        return Text.substring(0,10) + '..';
-      }else{
+      if (first_str.length > 10) {
+        return first_str.substring(0, 10) + "..";
+      } else {
+        return first_str;
+      }
+    } else {
+      if (Text.length > 10) {
+        return Text.substring(0, 10) + "..";
+      } else {
         return Text;
       }
     }
@@ -197,10 +211,10 @@ class TopBarDark extends Component {
           countrySelectorData={this.countrySelectorData}
           askCountry={this.state.askCountry}
           forceAsk={this.state.forceAsk}
-          closeModal = {this.closeModal}
+          closeModal={this.closeModal}
         />
 
-        <input type="hidden" name="mobileh" id="mobileh" className="d-none" /> 
+        <input type="hidden" name="mobileh" id="mobileh" className="d-none" />
         <div className="container">
           <div className="row">
             <div className="col-lg-6">
@@ -216,7 +230,7 @@ class TopBarDark extends Component {
                   </li> */}
                   <li>
                     <a
-                     href={`${sellerUrl+""+this.state.sellonbeldara}`}
+                      href={`${sellerUrl + "" + this.state.sellonbeldara}`}
                       className="text-white"
                     >
                       {translate("Sell On Beldara")}
@@ -236,14 +250,20 @@ class TopBarDark extends Component {
                         }
                   </li> */}
                   <li className="text-white">
-                      {!isMobile ? <a href="/download-app.html" className="h6 text-white">Get App</a> : ''}
+                    {!isMobile ? (
+                      <a href="/download-app.html" className="h6 text-white">
+                        Get App
+                      </a>
+                    ) : (
+                      ""
+                    )}
                   </li>
                 </ul>
               </div>
             </div>
             <div className="col-lg-6 text-right d-flex m-0">
               <ul className="header-dropdown">
-                  {/* <li className="mobile-wishlist wishlist">
+                {/* <li className="mobile-wishlist wishlist">
                     <a href="/wishlist.html" className="text-white">
                     <i className="text-white fa fa-heart"></i> Wishlist 
                     { (ls.get('sellerid'))?
@@ -251,21 +271,21 @@ class TopBarDark extends Component {
                     :''}
                     </a>
                   </li> */}
-                  <li className="mobile-wishlist cart">
-                    <a href="/cart.html" className="text-white">
-                    <i className="text-white fa fa-shopping-cart"></i> Cart 
+                <li className="mobile-wishlist cart">
+                  <a href="/cart.html" className="text-white">
+                    <i className="text-white fa fa-shopping-cart"></i> Cart
                     {/* { (ls.get('sellerid'))? */}
                     <span className="badge cart_badge badge-info">
                       {/* {this.state.cartCount} */}
                       {this.props.cartList}
-                      </span>
+                    </span>
                     {/* :''} */}
-                    </a>
-                  </li>
+                  </a>
+                </li>
                 <li className="onhover-dropdown mobile-account text-white language">
                   <i className="text-white fa fa-language" aria-hidden="true" />
 
-                  {this.props.languageMaster.forEach(item => {
+                  {this.props.languageMaster.forEach((item) => {
                     if (
                       domain_language_code != "" &&
                       domain_language_code !== undefined
@@ -279,7 +299,7 @@ class TopBarDark extends Component {
                   }, this)}
                   {language}
                   <ul className="onhover-show-div">
-                    {this.props.languageMaster.map(item => (
+                    {this.props.languageMaster.map((item) => (
                       <li key={item.id}>
                         {/* <span onClick={this.changeLanguage} data-lng={item.code} >{item.language}</span> */}
                         <a
@@ -292,19 +312,30 @@ class TopBarDark extends Component {
                       </li>
                     ))}
                   </ul>
-                </li>  
+                </li>
                 {/* currency */}
 
-                { this.state.country_code ?
-                  <li onClick={() => this.select_country(true, true)} className="onhover-dropdown mobile-account country text-white">
-                    <i className="d-sm-block d-md-none d-block text-uppercase">{ this.state.country_code }</i>
-                  <span className="text-uppercase">{ this.state.country_code }</span>
-                </li>
-                :''}
+                {this.state.country_code ? (
+                  <li
+                    onClick={() => this.select_country(true, true)}
+                    className="onhover-dropdown mobile-account country text-white"
+                  >
+                    <i className="d-sm-block d-md-none d-block text-uppercase">
+                      {this.state.country_code}
+                    </i>
+                    <span className="text-uppercase">
+                      {this.state.country_code}
+                    </span>
+                  </li>
+                ) : (
+                  ""
+                )}
 
                 <li className="onhover-dropdown mobile-account currency  text-white">
                   <i className="text-white fa fa-money" aria-hidden="true" />
-                  <span className="currencyActive">{this.props.data.symbol}</span>
+                  <span className="currencyActive">
+                    {this.props.data.symbol}
+                  </span>
                   <ul className="onhover-show-div">
                     <li>
                       <span
@@ -319,54 +350,69 @@ class TopBarDark extends Component {
                         onClick={() => this.currencyChanger("USD")}
                         data-currency="USD"
                       >
-                       <small> US Dollar (USD)</small>
+                        <small> US Dollar (USD)</small>
                       </span>
                     </li>
                   </ul>
                 </li>
-                {country_name? '':
-               
-                <Location dataFromLocation={this.dataFromLocation} />
-                    }
+                {country_name ? (
+                  ""
+                ) : (
+                  <Location dataFromLocation={this.dataFromLocation} />
+                )}
+                {/* <li className="onhover-dropdown mobile-account text-white">
+                  <i className="text-white fa fa-bell-o" aria-hidden="true" />
+                  <span className="badge badge-info">1</span>
+                  <ul className="onhover-show-div" style={{width: "350px"}}>
+                    <li>
+                      <span
+                        onClick={() => this.currencyChanger("INR")}
+                        data-currency="INR"
+                      >
+                        <small>Rupee (INR) Rupee (INR) Rupee (INR) Rupee (INR)Rupee (INR) Rupee (INR)</small>
+                      </span>
+                    </li>
+                    <hr></hr>
+                    <li>
+                      <span
+                        onClick={() => this.currencyChanger("USD")}
+                        data-currency="USD"
+                      >
+                        <small> US Dollar (USD)</small>
+                      </span>
+                    </li>
+                  </ul>
+                </li> */}
+
                 <li className="onhover-dropdown mobile-account text-white myAccount">
                   <i className="fa fa-user text-white" aria-hidden="true" />
-                  {this.props.user.user.name
-                    ? <span className="text-truncate">{this.truncateText(this.props.user.user.name)}</span>
-                    : translate("My Account")}
+                  {this.props.user.user.name ? (
+                    <span className="text-truncate">
+                      {this.truncateText(this.props.user.user.name)}
+                    </span>
+                  ) : (
+                    translate("My Account")
+                  )}
                   {this.props.user.user.name ? (
                     <ul className="onhover-show-div">
                       <li>
-                        <a
-                          href="https://seller.beldara.com"
-                          data-lng="en"
-                         
-                        >
+                        <a href="https://seller.beldara.com" data-lng="en">
                           <small>{translate("My dashboard")}</small>
                         </a>
                       </li>
                       <li>
-                        <a
-                          href="/wishlist.html"
-                          data-lng="en"
-                        >
+                        <a href="/wishlist.html" data-lng="en">
                           <small>{translate("Wishlist")}</small>
                           {/* <small>Wishlist</small> */}
                         </a>
                       </li>
                       <li>
-                        <a
-                          href="https://msg.beldara.com"
-                          data-lng="es"
-                         
-                        >
+                        <a href="https://msg.beldara.com" data-lng="es">
                           <small>{translate("Message Center")}</small>
                         </a>
                       </li>
                       <li>
-                        <a
-                          href="/logout.html"
-                          data-lng="es"
-                        >
+                        <a href="/logout.html" data-lng="es">
                           <small>{translate("Logout")}</small>
                         </a>
                       </li>
@@ -392,10 +438,7 @@ class TopBarDark extends Component {
                         </a>
                       </li>
                       <li>
-                        <a
-                          href="/wishlist.html"
-                          data-lng="en"
-                        >
+                        <a href="/wishlist.html" data-lng="en">
                           <small>{translate("Wishlist")}</small>
                           {/* <small>Wishlist</small> */}
                         </a>
@@ -416,19 +459,16 @@ class TopBarDark extends Component {
 //     lang : state.language
 // })
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   user: state.user,
   data: state.data,
   // cartList: state.cartList.cart
-  cartList : state.cartLength.cartLength.count
+  cartList: state.cartLength.cartLength.count,
   //languageMaster: state.languageMaster.languageMaster,
 });
 
 export default withTranslate(
-  connect(
-    mapStateToProps,
-    { getUpdateUser, changeCurrency }
-  )(TopBarDark)
+  connect(mapStateToProps, { getUpdateUser, changeCurrency })(TopBarDark)
 );
 
 // export default TopBarDark; //

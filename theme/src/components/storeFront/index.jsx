@@ -18,6 +18,10 @@ import { imgUrl } from "../../constants/variable";
 import LoadingComponent from "../products/common/loading-bar";
 import { getCookie } from "../../functions/index";
 import CategoryComponent from "../common/getStoreCategoryComponent";
+
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import Loader from "react-loader-spinner";
+
 function showImageOnlyIfExist(ele) {
   $("#" + ele)
     .closest(".col-grid-box")
@@ -46,6 +50,7 @@ class StoreFront extends Component {
       sellerData: "",
       currency: "INR",
       country_code: "IN",
+      productNotFound: false,
     };
   }
 
@@ -138,6 +143,20 @@ class StoreFront extends Component {
       });
     }
 
+    if (
+      this.state.products == null ||
+      this.state.products == undefined ||
+      this.state.products == "" ||
+      this.state.products == "0"
+    ) {
+      {
+        setTimeout(() => {
+          this.setState({
+            productNotFound: true,
+          });
+        }, 10000);
+      }
+    }
     axios
       .post(
         `${imgUrl}/beta_api/get_seller_info_listing.php`,
@@ -298,26 +317,28 @@ class StoreFront extends Component {
                                   </p> */}
                                   <h6 className="m-0">
                                     Price Range:{" "}
-                                    {this.state.sellerData ?
-                                    <strong>
-                                      <i
-                                        className={
-                                          this.state.currency == "INR"
-                                            ? "fa fa-inr"
-                                            : "fa fa-usd"
-                                        }
-                                      ></i>{" "}
-                                      {this.state.sellerData.min_price}-
-                                      <i
-                                        className={
-                                          this.state.currency == "INR"
-                                            ? "fa fa-inr"
-                                            : "fa fa-usd"
-                                        }
-                                      ></i>{" "}
-                                      {this.state.sellerData.max_price}
-                                    </strong>
-                                  :''}
+                                    {this.state.sellerData ? (
+                                      <strong>
+                                        <i
+                                          className={
+                                            this.state.currency == "INR"
+                                              ? "fa fa-inr"
+                                              : "fa fa-usd"
+                                          }
+                                        ></i>{" "}
+                                        {this.state.sellerData.min_price}-
+                                        <i
+                                          className={
+                                            this.state.currency == "INR"
+                                              ? "fa fa-inr"
+                                              : "fa fa-usd"
+                                          }
+                                        ></i>{" "}
+                                        {this.state.sellerData.max_price}
+                                      </strong>
+                                    ) : (
+                                      ""
+                                    )}
                                   </h6>
                                   <h6 className="m-0">
                                     Min Order Value:{" "}
@@ -365,7 +386,7 @@ class StoreFront extends Component {
                               </div>
                               <div className="row">
                                 <div className="col-sm-3">
-                                  <CategoryComponent type={this.state} />
+                                  <CategoryComponent type={this.state} cat_id={cat_id}/>
                                 </div>
                                 <div className="col-sm-9 my-2">
                                   <div className="product-wrapper-grid row">
@@ -391,47 +412,76 @@ class StoreFront extends Component {
                                           )}
                                         </div>
                                       ) : (
-                                        <div className="row text-center">
-                                          <div className="col-12">
-                                            <img
-                                              src={`${process.env.PUBLIC_URL}/assets/images/empty-search.jpg`}
-                                              className="img-fluid"
-                                            />
-                                            <h3>
-                                              Sorry! No Category Products
-                                              found!!!{" "}
-                                            </h3>
-                                            {/* <Link to={`${process.env.PUBLIC_URL}/`} className="btn btn-solid">continue shopping</Link> */}
-                                          </div>
-                                        </div>
+                                        <>
+                                          {(this.state.productNotFound) ? (
+                                            <div className="row text-center">
+                                              <div className="col-12">
+                                                <img
+                                                  src={`${process.env.PUBLIC_URL}/assets/images/empty-search.jpg`}
+                                                  className="img-fluid"
+                                                />
+                                                <h3>
+                                                  Sorry! No Category Products
+                                                  found!!!{" "}
+                                                </h3>
+                                                {/* <Link to={`${process.env.PUBLIC_URL}/`} className="btn btn-solid">continue shopping</Link> */}
+                                              </div>
+                                            </div>
+                                          ) : (
+                                            <div
+                                              style={{
+                                                position: "absolute",
+                                                left: "40%",
+                                                top: "2%",
+                                                transform:
+                                                  "translate(-50%, -50%)",
+                                              }}
+                                            >
+                                              <Loader
+                                                type="Puff"
+                                                color="#FB9944"
+                                                height={100}
+                                                width={100}
+                                              />
+                                            </div>
+                                          )}
+                                        </>
                                       )}
                                       {/* </div> */}
                                       <div className="row justify-content-md-center">
-                                        {this.state.pageCount ? (
-                                          <ReactPaginate
-                                            initialPage={this.state.pageNo}
-                                            previousLabel={"previous"}
-                                            nextLabel={"next"}
-                                            breakLabel={"..."}
-                                            breakClassName={"break-me"}
-                                            pageCount={this.state.pageCount}
-                                            marginPagesDisplayed={2}
-                                            pageRangeDisplayed={3}
-                                            onPageChange={this.handlePageClick}
-                                            containerClassName={
-                                              "pagination my-5"
-                                            }
-                                            subContainerClassName={
-                                              "pages pagination"
-                                            }
-                                            pageLinkClassName={"page-link"}
-                                            previousClassName={"page-item"}
-                                            previousLinkClassName={"page-link"}
-                                            nextClassName={"page-item"}
-                                            nextLinkClassName={"page-link"}
-                                            pageClassName={"page-item"}
-                                            activeClassName={"active"}
-                                          />
+                                        {this.state.products ? (
+                                          this.state.pageCount > 1  ? (
+                                            <ReactPaginate
+                                              initialPage={this.state.pageNo}
+                                              previousLabel={"previous"}
+                                              nextLabel={"next"}
+                                              breakLabel={"..."}
+                                              breakClassName={"break-me"}
+                                              pageCount={this.state.pageCount}
+                                              marginPagesDisplayed={2}
+                                              pageRangeDisplayed={3}
+                                              onPageChange={
+                                                this.handlePageClick
+                                              }
+                                              containerClassName={
+                                                "pagination my-5"
+                                              }
+                                              subContainerClassName={
+                                                "pages pagination"
+                                              }
+                                              pageLinkClassName={"page-link"}
+                                              previousClassName={"page-item"}
+                                              previousLinkClassName={
+                                                "page-link"
+                                              }
+                                              nextClassName={"page-item"}
+                                              nextLinkClassName={"page-link"}
+                                              pageClassName={"page-item"}
+                                              activeClassName={"active"}
+                                            />
+                                          ) : (
+                                            ""
+                                          )
                                         ) : (
                                           ""
                                         )}

@@ -7,3 +7,8 @@
 .catList{
     display:block;
 }
+
+.active-1{
+    background-color: #FB9944;
+    padding: 5px 5px 5px 5px;
+}

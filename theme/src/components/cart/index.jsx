@@ -251,7 +251,7 @@ class cartComponent extends Component {
       // console.log('currency changed',this.state.symbol,getCookie('currency'),98);
       axios
         .post(
-          `${types.ApiUrl}/common/update_currency_cart.php`,
+          `${types.ApiUrl}/common/update_currency_cart_test_new.php`,
           {
             sellerid: ls.get("log_id"),
             plateform_type: "",
@@ -1302,13 +1302,21 @@ class cartComponent extends Component {
                                       : "India"}
                                   </span>
                                 </div>
-                                {item.offer_stock == 0 ? (
+                                {item.offer_stock == 0 || item.available_stock == "" || item.available_stock == "0" || item.available_stock == null ? (
                                   <div className="text-danger">
                                     OUT OF STOCK
                                   </div>
                                 ) : (
                                   ""
                                 )}
+
+                                {/* {item.offer_stock == 0 ? (
+                                  <div className="text-danger">
+                                    OUT OF STOCK
+                                  </div>
+                                ) : (
+                                  ""
+                                )} */}
                               </td>
                               <td
                                 className={isMobile ? "d-block" : ""}

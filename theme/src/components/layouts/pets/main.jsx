@@ -783,7 +783,7 @@ class Pets extends Component {
               <div className="row partition3">
 
                 {this.state.getcartBanner1 ? Object.keys(this.state.getcartBanner1).slice(0, 6).map((item) => (
-                  <div className="col-md-4 mt-2" key={this.state.getcartBanner1[item].page_name}>
+                  <div className="col-md-4 mt-2" key={this.state.getcartBanner1[item].srno}>
                     <a href={`/lp/${this.state.getcartBanner1[item].page_name.replace(/\s+/g, '-').toLowerCase()}-${this.state.getcartBanner1[item].user_cat}.html?type=${this.state.getcartBanner1[item].type}`}>
                       <div className="collection-banner p-left">
                         <div className="img-part">

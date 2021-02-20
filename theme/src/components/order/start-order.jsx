@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import SimpleReactValidator from "simple-react-validator";
 import axios from "axios";
 import ls from "local-storage";
-// import RazorpayForm from "../razorpayForm/razorpayForm";
 import RazorpayForm from "../razorpayForm/razorpay-new";
 import $ from "jquery";
 import "./start-order.css";
@@ -114,6 +113,10 @@ class StartOrderTest extends Component {
       is_freeze: 0,
       token_percent: "",
       token_amt: "",
+      razorpay_token: "",
+      finalAmt: "",
+      formid1: "token_payment",
+      formid2: "all_payment",
     };
     this.validator = new SimpleReactValidator();
     this.selectAddress = this.selectAddress.bind(this);
@@ -124,7 +127,9 @@ class StartOrderTest extends Component {
     this.closeModal = this.closeModal.bind(this);
     this.submitPaymentProcess = this.submitPaymentProcess.bind(this);
     this.submitPaymentProcessToken = this.submitPaymentProcessToken.bind(this);
-    this.submitPaymentProcessRazorPay = this.submitPaymentProcessRazorPay.bind(this);
+    this.submitPaymentProcessRazorPay = this.submitPaymentProcessRazorPay.bind(
+      this
+    );
     this.checkGstCharacter = this.checkGstCharacter.bind(this);
     this.submitOnlineTransfer = this.submitOnlineTransfer.bind(this);
     this.openfileManager = this.openfileManager.bind(this);
@@ -380,10 +385,11 @@ class StartOrderTest extends Component {
                 if (response.data.result[0].status == "true") {
                   axios
                     .post(
-                      `${ImgUrl}/beta_api/validate-pincode-deliverable.php`,
+                      `${ImgUrl}/beta_api/validate-pincode-deliverable-web.php`,
                       {
                         pincode: this.state.pincode,
                         productid: "",
+                        country_name: getCookie("country_name"),
                       },
                       {
                         headers: { "Content-Type": "multipart/form-data" },
@@ -449,6 +455,8 @@ class StartOrderTest extends Component {
                                 order_code: res.data.result.order_code,
                                 order_id: res.data.result.order_id,
                                 bank_details: res.data.result.bank_info,
+                                min_token_amount:
+                                  res.data.result.min_token_amount,
                                 token_percent:
                                   res.data.result.min_payment_percent,
                                 token_amt:
@@ -459,10 +467,16 @@ class StartOrderTest extends Component {
                                     ? true
                                     : false,
                               });
-                              if (this.state.totalCartValue > 299) {
-                                if (this.state.token_amt <= 299) {
+                              if (
+                                this.state.totalCartValue >
+                                this.state.min_token_amount
+                              ) {
+                                if (
+                                  this.state.token_amt <=
+                                  this.state.min_token_amount
+                                ) {
                                   this.setState({
-                                    token_amt: 299,
+                                    token_amt: this.state.min_token_amount,
                                   });
                                 } else {
                                   this.setState({
@@ -483,6 +497,7 @@ class StartOrderTest extends Component {
                           });
                       } else {
                         // console.log('pincode invalid');
+                        $(".unique_class").removeAttr("disabled");
                         $("#price_validating_start").html(
                           '<i class="fa fa-exclamation-circle mx-1" aria-hidden="true"></i>' +
                             res.data.message
@@ -1085,6 +1100,9 @@ class StartOrderTest extends Component {
 
   submitPaymentProcess = () => {
     if (this.state.checked === "razorpay") {
+      this.setState({
+        razorpay_token: false,
+      });
       $(".razorpay-payment-button").click();
     } else if (this.state.checked === "paytm") {
       $(".paytmBtn").click();
@@ -1106,6 +1124,9 @@ class StartOrderTest extends Component {
 
   submitPaymentProcessToken = () => {
     if (this.state.checked === "razorpay") {
+      this.setState({
+        razorpay_token: true,
+      });
       $(".razorpay-payment-button").click();
     } else if (this.state.checked === "paytm") {
       $(".paytmBtnToken").click();
@@ -2156,6 +2177,88 @@ class StartOrderTest extends Component {
                     0
                   }
                 /> */}
+                {/* {this.state.razorpay_token !== ""?  */}
+                {/* {this.state.razorpay_token == true
+                  ? (console.log(
+                      "-----------razorpay_token true------------",
+                      this.state.razorpay_token,
+                      token_amt
+                    ),
+                    (
+                      <RazorpayForm
+                        totalCost={token_amt}
+                        name={name}
+                        email={email}
+                        mobile={mobile}
+                        id={"productOrder"}
+                        sellerid={sellerid}
+                        currency={currency}
+                        amount={token_amt}
+                        page={""}
+                        type={""}
+                        event={"Product-Order"}
+                        className={"productOrder"}
+                        method="POST"
+                        action={this.state.pay_link}
+                        isLoggedIn={this.isLoggedIn}
+                        item={cartItems}
+                        value={
+                          "order_code=" +
+                          this.state.order_code +
+                          ",order_id=" +
+                          this.state.order_id +
+                          ",sellerid=" +
+                          ls.get("sellerid") +
+                          ",mainurl=" +
+                          window.location.hostname +
+                          ",plateform_type=" +
+                          "web" +
+                          ",security_token=" +
+                          ""
+                        }
+                      />
+                    ))
+                  : (console.log(
+                      "-----------razorpay_token flase------------",
+                      this.state.razorpay_token,
+                      totalCartValue
+                    ),
+                    (
+                      <RazorpayForm
+                        totalCost={totalCartValue}
+                        name={name}
+                        email={email}
+                        mobile={mobile}
+                        id={"productOrder"}
+                        sellerid={sellerid}
+                        currency={currency}
+                        amount={totalCartValue}
+                        page={""}
+                        type={""}
+                        event={"Product-Order"}
+                        className={"productOrder"}
+                        method="POST"
+                        action={this.state.pay_link}
+                        isLoggedIn={this.isLoggedIn}
+                        item={cartItems}
+                        value={
+                          "order_code=" +
+                          this.state.order_code +
+                          ",order_id=" +
+                          this.state.order_id +
+                          ",sellerid=" +
+                          ls.get("sellerid") +
+                          ",mainurl=" +
+                          window.location.hostname +
+                          ",plateform_type=" +
+                          "web" +
+                          ",security_token=" +
+                          ""
+                        }
+                      />
+                    ))} */}
+                {/* : ""} */}
+
                 <RazorpayForm
                   totalCost={totalCartValue}
                   name={name}
@@ -2188,6 +2291,40 @@ class StartOrderTest extends Component {
                     ""
                   }
                 />
+
+                {/* <RazorpayForm
+                  totalCost={totalCartValue}
+                  name={name}
+                  email={email}
+                  mobile={mobile}
+                  id={"productOrder"}
+                  sellerid={sellerid}
+                  currency={currency}
+                  amount={totalCartValue}
+                  page={""}
+                  type={""}
+                  event={"Product-Order"}
+                  className={"productOrder"}
+                  method="POST"
+                  action={this.state.pay_link}
+                  isLoggedIn={this.isLoggedIn}
+                  item={cartItems}
+                  value={
+                    "order_code=" +
+                    this.state.order_code +
+                    ",order_id=" +
+                    this.state.order_id +
+                    ",sellerid=" +
+                    ls.get("sellerid") +
+                    ",mainurl=" +
+                    window.location.hostname +
+                    ",plateform_type=" +
+                    "web" +
+                    ",security_token=" +
+                    ""
+                  }
+                /> */}
+
                 <Paytm
                   user={this.props.user}
                   amount={totalCartValue}
@@ -2397,7 +2534,7 @@ class StartOrderTest extends Component {
                                   <div className="upper-box">
                                     <div className="payment-options">
                                       <ul>
-                                        {(this.state.coupon_code ==
+                                        {/* {(this.state.coupon_code ==
                                           "razorpay" ||
                                           this.state.coupon_code == "") &&
                                         this.state.razorpay_avail ? (
@@ -2421,8 +2558,10 @@ class StartOrderTest extends Component {
                                           </li>
                                         ) : (
                                           ""
-                                        )}
+                                        )} */}
                                         {(this.state.coupon_code == "paytm" ||
+                                          this.state.coupon_code ==
+                                            "razorpay" ||
                                           this.state.coupon_code == "") &&
                                         currency == "INR" ? (
                                           <>
@@ -2443,6 +2582,26 @@ class StartOrderTest extends Component {
                                                 </label>
                                               </div>
                                             </li>
+                                            {/* <li>
+                                              <div className="radio-option stripe">
+                                                <input
+                                                  type="radio"
+                                                  name="payment-group"
+                                                  method="razorpay"
+                                                  id="payment-2"
+                                                  //defaultChecked={true}
+                                                  onClick={() =>
+                                                    this.changeMethod(
+                                                      "razorpay"
+                                                    )
+                                                  }
+                                                />
+                                                <label htmlFor="payment-2">
+                                                  Pay using Cards/Net
+                                                  Banking,/Wallet/UPI/QR
+                                                </label>
+                                              </div>
+                                            </li> */}
                                           </>
                                         ) : (
                                           <li>

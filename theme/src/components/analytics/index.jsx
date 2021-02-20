@@ -19,7 +19,8 @@ class Tracking extends Component {
           gtmId: "GTM-5HBBK96", //gtmId: 'UA-57225000-1',  
           // dataLayerName: "GTM-5HBBK96",
           events: {
-            send_to: "AW-724875220"
+            //send_to: "AW-724875220"
+            send_to: "AW-803807171"
           }
         };
         TagManager.initialize(tagManagerArgs2);
@@ -48,21 +49,13 @@ class Tracking extends Component {
           gtmId: "GTM-5HBBK96", //gtmId: 'UA-57225000-1',  
           // dataLayerName: "GTM-5HBBK96",
           events: {
-            send_to: "AW-724875220", //send_to: 'AW-803807171/IHhPCKqLwYgBEMO_pP8C'
+            //send_to: "AW-724875220", 
+            send_to: 'AW-803807171/IHhPCKqLwYgBEMO_pP8C',
             value: 'replace with value',
           items: [{
             id: 'replace with value',
             location_id: 'replace with value',
-            google_business_vertical: 'local'
-          }, {
-            id: 'replace with value',
             google_business_vertical: 'retail'
-          }, {
-            origin: 'replace with value',
-            destination: 'replace with value',
-            start_date: 'replace with value',
-            end_date: 'replace with value',
-            google_business_vertical: 'travel'
           }]
           }
         };

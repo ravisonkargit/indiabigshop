@@ -170,7 +170,7 @@ class Main extends Component {
             // // this.setState({messages: [...this.state.messages, data]});
             // console.log(this.state.messages);
             // // newArray.push(this.state.value);
-            console.log(msg,173,this.state.toId);
+            //console.log(msg,173,this.state.toId);
             if (
                 $(".conversation-list")
                     .find("[id='" + frmmsg + "']:not(.worksn_active)")
@@ -697,7 +697,7 @@ class Main extends Component {
     sendNotiToSeller = async (nextProps) => {
         // console.log(this.props.chatToSeller.item,this.props.chatToSeller.chatWithSupplier,window.location.pathname.split('/')[1],this.state.sendToSeller,)
         if (localStorage.getItem('sellerid') && window.location.pathname.split('/')[1] === 'product' && this.state.sendToSeller) {
-            console.log('1');
+            //console.log('1');
             const buyerid = JSON.parse(localStorage.getItem('sellerid'))
             const state = localStorage.getItem("state")
             const user = JSON.parse(state)
@@ -722,9 +722,9 @@ class Main extends Component {
                     }
                 ).then(async res => {
                     await this.getConversations()
-                    console.log(this.props.chatToSeller.chatWithSupplier,'1');
+                    //console.log(this.props.chatToSeller.chatWithSupplier,'1');
                         if(this.props.chatToSeller.item.package_id !== undefined){
-                            console.log(this.props.chatToSeller.item.package_id,'1')
+                            //console.log(this.props.chatToSeller.item.package_id,'1')
                             if(this.props.chatToSeller.item.package_id == '0'){
                                 this.openMsg('Beldara Support','8775650')
                             }else{
@@ -766,7 +766,7 @@ class Main extends Component {
             }
         }
         else if (this.props.chatToSeller && this.state.sendToSeller) {
-            console.log('2');
+            //console.log('2');
             let buyerid = JSON.parse(localStorage.getItem('sellerid'))
             let state = localStorage.getItem("state")
             let user = JSON.parse(state)
@@ -791,7 +791,7 @@ class Main extends Component {
                 }
             ).then(async res => {
                 await this.getConversations()
-                console.log(this.props.chatToSeller.item.package_id,this.props.chatToSeller.company);
+                //console.log(this.props.chatToSeller.item.package_id,this.props.chatToSeller.company);
                 if(this.props.chatToSeller.item.package_id !== undefined){
                     if(this.props.chatToSeller.item.package_id == '0'){
                         this.openMsg('Beldara Support','8775650')
@@ -807,7 +807,7 @@ class Main extends Component {
             })
         }
         else if (nextProps) {
-            console.log('3');
+            //console.log('3');
             let buyerid = JSON.parse(localStorage.getItem('sellerid'))
             let state = localStorage.getItem("state")
             let user = JSON.parse(state)
@@ -967,7 +967,7 @@ class Main extends Component {
             })
             if (this.props.chatToSeller.chatWithSupplier) {
                 if (localStorage.getItem('sellerid')) {
-                    console.log(this.props.chatToSeller.item.package_id, 'didmount')
+                    //console.log(this.props.chatToSeller.item.package_id, 'didmount')
                     this.sendNotiToSeller()
                     if (!this.state.sendToSeller) {
                         this.openMsg(this.props.chatToSeller.company, this.props.chatToSeller.sellerid ? this.props.chatToSeller.sellerid : '7340477')
@@ -1101,7 +1101,7 @@ class Main extends Component {
         const target1 = params.get('target')
         const source = params.get('source')
         const userType = target.userType.value
-        console.log(userType)
+        //console.log(userType)
         // const contact = target.contact.value;
         Axios.post(
             `${ApiUrl}/common/new_seller_demo.php`,

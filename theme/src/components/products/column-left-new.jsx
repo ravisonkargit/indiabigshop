@@ -539,7 +539,9 @@ class ColumnLeft extends Component {
                             >
                               <div className="modal-content min-modal-size modal-content-1">
                                 <div className="modal-header modal-header-1">
-                                  <h5 className="modal-title modal-title-1">{item.name}</h5>
+                                  <h5 className="modal-title modal-title-1">
+                                    {item.name}
+                                  </h5>
                                   <button
                                     type="button"
                                     className="close"
@@ -676,7 +678,12 @@ class ColumnLeft extends Component {
                             </tr>
                             <tr>
                               <td>{translate("Avalibility")}:</td>
-                              <td>InStock</td>
+                              <td>
+                                {item.available_stock !== "0" &&
+                                item.available_stock > 0
+                                  ? "InStock"
+                                  : "Out Of Stock"}
+                              </td>
                             </tr>
                             {parseFloat(item.weight) > parseFloat(0) ? (
                               <tr>

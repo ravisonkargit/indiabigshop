@@ -9,14 +9,14 @@ class BeldaraPolicies extends Component {
   constructor() {
     super();
     this.state = {
-      data: ""
+      data: "",
     };
   }
   async componentWillMount() {
     var hostname = window.location.hostname;
     langDomain = hostname.split("beldara.com")[0];
     langDomain = langDomain.replace(".", "");
-    this.props.languageMaster.forEach(element => {
+    this.props.languageMaster.forEach((element) => {
       if (element.main_language.toLowerCase() == langDomain.toLowerCase())
         domain_language_code = element.code;
     }, this);
@@ -28,16 +28,16 @@ class BeldaraPolicies extends Component {
             security_token: "",
             plateform_type: "",
             langCode: domain_language_code,
-            pageid: "32812"
+            pageid: "32812",
           },
           { headers: { "Content-Type": "multipart/form-data" } }
         )
-        .then(response => {
+        .then((response) => {
           this.setState({
-            data: response.data.result
+            data: response.data.result,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           const result = error.response;
           return Promise.reject(result);
         });
@@ -49,16 +49,16 @@ class BeldaraPolicies extends Component {
             security_token: "",
             plateform_type: "",
             langCode: "en",
-            pageid: "32812"
+            pageid: "32812",
           },
           { headers: { "Content-Type": "multipart/form-data" } }
         )
-        .then(response => {
+        .then((response) => {
           this.setState({
-            data: response.data.result
+            data: response.data.result,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           const result = error.response;
           return Promise.reject(result);
         });
@@ -68,14 +68,16 @@ class BeldaraPolicies extends Component {
     const { title, head, content, desc1, keyword } = this.state.data;
     return (
       <div>
-        {(this.props.location.pathname) !== '/app-policies.html' ?
-        <Breadcrumb
-          title={"Beldara Policies"}
-          metaTitle={title}
-          metaDesc={desc1}
-          metaKeyword={keyword}
-        />
-        :''}
+        {this.props.location.pathname !== "/app-policies.html" ? (
+          <Breadcrumb
+            title={"Beldara Policies"}
+            metaTitle={title}
+            metaDesc={desc1}
+            metaKeyword={keyword}
+          />
+        ) : (
+          ""
+        )}
         <section className="faq-section section-b-space">
           <div className="container">
             <div className="row">
@@ -88,6 +90,11 @@ class BeldaraPolicies extends Component {
                     className="input-layout1 card-body post-ad-page"
                     dangerouslySetInnerHTML={{ __html: content }}
                   />
+                  <div className="d-flex justify-content-end mr-4" style={{marginBottom: "10px"}}>
+                    <a type="button" href="https://bo.beldara.com/policies/Beldara%20Policy.pdf" class="btn btn-solid" target="_blank">
+                      Download
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -98,8 +105,8 @@ class BeldaraPolicies extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  languageMaster: state.languageMaster.languageMaster
+const mapStateToProps = (state) => ({
+  languageMaster: state.languageMaster.languageMaster,
 });
 
 export default connect(mapStateToProps)(BeldaraPolicies);

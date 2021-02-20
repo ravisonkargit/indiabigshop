@@ -11,7 +11,12 @@ import GetPriceSelected from "./get-price-selected";
 import LoginPopUp from "../../../loginPopUp";
 import SignUpPopUp from "../../../signUpPopUp";
 import { withRouter } from "react-router-dom";
-import { getCookie, captureEvent, setCookie } from "../../../../functions";
+import {
+  getCookie,
+  captureEvent,
+  setCookie,
+  NotifyMeFunction,
+} from "../../../../functions";
 import { imgUrl, apiUrl, betaApi } from "../../../../constants/variable";
 // import StarReview from "./rating";
 import StarReview from "../../../collection/common/rating";
@@ -55,7 +60,11 @@ function priceCond(item, ele, deliverable, pincode) {
     });
   }
 
-  if (dataCond == 1 && (item.offer_stock > 0 || item.offer_stock == null)) {
+  if (
+    dataCond == 1 &&
+    (item.offer_stock > 0 || item.offer_stock == null) &&
+    item.available_stock > 0
+  ) {
     return (
       <React.Fragment>
         <div>
@@ -70,7 +79,8 @@ function priceCond(item, ele, deliverable, pincode) {
               {" "}
               Buy Now{" "}
             </button>
-          ) : (
+          ) : getCookie("country_name") === "India" ||
+            getCookie("country_name") === "india" ? (
             <OverlayTrigger
               // key="top"
               placement="top"
@@ -96,6 +106,16 @@ function priceCond(item, ele, deliverable, pincode) {
                 Buy Now{" "}
               </button>
             </OverlayTrigger>
+          ) : (
+            <button
+              className="btn btn-solid my-2 ml-2 "
+              onClick={ele.validate}
+              id="expressCheckOut"
+              clickevent="Express_checkout"
+            >
+              {" "}
+              Buy Now{" "}
+            </button>
           )}
           {/* <button
             className="btn btn-solid my-2 ml-2 "
@@ -136,35 +156,67 @@ function priceCond(item, ele, deliverable, pincode) {
       </React.Fragment>
     );
   } else {
-    return (
-      <React.Fragment>
-        <Link
-          onClick={() => ele.event_ask_for_price("ask_for_price")}
-          id="ask_for_price"
-          className="btn btn-solid my-2"
-          clickevent="Ask_for_price"
-          to={{ pathname: "/post-requirement.html", state: item }}
+    if (dataCond == 0) {
+      return (
+        <React.Fragment>
+          <Link
+            onClick={() => ele.event_ask_for_price("ask_for_price")}
+            id="ask_for_price"
+            className="btn btn-solid my-2"
+            clickevent="Ask_for_price"
+            to={{ pathname: "/post-requirement.html", state: item }}
+          >
+            Contact Supplier
+          </Link>
+          <div>
+            {/* <button className="btn btn-solid my-2" onClick={ele.validate} id="buyBtn" clickevent="Buy_Now"> Add To Cart </button>  */}
+            {/* {item.sellerid != ls.get("log_id") ? (
+              <button
+                className="btn btn-solid my-2 ml-2 "
+                onClick={ele.callAuction}
+                id="e_auction"
+                clickevent="e_auction"
+              >
+                {" "}
+                E-Auction{" "}
+              </button>
+            ) : (
+              ""
+            )} */}
+          </div>
+        </React.Fragment>
+      );
+    } else {
+      return (
+        <div
+          className="d-flex justify-content-between"
+          style={{ marginLeft: "10px" }}
         >
-          Contact Supplier
-        </Link>
-        <div>
-          {/* <button className="btn btn-solid my-2" onClick={ele.validate} id="buyBtn" clickevent="Buy_Now"> Add To Cart </button>  */}
-          {/* {item.sellerid != ls.get("log_id") ? (
+          <div className="p-0 mx-2 mr-1 productBorder">
+            <h5 className="p-text-color px-1" style={{ marginTop: "5px" }}>
+              Out Of Stock
+            </h5>
+          </div>
+          {/* <div className="dangerBorder mr-1">
+            <h5 className="text-danger px-1" style={{ marginTop: "5px" }}>
+              Out Of Stock
+            </h5>
+          </div> */}
+
+          <div className="mr-1">
             <button
-              className="btn btn-solid my-2 ml-2 "
-              onClick={ele.callAuction}
-              id="e_auction"
-              clickevent="e_auction"
+              className="btn btn-solid mr-1"
+              onClick={ele.NotifyMe}
+              id="expressCheckOut"
+              clickevent="Express_checkout"
             >
               {" "}
-              E-Auction{" "}
+              Notify Me{" "}
             </button>
-          ) : (
-            ""
-          )} */}
+          </div>
         </div>
-      </React.Fragment>
-    );
+      );
+    }
   }
 }
 
@@ -199,7 +251,10 @@ class Details extends Component {
       pincodeTitle: "",
       min_qty: parseInt(props.item.qty),
       min_qty_error: false,
-      // price_array: []
+      // price_array: [],
+      msgNotifyME: false,
+      NotifyMessage: "",
+      ogtitle: true,
     };
     this.validator = new SimpleReactValidator();
     this.openPrcieCard = this.openPrcieCard.bind(this);
@@ -357,6 +412,72 @@ class Details extends Component {
     });
   };
 
+  NotifyMe = () => {
+    if (ls.get("sellerid")) {
+      NotifyMeFunction(
+        ls.get("sellerid"),
+        this.props.item.id,
+        getCookie("mhinpbnb")
+      ).then(async (res) => {
+        try {
+          if (res != null || res != "") {
+            if (res.statusId == 1 || res.statusId == "1") {
+              this.setState({
+                msgNotifyME: true,
+                NotifyMessage:
+                  "Oh, it's great you've shown interest in the most demanding product. Unfortunately, it is out of stock. Beldara will notify you once it is in stock.",
+              });
+              setTimeout(() => {
+                this.setState({ msgNotifyME: false, NotifyMessage: "" });
+              }, 6000);
+            } else {
+              this.setState({
+                msgNotifyME: true,
+                NotifyMessage: "Something went wrong please try again!",
+              });
+              setTimeout(() => {
+                this.setState({ msgNotifyME: false, NotifyMessage: "" });
+              }, 6000);
+            }
+          }
+        } catch (e) {
+          console.log(`😱 Axios request failed: ${e}`);
+        }
+      });
+    } else {
+      NotifyMeFunction(
+        ls.get("sellerid"),
+        this.props.item.id,
+        getCookie("mhinpbnb")
+      ).then(async (res) => {
+        try {
+          if (res != null || res != "") {
+            if (res.statusId == 1 || res.statusId == "1") {
+              this.setState({
+                msgNotifyME: true,
+                NotifyMessage:
+                  "Oh, it's great you've shown interest in the most demanding product. Unfortunately, it is out of stock. Please login so that Beldara can notify you once it is in stock.  ",
+              });
+              setTimeout(() => {
+                this.setState({ msgNotifyME: false, NotifyMessage: "" });
+              }, 6000);
+            } else {
+              this.setState({
+                msgNotifyME: true,
+                NotifyMessage: "Something went wrong please try again!",
+              });
+              setTimeout(() => {
+                this.setState({ msgNotifyME: false, NotifyMessage: "" });
+              }, 6000);
+            }
+          }
+        } catch (e) {
+          console.log(`😱 Axios request failed: ${e}`);
+        }
+      });
+    }
+  };
+
   componentDidMount = async (nextProps) => {
     this.getProdDetails(getCookie("currency"), getCookie("country_code"));
     let search = window.location.search;
@@ -379,7 +500,6 @@ class Details extends Component {
         askAuctionInit: true,
       });
     }
-    // console.log('componentDidMount', nextProps, this.props)
     this.loadedproduct();
     const advancedMatching = { em: "support@beldara.com" };
     const options = {
@@ -393,17 +513,18 @@ class Details extends Component {
     var toast = $("#toast_message").detach();
     $(toast).insertAfter(".breadcrumb-section");
 
-    const tagManagerArgs = {
-      gtmId: "GTM-5HBBK96", //gtmId: 'UA-57225000-1',
-      // dataLayerName: "GTM-5HBBK96",
-      events: {
-        send_to: "AW-724875220/AfpTCL3st7ABENTv0tkC", //send_to: 'AW-803807171/IHhPCKqLwYgBEMO_pP8C',
-        value: this.state.price,
-        currency: "USD",
-        aw_remarketing_only: true,
-      },
-    };
-    TagManager.initialize(tagManagerArgs);
+    // const tagManagerArgs = {
+    //   gtmId: "GTM-5HBBK96", //gtmId: 'UA-57225000-1',
+    //   // dataLayerName: "GTM-5HBBK96",
+    //   events: {
+    //     //send_to: "AW-724875220/AfpTCL3st7ABENTv0tkC",
+    //     send_to: 'AW-803807171/IHhPCKqLwYgBEMO_pP8C',
+    //     value: this.state.eachunit,
+    //     currency: "INR",
+    //     aw_remarketing_only: true,
+    //   },
+    // };
+    // TagManager.initialize(tagManagerArgs);
     var pincode = getCookie("pincode");
     if (pincode !== "" && pincode !== null) {
       this.checkZipCode(pincode);
@@ -488,6 +609,26 @@ class Details extends Component {
         await this.setState({
           inrValue: 70,
         });
+    }
+    if (this.state.ogtitle == true && this.state.eachunit != undefined) {
+      const tagManagerArgs = {
+        gtmId: "GTM-5HBBK96", //gtmId: 'UA-57225000-1',
+        // dataLayerName: "GTM-5HBBK96",
+        events: {
+          //send_to: "AW-724875220/AfpTCL3st7ABENTv0tkC",
+          send_to: "AW-803807171/IHhPCKqLwYgBEMO_pP8C",
+          id: this.props.item.id,
+          value: this.state.eachunit,
+          currency: this.state.currency,
+          aw_remarketing_only: true,
+          location_id: getCookie("country_name"),
+          google_business_vertical: "retail",
+        },
+      };
+      TagManager.initialize(tagManagerArgs);
+      this.setState({
+        ogtitle: false,
+      });
     }
   };
 
@@ -1041,404 +1182,409 @@ class Details extends Component {
     );
 
     return (
-      <div className="col-lg-8">
-        <div
-          id="toast_message"
-          role="alert"
-          aria-live="assertive"
-          aria-atomic="true"
-          className="toast toast_pull_right fade hide"
-        >
-          <div className="toast-body">
-            <i className="fas fa-check"></i> Product Added To Wishlist
-          </div>
-        </div>
-
-        <div className="product-right product-description-box">
-          {/* <h5> {item_name ? item_name.replace(/[^a-zA-Z ]/g, "") : ""} </h5> */}
-          <h5> {item_name ? item_name : ""} </h5>
-          <div className="d-flex align-items-center mt-2 border-bottom">
-            <div className="">
-              Sold by:{" "}
-              {this.props.item.surl !== undefined &&
-              this.props.item.surl != "" ? (
-                <a
-                  className="h6"
-                  href={`/store/${this.props.item.surl}.html`}
-                  target="_blank"
-                >
-                  {item.company}
-                  {item.country !== null && item.country !== undefined
-                    ? "/" + item.country
-                    : ""}
-                </a>
-              ) : (
-                <span className="h6">
-                  {item.company}
-                  {item.country !== null && item.country !== undefined
-                    ? "/" + item.country
-                    : ""}
-                </span>
-              )}
+      <>
+        <div className="col-lg-8">
+          <div
+            id="toast_message"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+            className="toast toast_pull_right fade hide"
+          >
+            <div className="toast-body">
+              <i className="fas fa-check"></i> Product Added To Wishlist
             </div>
-            <div className="mx-3">
-              {this.props.item.company && this.props.item.is_active == "1" ? (
-                <ReactCSSTransitionGroup
-                  transitionName="example"
-                  transitionEnterTimeout={500}
-                  transitionLeaveTimeout={600}
-                >
-                  <div
-                    className="py-1"
-                    style={{ color: "#ff9944", cursor: "pointer" }}
-                    onClick={this.chatBtn}
-                    id="chatBtn"
+          </div>
+          <div className="product-right product-description-box">
+            {/* <h5> {item_name ? item_name.replace(/[^a-zA-Z ]/g, "") : ""} </h5> */}
+            <h5> {item_name ? item_name : ""} </h5>
+            <div className="d-flex align-items-center mt-2 border-bottom">
+              <div className="">
+                Sold by:{" "}
+                {this.props.item.surl !== undefined &&
+                this.props.item.surl != "" ? (
+                  <a
+                    className="h6"
+                    href={`/store/${this.props.item.surl}.html`}
+                    target="_blank"
                   >
-                    <i className="fa fa-comments mr-1" /> Chat with supplier
-                  </div>
-                </ReactCSSTransitionGroup>
-              ) : (
-                ""
-              )}
-            </div>
-          </div>
-          <a onClick={this.ScrollTospec} className="mouse_pointer text-primary">
-            Show description/specification
-          </a>
-          {this.props.reviewCount && this.props.reviewCount > 0 ? (
-            <React.Fragment>
-              <div className="d-flex mt-2">
-                <span>Product Rating ({this.props.reviewCount})</span>
-                <StarReview
-                  dataFromRating={this.props.dataFromRating}
-                  page={`${process.env.PUBLIC_URL}/rating/${item.url}.html`}
-                  avgRating={this.props.avgRating}
-                  item={item}
-                  average={true}
-                  readonly={true}
-                />
+                    {item.company}
+                    {item.country !== null && item.country !== undefined
+                      ? "/" + item.country
+                      : ""}
+                  </a>
+                ) : (
+                  <span className="h6">
+                    {item.company}
+                    {item.country !== null && item.country !== undefined
+                      ? "/" + item.country
+                      : ""}
+                  </span>
+                )}
               </div>
-            </React.Fragment>
-          ) : (
-            ""
-          )}
-          <div className="row mt-2 align-items-center border-bottom">
-            <div className="col-lg-6">
-              {item.price.length > 0 ? (
-                <div className="timer border-product w-100 p-0 m-auto text-center">
-                  <div id="demo" className=" py-2 ">
-                    {item.offer_price !== null &&
-                    item.offer_mrp_price !== null &&
-                    item.offer_from_date !== null &&
-                    item.offer_to_date !== null &&
-                    this.offerExist(
-                      item.offer_from_date,
-                      item.offer_to_date
-                    ) ? (
-                      <div class="mx-auto">
-                        <div className="time-cal">
-                          <del className="d-flex justify-content-center">
-                            MRP:<div>&nbsp;</div>
-                            {this.state.mrp_price > 0
-                              ? `${this.state.currency} ${this.state.mrp_price} ${item.offer_unit}`
-                              : ""}
-                          </del>
-                          <div className="d-flex justify-content-center">
-                            Offer:<div>&nbsp;</div>
-                            {this.state.offer_price > 0
-                              ? `${this.state.currency} ${this.state.offer_price} ${item.offer_unit}`
-                              : "Ask for price"}
+              <div className="mx-3">
+                {this.props.item.company && this.props.item.is_active == "1" ? (
+                  <ReactCSSTransitionGroup
+                    transitionName="example"
+                    transitionEnterTimeout={500}
+                    transitionLeaveTimeout={600}
+                  >
+                    <div
+                      className="py-1"
+                      style={{ color: "#ff9944", cursor: "pointer" }}
+                      onClick={this.chatBtn}
+                      id="chatBtn"
+                    >
+                      <i className="fa fa-comments mr-1" /> Chat with supplier
+                    </div>
+                  </ReactCSSTransitionGroup>
+                ) : (
+                  ""
+                )}
+              </div>
+            </div>
+            <a
+              onClick={this.ScrollTospec}
+              className="mouse_pointer text-primary"
+            >
+              Show description/specification
+            </a>
+            {this.props.reviewCount && this.props.reviewCount > 0 ? (
+              <React.Fragment>
+                <div className="d-flex mt-2">
+                  <span>Product Rating ({this.props.reviewCount})</span>
+                  <StarReview
+                    dataFromRating={this.props.dataFromRating}
+                    page={`${process.env.PUBLIC_URL}/rating/${item.url}.html`}
+                    avgRating={this.props.avgRating}
+                    item={item}
+                    average={true}
+                    readonly={true}
+                  />
+                </div>
+              </React.Fragment>
+            ) : (
+              ""
+            )}
+            <div className="row mt-2 align-items-center border-bottom">
+              <div className="col-lg-6">
+                {item.price.length > 0 ? (
+                  <div className="timer border-product w-100 p-0 m-auto text-center">
+                    <div id="demo" className=" py-2 ">
+                      {item.offer_price !== null &&
+                      item.offer_mrp_price !== null &&
+                      item.offer_from_date !== null &&
+                      item.offer_to_date !== null &&
+                      this.offerExist(
+                        item.offer_from_date,
+                        item.offer_to_date
+                      ) ? (
+                        <div class="mx-auto">
+                          <div className="time-cal">
+                            <del className="d-flex justify-content-center">
+                              MRP:<div>&nbsp;</div>
+                              {this.state.mrp_price > 0
+                                ? `${this.state.currency} ${this.state.mrp_price} ${item.offer_unit}`
+                                : ""}
+                            </del>
+                            <div className="d-flex justify-content-center">
+                              Offer:<div>&nbsp;</div>
+                              {this.state.offer_price > 0
+                                ? `${this.state.currency} ${this.state.offer_price} ${item.offer_unit}`
+                                : "Ask for price"}
+                            </div>
+                          </div>
+                          <div className="time-cal">
+                            {item.offer_stock > 0 ? (
+                              `Instock: ${item.offer_stock} ${item.offer_unit}`
+                            ) : (
+                              <div className="d-flex justify-content-center text-danger">
+                                OUT OF STOCK
+                              </div>
+                            )}
                           </div>
                         </div>
-                        <div className="time-cal">
-                          {item.offer_stock > 0 ? (
-                            `Instock: ${item.offer_stock} ${item.offer_unit}`
-                          ) : (
-                            <div className="d-flex justify-content-center text-danger">
-                              OUT OF STOCK
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ) : this.state.price_array != undefined ? (
-                      this.state.price_array.map((vari, index) => (
-                        <React.Fragment key={index}>
-                          <span>
-                            <div class="timer-cal">{`${vari.rangestart}-${vari.rangeend} ${this.state.unit}`}</div>
-                            <div class="timer-cal">
-                              <div>
-                                <div
-                                  class={`font-weight-bold ${vari.eachunit}`}
-                                >
-                                  {vari.eachunit > 0
-                                    ? `${
-                                        vari.currency
-                                      }-${new Intl.NumberFormat().format(
-                                        vari.eachunit
-                                      )}`
-                                    : "Ask for price"}
-                                  {}
+                      ) : this.state.price_array != undefined ? (
+                        this.state.price_array.map((vari, index) => (
+                          <React.Fragment key={index}>
+                            <span>
+                              <div class="timer-cal">{`${vari.rangestart}-${vari.rangeend} ${this.state.unit}`}</div>
+                              <div class="timer-cal">
+                                <div>
+                                  <div
+                                    class={`font-weight-bold ${vari.eachunit}`}
+                                  >
+                                    {vari.eachunit > 0
+                                      ? `${
+                                          vari.currency
+                                        }-${new Intl.NumberFormat().format(
+                                          vari.eachunit
+                                        )}`
+                                      : "Ask for price"}
+                                    {}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </span>
-                          {/* </div> */}
-                          {/* </span> */}
-                        </React.Fragment>
-                      ))
-                    ) : (
-                      ""
-                    )}
-                  </div>
-                </div>
-              ) : (
-                ""
-              )}
-            </div>
-            <div className="col-lg-6" id="pincodemodule">
-              {!this.state.pincodeValidate ? (
-                <>
-                  <form className="d-flex align-items-center mb-2">
-                    <div className="justify-content-center">
-                      <img
-                        className="imglocation"
-                        src="https://img.beldara.com/images/location_marker.png"
-                        alt="location"
-                      />
-                    </div>
-                    <div className="has-float-label col-sm-11 col-xs-11 col-md-11">
-                      <NumberFormat
-                        id="pincode"
-                        name="pincode"
-                        placeholder=" "
-                        className="form-control input-number"
-                        value={this.state.pincode}
-                        onChange={this.ChangePincode.bind(this)}
-                        onKeyPress={this.allowPincode.bind(this)}
-                      />
-                      <label htmlFor="pincode" className="mx-2">
-                        {"Enter Pincode"}
-                      </label>
-                      {this.validator.message(
-                        "pincode",
-                        this.state.pincode,
-                        `required|numeric`
+                            </span>
+                            {/* </div> */}
+                            {/* </span> */}
+                          </React.Fragment>
+                        ))
+                      ) : (
+                        ""
                       )}
                     </div>
-                    {!isMobile ? (
-                      <div className="col-sm-1 col-md-1 col-sx-1 p-0 adjust-content">
-                        <span
-                          className="p-text-color mouse_pointer"
-                          onClick={this.checkZipCode.bind(this, null)}
-                        >
-                          CHECK
-                        </span>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
+              <div className="col-lg-6" id="pincodemodule">
+                {!this.state.pincodeValidate ? (
+                  <>
+                    <form className="d-flex align-items-center mb-2">
+                      <div className="justify-content-center">
+                        <img
+                          className="imglocation"
+                          src="https://img.beldara.com/images/location_marker.png"
+                          alt="location"
+                        />
                       </div>
-                    ) : (
-                      <div className="col-sm-1 col-md-1 col-sx-1 p-0 adjust-content-end">
+                      <div className="has-float-label col-sm-11 col-xs-11 col-md-11">
+                        <NumberFormat
+                          id="pincode"
+                          name="pincode"
+                          placeholder=" "
+                          className="form-control input-number"
+                          value={this.state.pincode}
+                          onChange={this.ChangePincode.bind(this)}
+                          onKeyPress={this.allowPincode.bind(this)}
+                        />
+                        <label htmlFor="pincode" className="mx-2">
+                          {"Enter Pincode"}
+                        </label>
+                        {this.validator.message(
+                          "pincode",
+                          this.state.pincode,
+                          `required|numeric`
+                        )}
+                      </div>
+                      {!isMobile ? (
+                        <div className="col-sm-1 col-md-1 col-sx-1 p-0 adjust-content">
+                          <span
+                            className="p-text-color mouse_pointer"
+                            onClick={this.checkZipCode.bind(this, null)}
+                          >
+                            CHECK
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="col-sm-1 col-md-1 col-sx-1 p-0 adjust-content-end">
+                          <span
+                            className="p-text-color change-pincode-button p-1 mouse_pointer"
+                            onClick={this.checkZipCode.bind(this, null)}
+                          >
+                            CHECK
+                          </span>
+                        </div>
+                      )}
+                    </form>
+                    <p id="error_pincode" className="text-danger d-none">
+                      Please enter valid pincode
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <div className="row">
+                      {/* <div className="col-md-12"> */}
+                      <div className="col-md-9 col-sm-9 col-sm-9 p-0">
+                        {/* <div className="justify-content-center"> */}
+                        <img
+                          className="imglocation"
+                          src="https://img.beldara.com/images/location_marker.png"
+                          alt="location"
+                        />
+                        <span>
+                          <strong>
+                            DELIVERY OPTIONS FOR{" "}
+                            <span className="p-text-color">
+                              {this.state.pincode}
+                            </span>
+                          </strong>
+                        </span>
+                        {/* </div> */}
+                      </div>
+                      <div className="col-md-1 col-sm-1 col-sm-1 m-0 p-0">
                         <span
                           className="p-text-color change-pincode-button p-1 mouse_pointer"
-                          onClick={this.checkZipCode.bind(this, null)}
+                          onClick={this.checkPincodeAgain}
                         >
-                          CHECK
+                          CHANGE
                         </span>
                       </div>
-                    )}
-                  </form>
-                  <p id="error_pincode" className="text-danger d-none">
-                    Please enter valid pincode
-                  </p>
-                </>
-              ) : (
-                <>
-                  <div className="row">
-                    {/* <div className="col-md-12"> */}
-                    <div className="col-md-9 col-sm-9 col-sm-9 p-0">
-                      {/* <div className="justify-content-center"> */}
-                      <img
-                        className="imglocation"
-                        src="https://img.beldara.com/images/location_marker.png"
-                        alt="location"
-                      />
-                      <span>
-                        <strong>
-                          DELIVERY OPTIONS FOR{" "}
-                          <span className="p-text-color">
-                            {this.state.pincode}
-                          </span>
-                        </strong>
-                      </span>
                       {/* </div> */}
                     </div>
-                    <div className="col-md-1 col-sm-1 col-sm-1 m-0 p-0">
-                      <span
-                        className="p-text-color change-pincode-button p-1 mouse_pointer"
-                        onClick={this.checkPincodeAgain}
-                      >
-                        CHANGE
-                      </span>
-                    </div>
-                    {/* </div> */}
-                  </div>
-                  {this.state.pincodeDeliverable ? (
-                    <div className="row">
-                      <div className="col-sm-12 col-xs-12 col-md-12 px-1 m-0 d-flex align-items-center">
-                        <p>
-                          Shipping To:{" "}
-                          <strong>{this.state.pincodeTitle}</strong>
-                        </p>
-                      </div>
-                      {this.state.pincodeMsg.map((value, index) => (
-                        <React.Fragment>
-                          <div className="col-sm-12 col-xs-12 col-md-12 px-1 m-0 d-flex align-items-center">
-                            <i className="success-mark">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 18.35"
-                              >
-                                <title>checkmark</title>
-                                <path
-                                  d="M21.13 0L8.48 12.65 2.87 7.04 0 9.91l7.53 7.53 1 .91.95-.91L24 2.87z"
-                                  fill="#4fcc71"
-                                ></path>
-                              </svg>
-                            </i>
-                            <p className="mx-1">{value}</p>
-                          </div>
-                        </React.Fragment>
-                      ))}
-                      {/* <div className="col-sm-12 col-xs-12 col-md-12 px-1 m-0 d-flex align-items-center">
+                    {this.state.pincodeDeliverable ? (
+                      <div className="row">
+                        <div className="col-sm-12 col-xs-12 col-md-12 px-1 m-0 d-flex align-items-center">
+                          <p>
+                            Shipping To:{" "}
+                            <strong>{this.state.pincodeTitle}</strong>
+                          </p>
+                        </div>
+                        {this.state.pincodeMsg.map((value, index) => (
+                          <React.Fragment>
+                            <div className="col-sm-12 col-xs-12 col-md-12 px-1 m-0 d-flex align-items-center">
+                              <i className="success-mark">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 24 18.35"
+                                >
+                                  <title>checkmark</title>
+                                  <path
+                                    d="M21.13 0L8.48 12.65 2.87 7.04 0 9.91l7.53 7.53 1 .91.95-.91L24 2.87z"
+                                    fill="#4fcc71"
+                                  ></path>
+                                </svg>
+                              </i>
+                              <p className="mx-1">{value}</p>
+                            </div>
+                          </React.Fragment>
+                        ))}
+                        {/* <div className="col-sm-12 col-xs-12 col-md-12 px-1 m-0 d-flex align-items-center">
                                   <i class="success-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 18.35"><title>checkmark</title><path d="M21.13 0L8.48 12.65 2.87 7.04 0 9.91l7.53 7.53 1 .91.95-.91L24 2.87z" fill="#4fcc71"></path></svg></i>
                                   <p className="mx-1">Information not found for entered pincode</p>
                                 </div> */}
-                    </div>
-                  ) : (
-                    <div className="row">
-                      <div className="col-sm-12 col-xs-12 col-md-12 p-0 m-0 d-flex align-items-center">
-                        <i class="cross-mark p-1">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                          >
-                            <title>cross</title>
-                            <path
-                              d="M3 0L0 3l9 9-9 9 3 3 9-9 9 9 3-3-9-9 9-9-3-3-9 9z"
-                              fill="#fc0006"
-                            ></path>
-                          </svg>
-                        </i>
-                        <p>{this.state.pincodeTitle}</p>
                       </div>
-                    </div>
-                  )}
-                </>
-              )}
+                    ) : (
+                      <div className="row">
+                        <div className="col-sm-12 col-xs-12 col-md-12 p-0 m-0 d-flex align-items-center">
+                          <i class="cross-mark p-1">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                            >
+                              <title>cross</title>
+                              <path
+                                d="M3 0L0 3l9 9-9 9 3 3 9-9 9 9 3-3-9-9 9-9-3-3-9 9z"
+                                fill="#fc0006"
+                              ></path>
+                            </svg>
+                          </i>
+                          <p>{this.state.pincodeTitle}</p>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-          <div id="hide_general" className="row mt-2 align-items-center mx-1">
-            <div className="col-lg-4">
-              {/* {(item.price.length > 0 && (item.beldara_prime == 1 || ((this.state.buyer_country.toLowerCase() != 'us' && this.state.buyer_country_id != '1' && this.state.buyer_country.toLowerCase() != 'in' && this.state.buyer_country_id != '91') || ( (this.state.buyer_country_id.toLowerCase() == '' || this.state.buyer_country_id.toLowerCase() === undefined || this.state.buyer_country_id.toLowerCase() === null) && getCookie('country_code').toLowerCase()!='in' && getCookie('country_code').toLowerCase()!='us' )) ) )? ( */}
-              {Array.isArray(item.price) && item.price.length > 0 ? (
-                <div className="single-product-tables detail-section py-2">
-                  <table>
-                    <tbody>
-                      <tr>
-                        <td>{translate("Quantity")}:</td>
-                        <td>
-                          <div className="qty-box">
-                            <div className="input-group">
-                              <span className="input-group-prepend">
-                                <button
-                                  type="button"
-                                  className="btn quantity-left-minus"
-                                  onClick={this.minusQty}
-                                  data-type="minus"
-                                  data-field=""
+            <div id="hide_general" className="row mt-2 align-items-center mx-1">
+              <div className="col-lg-4">
+                {/* {(item.price.length > 0 && (item.beldara_prime == 1 || ((this.state.buyer_country.toLowerCase() != 'us' && this.state.buyer_country_id != '1' && this.state.buyer_country.toLowerCase() != 'in' && this.state.buyer_country_id != '91') || ( (this.state.buyer_country_id.toLowerCase() == '' || this.state.buyer_country_id.toLowerCase() === undefined || this.state.buyer_country_id.toLowerCase() === null) && getCookie('country_code').toLowerCase()!='in' && getCookie('country_code').toLowerCase()!='us' )) ) )? ( */}
+                {Array.isArray(item.price) && item.price.length > 0 ? (
+                  <div className="single-product-tables detail-section py-2">
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>{translate("Quantity")}:</td>
+                          <td>
+                            <div className="qty-box">
+                              <div className="input-group">
+                                <span className="input-group-prepend">
+                                  <button
+                                    type="button"
+                                    className="btn quantity-left-minus"
+                                    onClick={this.minusQty}
+                                    data-type="minus"
+                                    data-field=""
+                                  >
+                                    <i className="fa fa-minus" />
+                                  </button>
+                                </span>
+                                <NumberFormat
+                                  format="####"
+                                  name="quantity"
+                                  value={this.state.quantity}
+                                  onChange={this.changeQty}
+                                  className="form-control input-number"
+                                />
+                                {/* <input type="text" name="quantity" value={this.state.quantity} onChange={this.changeQty}  /> */}
+                                <span
+                                  className="input-group-prepend"
+                                  style={{ marginRight: "-32px" }}
                                 >
-                                  <i className="fa fa-minus" />
-                                </button>
-                              </span>
-                              <NumberFormat
-                                format="####"
-                                name="quantity"
-                                value={this.state.quantity}
-                                onChange={this.changeQty}
-                                className="form-control input-number"
-                              />
-                              {/* <input type="text" name="quantity" value={this.state.quantity} onChange={this.changeQty}  /> */}
-                              <span
-                                className="input-group-prepend"
-                                style={{ marginRight: "-32px" }}
-                              >
-                                <button
-                                  type="button"
-                                  className="btn quantity-right-plus"
-                                  onClick={this.plusQty}
-                                  data-type="plus"
-                                  data-field=""
-                                >
-                                  <i className="fa fa-plus" />
-                                </button>
-                              </span>
+                                  <button
+                                    type="button"
+                                    className="btn quantity-right-plus"
+                                    onClick={this.plusQty}
+                                    data-type="plus"
+                                    data-field=""
+                                  >
+                                    <i className="fa fa-plus" />
+                                  </button>
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        </td>
-                      </tr>
-                      {/* <tr>   
+                          </td>
+                        </tr>
+                        {/* <tr>   
                     <td><a href="javascript:void(0)" className="text-solid"><small> <i className="fa fa-paper-plane mr-1"></i>Calculate Shipment Cost </small></a></td>
                   </tr> */}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                ""
-              )}
-              <div className="">
-                {this.state.product_mrp !== null &&
-                this.state.selling_price !== null ? (
-                  <>
-                    <div className="d-flex justify-content-between">
-                      <div className="font-weight-bold">
-                        {this.state.currency}{" "}
-                        {new Intl.NumberFormat().format(this.state.eachunit)} /{" "}
-                        {item.unit}
-                      </div>
-                      <div className="font-weight-bold d-flex justify-content-end">
-                        {item.free_shipping == "1" ? (
-                          <>
-                            {item.beldara_first_web !== "" ? (
-                              <Link to="/beldara-first.html" ><img
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  ""
+                )}
+                <div className="">
+                  {this.state.product_mrp !== null &&
+                  this.state.selling_price !== null ? (
+                    <>
+                      <div className="d-flex justify-content-between">
+                        <div className="font-weight-bold">
+                          {this.state.currency}{" "}
+                          {new Intl.NumberFormat().format(this.state.eachunit)}{" "}
+                          / {item.unit}
+                        </div>
+                        <div className="font-weight-bold d-flex justify-content-end">
+                          {item.beldara_first_web !== "" ? (
+                            <Link to="/beldara-first.html">
+                              <img
                                 src={item.beldara_first_web}
                                 alt="Beldara first on beldara.com"
                                 className="imgBeldaraFirst"
-                              ></img></Link>
-                            ) : (
-                              ""
-                            )}
-                            <span
-                              data-tip
-                              data-for="ToolTip"
-                              className="mouse_pointer shippingBeldaraFirst"
-                            >
-                              Free&nbsp;Shipping
-                            </span>
-                            <div>
-                              <ReactTooltip
-                                id="ToolTip"
-                                type="warning"
-                                effect="solid"
+                              ></img>
+                            </Link>
+                          ) : (
+                            ""
+                          )}
+                          {item.free_shipping == "1" ? (
+                            <>
+                              <span
+                                data-tip
+                                data-for="ToolTip"
+                                className="mouse_pointer shippingBeldaraFirst"
                               >
-                                <span>{item.free_shipping_text}</span>
-                              </ReactTooltip>
-                            </div>
-                          </>
-                        ) : (
-                          ""
-                        )}
+                                Free&nbsp;Shipping
+                              </span>
+                              <div>
+                                <ReactTooltip
+                                  id="ToolTip"
+                                  type="warning"
+                                  effect="solid"
+                                >
+                                  <span>{item.free_shipping_text}</span>
+                                </ReactTooltip>
+                              </div>
+                            </>
+                          ) : (
+                            ""
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <div className="row d-flex justify-content-between">
-                      {/* <div className="col">
+                      <div className="row d-flex justify-content-between">
+                        {/* <div className="col">
                         {item.beldara_first_web !== "" ? (
                           <img
                             src={item.beldara_first_web}
@@ -1449,7 +1595,7 @@ class Details extends Component {
                         )}
                       </div> */}
 
-                      {/* <div className="col font-weight-bold">
+                        {/* <div className="col font-weight-bold">
                         {item.free_shipping == "1" ? (
                           <>
                             <span data-tip data-for="ToolTip" className="mouse_pointer" style={{color: "#24adee"}}>
@@ -1469,21 +1615,21 @@ class Details extends Component {
                           ""
                         )}
                       </div> */}
-                    </div>
-                  </>
-                ) : (
-                  ""
-                )}
+                      </div>
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </div>
               </div>
-            </div>
-            {/* <div className="col-lg-4">
+              {/* <div className="col-lg-4">
               <div className="font-weight-bold">
                 {this.state.currency}{" "}
                 {new Intl.NumberFormat().format(this.state.eachunit)} /{" "}
                 {item.unit}
               </div>
             </div> */}
-            {/* {this.state.gst_val != null ? (
+              {/* {this.state.gst_val != null ? (
               <div className="col-lg-4">
                 <span className="h6 mouse_pointer" onClick={this.openPrcieCard}>
                   {this.state.gst_val}% GST + GST Charges
@@ -1492,55 +1638,55 @@ class Details extends Component {
             ) : (
               ""
             )} */}
-          </div>
+            </div>
 
-          <div className="border-product d-none">
-            <h3>
-              <div className="product-buttons">
-                {/* <a className="btn btn-solid" onClick={() => addToCartClicked(item, this.state.quantity)}>Contact Supplier</a> */}
-                <Link
-                  to={`${process.env.PUBLIC_URL}/checkout`}
-                  className="btn btn-solid"
-                  onClick={() => BuynowClicked(item, this.state.quantity)}
-                >
-                  Start Order
-                </Link>
-              </div>
-            </h3>
-          </div>
-
-          <div className="d-flex align-items-end">
-            <div className="px-1">
-              {this.state.qtyerror ? (
-                <div className="text-danger">
-                  {item.offer_stock == 0
-                    ? `OUT OF STOCK`
-                    : `only ${item.offer_stock} stock left!`}
+            <div className="border-product d-none">
+              <h3>
+                <div className="product-buttons">
+                  {/* <a className="btn btn-solid" onClick={() => addToCartClicked(item, this.state.quantity)}>Contact Supplier</a> */}
+                  <Link
+                    to={`${process.env.PUBLIC_URL}/checkout`}
+                    className="btn btn-solid"
+                    onClick={() => BuynowClicked(item, this.state.quantity)}
+                  >
+                    Start Order
+                  </Link>
                 </div>
-              ) : (
-                // :(this.state.min_qty_error)?(
-                //   <div className="text-danger">
-                //        {`MOQ ${this.state.min_qty} ${this.state.unit}`}
-                //   </div>
-                // )
-                ""
-              )}
-              <div
-                className={`alert alert-danger ${
-                  this.state.moqErr ? "d-block" : "d-none"
-                }`}
-              >
-                <i className="fa fa-info-circle mr-1" /> Order must be greater
-                than MOQ {item.qty} {item.unit}
-              </div>
+              </h3>
+            </div>
 
-              {/* {( this.state.quantity && (item.beldara_prime == 1 || ((this.state.buyer_country.toLowerCase() != 'us' && this.state.buyer_country_id != '1' && this.state.buyer_country.toLowerCase() != 'in' && this.state.buyer_country_id != '91') || ( (this.state.buyer_country_id.toLowerCase() == '' || this.state.buyer_country_id.toLowerCase() === undefined || this.state.buyer_country_id.toLowerCase() === null) && getCookie('country_code').toLowerCase()!='in' && getCookie('country_code').toLowerCase()!='us' )) ) ) ? (
+            <div className="d-flex align-items-end">
+              <div className="px-1">
+                {this.state.qtyerror ? (
+                  <div className="text-danger">
+                    {item.offer_stock == 0
+                      ? `OUT OF STOCK`
+                      : `only ${item.offer_stock} stock left!`}
+                  </div>
+                ) : (
+                  // :(this.state.min_qty_error)?(
+                  //   <div className="text-danger">
+                  //        {`MOQ ${this.state.min_qty} ${this.state.unit}`}
+                  //   </div>
+                  // )
+                  ""
+                )}
+                <div
+                  className={`alert alert-danger ${
+                    this.state.moqErr ? "d-block" : "d-none"
+                  }`}
+                >
+                  <i className="fa fa-info-circle mr-1" /> Order must be greater
+                  than MOQ {item.qty} {item.unit}
+                </div>
+
+                {/* {( this.state.quantity && (item.beldara_prime == 1 || ((this.state.buyer_country.toLowerCase() != 'us' && this.state.buyer_country_id != '1' && this.state.buyer_country.toLowerCase() != 'in' && this.state.buyer_country_id != '91') || ( (this.state.buyer_country_id.toLowerCase() == '' || this.state.buyer_country_id.toLowerCase() === undefined || this.state.buyer_country_id.toLowerCase() === null) && getCookie('country_code').toLowerCase()!='in' && getCookie('country_code').toLowerCase()!='us' )) ) ) ? (
                 <GetPriceSelected product={item} qty={this.state.quantity} />
               ) : (
                 ""
                 )} */}
 
-              {/* {this.state.quantity ? (
+                {/* {this.state.quantity ? (
                 // <GetPriceSelected productCost={this.productCost}
                 // finalCost={this.finalCost} product={item} qty={this.state.quantity} />
                 <div className="border-product text-center border-0 ">
@@ -1573,135 +1719,189 @@ class Details extends Component {
               ) : (
                 ""
               )} */}
-              {/* <OfferTimer
+                {/* <OfferTimer
                 offer_from_date={item.offer_from_date}
                 offer_to_date={item.offer_to_date}
               /> */}
+              </div>
             </div>
-          </div>
-          <div
-            className="row d-flex justify-content-start align-items-center mt-1"
-            style={{ marginLeft: "10px", marginRight: "10px" }}
-          >
-            {/* <div>
+            <div
+              className="row d-flex justify-content-start align-items-center mt-1"
+              style={{ marginLeft: "10px", marginRight: "10px" }}
+            >
+              {/* <div>
               Shipping Charges:{` `}
               {this.state.currency} {this.state.shipping_cost}
             </div> */}
-            {this.state.gst_val != null ? (
-              <div
-                id="prices_cards"
-                className="bg-grey float-left col-sm-5 text-center productBorder"
-              >
-                <div className="row justify-content-between mx-2">
-                  <div className="float-left">Price of items</div>
-                  <div className="float-right">
-                    {this.state.currency}{" "}
-                    {/* {parseFloat(
+              {this.state.gst_val != null ? (
+                <div
+                  id="prices_cards"
+                  className="bg-grey float-left col-sm-5 text-center productBorder"
+                >
+                  <div className="row justify-content-between mx-2">
+                    <div className="float-left">Price of items</div>
+                    <div className="float-right">
+                      {this.state.currency}{" "}
+                      {/* {parseFloat(
                       parseFloat(this.state.price) -
                         parseFloat(this.state.gst_cal)
                     ).toFixed(2)} */}
-                    {new Intl.NumberFormat().format(
-                      parseFloat(
-                        parseFloat(this.state.price) -
-                          parseFloat(this.state.gst_cal)
-                      ).toFixed(2)
-                    )}
+                      {new Intl.NumberFormat().format(
+                        parseFloat(
+                          parseFloat(this.state.price) -
+                            parseFloat(this.state.gst_cal)
+                        ).toFixed(2)
+                      )}
+                    </div>
                   </div>
-                </div>
-                <div className="row justify-content-between mx-1">
-                  <div className="float-left">Tax @ {this.state.gst_val}%</div>
-                  <div className="float-right">
-                    {this.state.currency}{" "}
-                    {new Intl.NumberFormat().format(
-                      parseFloat(this.state.gst_cal).toFixed(2)
-                    )}
+                  <div className="row justify-content-between mx-1">
+                    <div className="float-left">
+                      Tax @ {this.state.gst_val}%
+                    </div>
+                    <div className="float-right">
+                      {this.state.currency}{" "}
+                      {new Intl.NumberFormat().format(
+                        parseFloat(this.state.gst_cal).toFixed(2)
+                      )}
+                    </div>
                   </div>
-                </div>
-                <HRLine color="#0e0e0e" />
-                <div className="row justify-content-between mx-1">
-                  <div className="float-left">Final Price</div>
-                  <div className="float-right">
-                    {this.state.currency}{" "}
-                    {new Intl.NumberFormat().format(
-                      parseFloat(this.state.price).toFixed(2)
-                    )}
-                    {/* {parseFloat(this.state.price).toFixed(2)} */}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              ""
-            )}
-            <div className="float-right col-sm-2 mt-2"></div>
-
-            {this.state.product_mrp !== null &&
-            this.state.selling_price !== null ? (
-              <div
-                id="prices_cards"
-                className="bg-grey float-left col-sm-5 text-center productBorder"
-              >
-                <div className="row justify-content-between mx-2">
-                  <div className="row">
-                    <div className="col">
-                      MRP {this.state.currency}{" "}
-                      {new Intl.NumberFormat().format(this.state.product_mrp)}
+                  <HRLine color="#0e0e0e" />
+                  <div className="row justify-content-between mx-1">
+                    <div className="float-left">Final Price</div>
+                    <div className="float-right">
+                      {this.state.currency}{" "}
+                      {new Intl.NumberFormat().format(
+                        parseFloat(this.state.price).toFixed(2)
+                      )}
+                      {/* {parseFloat(this.state.price).toFixed(2)} */}
                     </div>
                   </div>
                 </div>
-                <HRLine color="#0e0e0e" />
-                <div className="row justify-content-between mx-1">
-                  <div className="row">
-                    <div className="col">
-                      Retail Margin:{" "}
-                      {/* {parseFloat(
+              ) : (
+                ""
+              )}
+              <div className="float-right col-sm-2 mt-2"></div>
+
+              {this.state.product_mrp !== null &&
+              this.state.selling_price !== null ? (
+                <div
+                  id="prices_cards"
+                  className="bg-grey float-left col-sm-5 text-center productBorder"
+                >
+                  <div className="row justify-content-between mx-2">
+                    <div className="row">
+                      <div className="col">
+                        MRP {this.state.currency}{" "}
+                        {new Intl.NumberFormat().format(this.state.product_mrp)}
+                      </div>
+                    </div>
+                  </div>
+                  <HRLine color="#0e0e0e" />
+                  <div className="row justify-content-between mx-1">
+                    <div className="row">
+                      <div className="col">
+                        Retail Margin:{" "}
+                        {/* {parseFloat(
                     (parseFloat(this.state.product_mrp) -
                       parseFloat(this.state.selling_price)) /
                       (parseFloat(this.state.product_mrp) * 0.01).toFixed(2)
                   ).toFixed(2)} */}
-                      {parseFloat(
-                        ((parseFloat(this.state.product_mrp) -
-                          parseFloat(this.state.selling_price)) /
-                          parseFloat(this.state.product_mrp)) *
-                          100
-                      ).toFixed(2)}
-                      %
+                        {parseFloat(
+                          ((parseFloat(this.state.product_mrp) -
+                            parseFloat(this.state.selling_price)) /
+                            parseFloat(this.state.product_mrp)) *
+                            100
+                        ).toFixed(2)}
+                        %
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              ""
-            )}
-          </div>
-          <ProductVariation
-            getProdDetl={this.getProdDetails}
-            prodId={item.id}
-            variation={this.state.variation}
-            disptach_product={this.props.dispatch_variant_products}
-            deliverable={this.state.pincodeDeliverable}
-            pincode={this.state.pincode}
-            product_mrp={this.state.product_mrp}
-            selling_price={this.state.selling_price}
-            prodData={item}
-          />
-          <div
-            className="d-flex justify-content-left align-items-center"
-            id="general_products_event"
-            style={{ marginLeft: "65px" }}
-          >
-            {this.props.item.is_active == "1" ? (
-              priceCond(
-                item,
-                this,
-                this.state.pincodeDeliverable,
-                this.state.pincode
-              )
-            ) : (
-              <div className="p-0 mx-2 dangerBorder">
-                <h5 className="text-danger px-1">Product Unavailable</h5>
-              </div>
-            )}
-            {/* {this.state.product_mrp !== null &&
+              ) : (
+                ""
+              )}
+            </div>
+            <ProductVariation
+              getProdDetl={this.getProdDetails}
+              prodId={item.id}
+              variation={this.state.variation}
+              disptach_product={this.props.dispatch_variant_products}
+              deliverable={this.state.pincodeDeliverable}
+              pincode={this.state.pincode}
+              product_mrp={this.state.product_mrp}
+              selling_price={this.state.selling_price}
+              prodData={item}
+            />
+            <div
+              className="col-lg-5 d-flex justify-content-center"
+              id="general_products_event"
+            >
+              {this.props.item.is_active == "1" ? (
+                <div>
+                  {priceCond(
+                    item,
+                    this,
+                    this.state.pincodeDeliverable,
+                    this.state.pincode
+                  )}
+                </div>
+              ) : (
+                <>
+                  <div className="p-0 mx-2 productBorder">
+                    <h5
+                      className="p-text-color px-1"
+                      style={{ marginTop: "4px" }}
+                    >
+                      Product Unavailable
+                    </h5>
+                  </div>
+                </>
+              )}
+
+              {/* {(item.available_stock !== "0" && item.available_stock > 0) ||
+              item.offer_stock > 0 ||
+              item.offer_stock == null ? (
+                this.props.item.is_active == "1" ? (
+                  <div style={{ marginLeft: "100px" }}>
+                    {priceCond(
+                      item,
+                      this,
+                      this.state.pincodeDeliverable,
+                      this.state.pincode
+                    )}
+                  </div>
+                ) : (
+                  <div className="dangerBorder" style={{ marginLeft: "80px" }}>
+                    <h5 className="text-danger px-1">Product Unavailable</h5>
+                  </div>
+                )
+              ) : (
+                <div
+                  className="d-flex justify-content-between"
+                  style={{ marginLeft: "46px" }}
+                >
+                  <div className="dangerBorder mr-1">
+                    <h5
+                      className="text-danger mr-1 px-1"
+                      style={{ borderRadius: "4px", marginTop: "6px" }}
+                    >
+                      Out Of Stock
+                    </h5>
+                  </div>
+                  <div className="mr-1">
+                    <button
+                      className="btn btn-solid mr-1"
+                      onClick={this.NotifyMe}
+                      id="expressCheckOut"
+                      clickevent="Express_checkout"
+                    >
+                      {" "}
+                      Notify Me{" "}
+                    </button>
+                  </div>
+                </div>
+              )} */}
+              {/* {this.state.product_mrp !== null &&
             this.state.selling_price !== null ? (
               <div className="col-sm-9 col-md-9">
                 <div className="row">
@@ -1729,83 +1929,101 @@ class Details extends Component {
             ) : (
               ""
             )} */}
-            {/* <button className="btn btn-solid ml-2 my-2" onClick={this.create_wishlist} id="wishlist_product" clickevent="add_to_wishlist"> Wishlist </button> */}
-          </div>
-          <div className="col-sm-12 col-lg-12">
-            <DetailsTopTabs item={item} />
-          </div>
-          <LiveReq
-            price={item}
-            askAuction={this.state.askAuctionInit}
-            shouldReload={this.state.shouldReload}
-            showAuctionPop={this.state.showAuctionPop}
-            undoCallAuction={this.undoCallAuction}
-          />
-          <div className="border-product d-none">
-            <h6 className="product-title">{translate("Share It")}</h6>
-            <div className="product-icon">
-              <ul className="product-social">
-                <li>
-                  <a
-                    href="https://www.facebook.com/"
-                    target="_blank"
-                    rel="nofollow"
-                  >
-                    <i className="fa fa-facebook" />
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://plus.google.com/discover"
-                    target="_blank"
-                    rel="nofollow"
-                  >
-                    <i className="fa fa-google-plus" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://twitter.com/" target="_blank" rel="nofollow">
-                    <i className="fa fa-twitter" />
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.instagram.com/"
-                    target="_blank"
-                    rel="nofollow"
-                  >
-                    <i className="fa fa-instagram" />
-                  </a>
-                </li>
-              </ul>
-              {/* <button className="wishlist-btn" onClick={() => addToWishlistClicked(item)}>
+              {/* <button className="btn btn-solid ml-2 my-2" onClick={this.create_wishlist} id="wishlist_product" clickevent="add_to_wishlist"> Wishlist </button> */}
+            </div>
+            <div className="col-sm-12 col-lg-12">
+              <DetailsTopTabs item={item} />
+            </div>
+            <LiveReq
+              price={item}
+              askAuction={this.state.askAuctionInit}
+              shouldReload={this.state.shouldReload}
+              showAuctionPop={this.state.showAuctionPop}
+              undoCallAuction={this.undoCallAuction}
+            />
+            <div className="border-product d-none">
+              <h6 className="product-title">{translate("Share It")}</h6>
+              <div className="product-icon">
+                <ul className="product-social">
+                  <li>
+                    <a
+                      href="https://www.facebook.com/"
+                      target="_blank"
+                      rel="nofollow"
+                    >
+                      <i className="fa fa-facebook" />
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://plus.google.com/discover"
+                      target="_blank"
+                      rel="nofollow"
+                    >
+                      <i className="fa fa-google-plus" />
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://twitter.com/"
+                      target="_blank"
+                      rel="nofollow"
+                    >
+                      <i className="fa fa-twitter" />
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://www.instagram.com/"
+                      target="_blank"
+                      rel="nofollow"
+                    >
+                      <i className="fa fa-instagram" />
+                    </a>
+                  </li>
+                </ul>
+                {/* <button className="wishlist-btn" onClick={() => addToWishlistClicked(item)}>
                                     <i className="fa fa-heart"></i><span className="title-font">Add To WishList</span>
                                 </button> */}
+              </div>
             </div>
           </div>
-        </div>
-        <LoginPopUp
-          footerData={this.footerData}
-          login={this.state}
-          openSignUpModal={this.openSignUpModal}
-          closeModal={this.closeModal}
-        />
-        <SignUpPopUp
-          footerData={this.footerData}
-          signup={this.state}
-          openLoginModal={this.openLoginModal}
-          closeModal={this.closeModal}
-        />
-        {/* {Chat} */}
-        <Suspense loading={""}>
-          <ChatBox
-            product={item}
-            chatToSeller={
-              this.props.chatToSeller ? this.props.chatToSeller : false
-            }
+          <LoginPopUp
+            footerData={this.footerData}
+            login={this.state}
+            openSignUpModal={this.openSignUpModal}
+            closeModal={this.closeModal}
           />
-        </Suspense>
-      </div>
+          <SignUpPopUp
+            footerData={this.footerData}
+            signup={this.state}
+            openLoginModal={this.openLoginModal}
+            closeModal={this.closeModal}
+          />
+          {/* {Chat} */}
+          <Suspense loading={""}>
+            <ChatBox
+              product={item}
+              chatToSeller={
+                this.props.chatToSeller ? this.props.chatToSeller : false
+              }
+            />
+          </Suspense>
+        </div>
+        <div className="col-lg-4">
+          {this.state.msgNotifyME ? (
+            <div
+              className="alert alert-info toast_pull_right-1"
+              role="alert"
+              id="msgNotifyME"
+            >
+              {this.state.NotifyMessage}
+            </div>
+          ) : (
+            ""
+          )}
+        </div>
+      </>
     );
   }
 }

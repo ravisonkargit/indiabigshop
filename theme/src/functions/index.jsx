@@ -1072,6 +1072,25 @@ export async function UpdateCategoryDashboard(sellerid, categoryid) {
     }
   }
 
+  export async function NotifyMeFunction(buyerid, productid,visitorid) {
+    try {
+      return await axios
+        .post(
+          `${ApiUrl}/outof_stock_product_notify_me.php`,
+          { buyerid: buyerid, productid: productid, visitorid: visitorid },
+          { headers: { "Content-Type": "multipart/form-data" } }
+        )
+        .then((response) => {
+          return response.data;
+        })
+        .catch((error) => {
+          const result = error;
+        });
+    } catch (e) {
+      console.log(`😱 Axios request failed: ${e}`);
+    }
+  }
+
   export async function numberWithCommas(price){
     return price.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }

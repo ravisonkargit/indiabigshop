@@ -336,7 +336,7 @@ class ProductVariation extends Component {
               {this.props.prodData.is_active != "1" ? (
                 <>
                   <div className="p-0 mx-2 productBorder">
-                    <h5 className="p-text-color px-1">Product Unavailable</h5>
+                    <h5 className="p-text-color px-1" style={{marginTop: "4px"}}>Product Unavailable</h5>
                   </div>
                 </>
               ) : (

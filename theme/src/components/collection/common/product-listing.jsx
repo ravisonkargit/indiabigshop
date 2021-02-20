@@ -201,7 +201,7 @@ class ProductListing extends Component {
 const mapStateToProps = (state) => ({
     // products: getSearchProducts(state.data, state.filters),
     // totalCount: state.data.totalCount,
-    perPage:'50',
+    perPage:'51',
     // products: getVisibleproducts(state.data, state.filters),
     symbol: state.data.symbol,
     hole_data: state

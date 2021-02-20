@@ -44,11 +44,11 @@ class index extends Component {
                                                 <div className="modal-body justify-content-center text-center">
                                                 <h3>Get update about latest offers</h3>
                                                             <h6>Allow push notification to remain updated with lattest offers</h6>
-                                                            <div className="justify-content-around d-flex">
-                                                                <div className="foat-left">
-                                                                    <button onClick={this.props.closemodal} className="btn btn-secondary">Not Now</button>
+                                                            <div className="d-flex justify-content-between">
+                                                                <div className="d-flex justify-content-start">
+                                                                    <button onClick={this.props.closemodal} className="btn btn-secondary" style={{padding: "10px 10px 10px 10px",borderRadius: "4px"}}>Not Now</button>
                                                                 </div>
-                                                                <div className="foat-right">
+                                                                <div className="d-flex justify-content-end">
                                                                     <button onClick={this.allowPopuptoOpen} className="btn btn-solid">I'm intersted</button>
                                                                 </div>
                                                             </div>
