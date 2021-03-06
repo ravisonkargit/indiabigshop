@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import SimpleReactValidator from "simple-react-validator";
 import axios from "axios";
 import ls from "local-storage";
-import RazorpayForm from "../razorpayForm/razorpay-new";
+import RazorpayForm from "../razorpayForm/razorpayPayTokenAndAll";
 import $ from "jquery";
 import "./start-order.css";
 import { ApiUrl, ImgUrl, SellerUrl } from "../../constants/ActionTypes";
@@ -21,6 +21,7 @@ import index from "../adduser";
 import { apiUrl, betaApi, imgUrl } from "../../constants/variable";
 import Modal from "react-responsive-modal";
 import Table from "react-bootstrap/Table";
+import { isMobile } from "react-device-detect";
 
 // import {
 //   getCartTotal,
@@ -73,7 +74,7 @@ class StartOrderTest extends Component {
       shippingFrom: "1",
       link: `${ApiUrl}/common/product_purchased.php`,
       // link: `${ApiUrl}/common/product_purchased_kau.php`,
-      checked: "paytm",
+      checked: "",
       key: 0,
       totalCartValue: 0,
       totalProductCost: 0,
@@ -117,6 +118,8 @@ class StartOrderTest extends Component {
       finalAmt: "",
       formid1: "token_payment",
       formid2: "all_payment",
+      paymentType: "",
+      pincodelength: "6",
     };
     this.validator = new SimpleReactValidator();
     this.selectAddress = this.selectAddress.bind(this);
@@ -137,6 +140,7 @@ class StartOrderTest extends Component {
     this.checkCoupon = this.checkCoupon.bind(this);
     this.changeCouponValue = this.changeCouponValue.bind(this);
     this.removeCoupon = this.removeCoupon.bind(this);
+    this.maxLengthCheck = this.maxLengthCheck.bind(this);
   }
 
   setStateFromInput = async (event) => {
@@ -336,6 +340,7 @@ class StartOrderTest extends Component {
 
   orderSubmit = async (e) => {
     $(".unique_class").attr("disabled", "true");
+    $("#confirm_order_sppinner").removeClass("d-none");
     this.setState({
       addNotValid: 0,
     });
@@ -455,6 +460,9 @@ class StartOrderTest extends Component {
                                 order_code: res.data.result.order_code,
                                 order_id: res.data.result.order_id,
                                 bank_details: res.data.result.bank_info,
+                                paymentType: res.data.result.paymentType,
+                                checked:
+                                  res.data.result.paymentType[0].paymentType,
                                 min_token_amount:
                                   res.data.result.min_token_amount,
                                 token_percent:
@@ -488,15 +496,18 @@ class StartOrderTest extends Component {
                                   token_amt: this.state.totalCartValue,
                                 });
                               }
+                              $("#confirm_order_sppinner").addClass("d-none");
                               // this.setState({order_code:res.data.result.order_code,order_id:res.data.result.order_id});
                             }
                           })
                           .catch((error) => {
                             $(".unique_class").removeAttr("disabled");
                             console.error(error);
+                            $("#confirm_order_sppinner").addClass("d-none");
                           });
                       } else {
                         // console.log('pincode invalid');
+                        $("#confirm_order_sppinner").addClass("d-none");
                         $(".unique_class").removeAttr("disabled");
                         $("#price_validating_start").html(
                           '<i class="fa fa-exclamation-circle mx-1" aria-hidden="true"></i>' +
@@ -506,9 +517,11 @@ class StartOrderTest extends Component {
                     })
                     .catch((error) => {
                       console.error(error);
+                      $("#confirm_order_sppinner").addClass("d-none");
                     });
                 } else {
                   $(".unique_class").attr("disabled", "false");
+                  $("#confirm_order_sppinner").addClass("d-none");
                   $("#price_validating_start").addClass("d-none");
                   $("#price_validating_end").removeClass("d-none");
                   var inter = setInterval(() => {
@@ -521,21 +534,25 @@ class StartOrderTest extends Component {
               })
               .catch((error) => {
                 //  console.log(error, 192);
+                $("#confirm_order_sppinner").addClass("d-none");
                 const result = error.response;
                 return Promise.reject(result);
               });
           })
           .catch((error) => {
             const result = error.response;
+            $("#confirm_order_sppinner").addClass("d-none");
             // console.log(result,149,error);
             return Promise.reject(result);
           });
       } else {
         $(".unique_class").removeAttr("disabled");
+        $("#confirm_order_sppinner").addClass("d-none");
       }
     } else {
       // $('.unique_class').attr('disabled','false');
       $(".unique_class").removeAttr("disabled");
+      $("#confirm_order_sppinner").addClass("d-none");
       // console.log('invalid');
       this.setState({
         addNotValid: 1,
@@ -601,6 +618,7 @@ class StartOrderTest extends Component {
     // console.log('componentDidMount Called',this.props);
     // window.removeEventListener('scroll', this.handleScroll);
     // console.log(this.props, "render");
+    this.maxLengthCheck();
     this.updateCart();
     this.toggleDiv();
     // if(this.props.location.state.cashback_amount_inr > 0){
@@ -633,6 +651,31 @@ class StartOrderTest extends Component {
     if (gst !== "" && gst !== null) {
       this.checkGstCharacter(gst);
     }
+
+    // axios
+    //   .post(
+    //     `${ApiUrl}/common/generate_order_id_razor_pay.php`,
+    //     {
+    //       amount: 1*100,
+    //       currency: getCookie("currency"),
+    //       orderid: this.state.order_id,
+    //     },
+    //     { headers: { "Content-Type": "multipart/form-data" } }
+    //   )
+    //   .then((response) => {
+    //     if(response.data.statusId == '1'){
+    //       this.setState({
+    //         razorpayorderid : response.data.result.id
+    //       })
+    //     }else{
+    //       console.log("-------------2----------------", response.data.statusId);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.log("-------------12----------------", error);
+    //     const result = error.response;
+    //     return Promise.reject(result);
+    //   });
   };
 
   componentWillReceiveProps = async (nextProps) => {
@@ -871,6 +914,8 @@ class StartOrderTest extends Component {
             txn_type: this.props.location.state.txn_type,
             cartItems: response.data.result.cart,
             delivery_address: response.data.result.address,
+            cartmsg: response.data.result.cartmsg,
+            checkoutmsg: response.data.result.checkoutmsg,
           });
           this.setDefaultAddress(response.data.result.address);
           // console.log(response.data.result,115);
@@ -1086,7 +1131,7 @@ class StartOrderTest extends Component {
   };
 
   closeModal = () => {
-    this.setState({ modalOpen: false });
+    this.setState({ modalOpen: false, checked: "" });
     //window.location.href = `${SellerUrl}/my_purchase.html?order=${this.state.order_code}`;
 
     // window.open(
@@ -1103,7 +1148,7 @@ class StartOrderTest extends Component {
       this.setState({
         razorpay_token: false,
       });
-      $(".razorpay-payment-button").click();
+      //$(".razorpay-payment-button").click();
     } else if (this.state.checked === "paytm") {
       $(".paytmBtn").click();
     } else {
@@ -1112,7 +1157,7 @@ class StartOrderTest extends Component {
   };
 
   submitPaymentProcessRazorPay = () => {
-    $(".razorpay-payment-button").click();
+    //$(".razorpay-payment-button").click();
     // if (this.state.checked === "razorpay") {
     //   $(".razorpay-payment-button").click();
     // } else if (this.state.checked === "paytm") {
@@ -1127,7 +1172,7 @@ class StartOrderTest extends Component {
       this.setState({
         razorpay_token: true,
       });
-      $(".razorpay-payment-button").click();
+      //$(".razorpay-payment-button").click();
     } else if (this.state.checked === "paytm") {
       $(".paytmBtnToken").click();
     } else {
@@ -1328,11 +1373,70 @@ class StartOrderTest extends Component {
       is_freeze: 0,
       totalCartValue: this.state.totalCartStaticValue,
       validCoupon: false,
+      checked: "paytm",
     });
     $("#validateCoupon").removeAttr("readonly");
     $("#err_coupon").addClass("d-none");
     $("#enter_coupon").addClass("d-none");
     // console.log(e);
+  };
+
+  maxLengthCheck = (e) => {
+    if (e == undefined) {
+      this.setState({
+        pincode: getCookie("pincode"),
+        pincodelength: 6,
+      });
+    } else {
+      this.setState({
+        pincodelength: e.target.value.length + 1,
+        pincode: e.target.value,
+      });
+    }
+    console.log(
+      "-------------------this.state.pincodelength---------------------",
+      this.state.pincodelength
+    );
+    if (this.state.pincodelength == "6") {
+      this.setState({
+        state: "",
+        city: "",
+      });
+      axios
+        .post(
+          `https://api.beldara.com/get_pincode_details.php`,
+          {
+            pincode: this.state.pincode,
+          },
+          { headers: { "Content-Type": "multipart/form-data" } }
+        )
+        .then((response) => {
+          if (response.data.result[0].msg == undefined) {
+            $("#pincodeCheck").addClass("d-none");
+            this.setState({
+              state: response.data.result[0].statename,
+              city: response.data.result[0].city,
+            });
+          } else {
+            $("#pincodeCheck").removeClass("d-none");
+            this.setState({
+              state: "",
+              city: "",
+            });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      if (this.state.pincodelength != "7") {
+        this.setState({
+          state: "",
+          city: "",
+        });
+      }
+      console.log("pincode format invalid");
+    }
   };
 
   render() {
@@ -1390,329 +1494,356 @@ class StartOrderTest extends Component {
           <div className="row col-md-12">
             <div className="col-md-7">
               <form className="">
-                <div className="card mt-4">
-                  <div className="card-header text-dark py-1">
-                    <i className="fa fa-dolly" />
-                    Shipping Details
+                <div className="card mt-4 mouse_pointer">
+                  <div
+                    className="card-header text-dark py-1"
+                    data-toggle="collapse"
+                    data-target="#collapseShippingDetails"
+                    aria-expanded="true"
+                  >
+                    <div className="d-flex justify-content-center">
+                      <strong>
+                        <i className="fa fa-dolly" />
+                        Shipping Details <i class="fa fa-caret-down ml-3"></i>
+                      </strong>
+                    </div>
                   </div>
-                  <div className="card-body py-1">
-                    <div className="detail-section">
-                      <div className="row">
-                        <div className="col-md-12">
-                          <table className="w-100">
-                            <tbody>
-                              <tr className="mt-2">
-                                Shipping To: {countryName}
-                              </tr>
-                              <tr className="mt-2">
-                                {/* <td>Shipping Address:</td> */}
-                                <td>
-                                  <a
-                                    href="3"
-                                    //data-toggle="collapse"
-                                    //href="#collapseExample"
-                                    role="button"
-                                    //aria-expanded="true"
-                                    //aria-controls="collapseExample"
-                                    onClick={this.emptyAddress}
-                                    className="chkValidate"
-                                  >
-                                    New shipping address +
-                                  </a>
-                                  <div
-                                    className="collapse show"
-                                    id="collapseExample"
-                                  >
-                                    <div className="card-body px-0 py-1 mt-3">
-                                      <div className="has-float-label">
-                                        <input
-                                          id="address"
-                                          type="text"
-                                          placeholder=" "
-                                          name="address"
-                                          className="form-control"
-                                          onChange={this.setStateFromInput}
-                                          value={this.state.address}
-                                        />
-                                        <label htmlFor="address">
-                                          {"Address"}
-                                        </label>
-                                        {this.validator.message(
-                                          "address",
-                                          this.state.address,
-                                          `required|string`
-                                        )}
-                                      </div>
-                                      <div className="row my-2">
-                                        <div className="col-md-6">
-                                          <div className="has-float-label">
-                                            <input
-                                              id="landmark"
-                                              type="text"
-                                              placeholder=" "
-                                              name="landmark"
-                                              className="form-control"
-                                              onChange={this.setStateFromInput}
-                                              value={this.state.landmark}
-                                            />
-                                            <label htmlFor="landmark">
-                                              {"Landmark (optional)"}
-                                            </label>
-                                            {/* {this.validator.message(
+                  <div class="collapse show" id="collapseShippingDetails">
+                    <div className="card card-body py-1">
+                      <div className="detail-section">
+                        <div className="row">
+                          <div className="col-md-12">
+                            <table className="w-100">
+                              <tbody>
+                                <tr className="mt-2">
+                                  Shipping To: {countryName}
+                                </tr>
+                                <tr className="mt-2">
+                                  {/* <td>Shipping Address:</td> */}
+                                  <td>
+                                    <a
+                                      href="3"
+                                      //data-toggle="collapse"
+                                      //href="#collapseExample"
+                                      role="button"
+                                      //aria-expanded="true"
+                                      //aria-controls="collapseExample"
+                                      onClick={this.emptyAddress}
+                                      className="chkValidate"
+                                    >
+                                      New shipping address +
+                                    </a>
+                                    <div
+                                      className="collapse show"
+                                      id="collapseExample"
+                                    >
+                                      <div className="card-body px-0 py-1 mt-3">
+                                        <div className="has-float-label">
+                                          <input
+                                            id="address"
+                                            type="text"
+                                            placeholder=" "
+                                            name="address"
+                                            className="form-control"
+                                            onChange={this.setStateFromInput}
+                                            value={this.state.address}
+                                          />
+                                          <label htmlFor="address">
+                                            {"Address"}
+                                          </label>
+                                          {this.validator.message(
+                                            "address",
+                                            this.state.address,
+                                            `required|string`
+                                          )}
+                                        </div>
+                                        <div className="row my-2">
+                                          <div className="col-md-6">
+                                            <div className="has-float-label">
+                                              <input
+                                                id="landmark"
+                                                type="text"
+                                                placeholder=" "
+                                                name="landmark"
+                                                className="form-control"
+                                                onChange={
+                                                  this.setStateFromInput
+                                                }
+                                                value={this.state.landmark}
+                                              />
+                                              <label htmlFor="landmark">
+                                                {"Landmark (optional)"}
+                                              </label>
+                                              {/* {this.validator.message(
                                               "landmark",
                                               this.state.landmark,
                                               `required|string`
                                             )} */}
+                                            </div>
                                           </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                          <div className="has-float-label">
-                                            <NumberFormat
-                                              format="######"
-                                              id="pincode"
-                                              name="pincode"
-                                              placeholder=" "
-                                              className="form-control input-number"
-                                              onChange={this.setStateFromInput}
-                                              value={this.state.pincode}
-                                            />
+                                          <div className="col-md-6">
+                                            <div className="has-float-label">
+                                              <NumberFormat
+                                                //format="######"
+                                                id="pincode"
+                                                maxLength="6"
+                                                name="pincode"
+                                                placeholder=" "
+                                                className="form-control input-number"
+                                                onKeyUp={this.maxLengthCheck}
+                                                onChange={
+                                                  this.setStateFromInput
+                                                }
+                                                value={this.state.pincode}
+                                              />
 
-                                            <label htmlFor="pincode">
-                                              {"Zip Code / Postal Code"}
-                                            </label>
-                                            {this.validator.message(
-                                              "pincode",
-                                              this.state.pincode,
-                                              `required|numeric`
-                                            )}
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div className="row my-2">
-                                        <div className="col-md-6">
-                                          <div className="has-float-label">
-                                            <input
-                                              id="city"
-                                              type="text"
-                                              name="city"
-                                              placeholder=" "
-                                              className="form-control"
-                                              onChange={this.setStateFromInput}
-                                              value={this.state.city}
-                                            />
-                                            <label htmlFor="city">
-                                              {"City"}
-                                            </label>
-                                            {this.validator.message(
-                                              "city",
-                                              this.state.city,
-                                              `required|string`
-                                            )}
-                                          </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                          <div className="has-float-label">
-                                            <input
-                                              id="state"
-                                              type="text"
-                                              placeholder=" "
-                                              className="form-control"
-                                              name="state"
-                                              onChange={this.setStateFromInput}
-                                              value={this.state.state}
-                                            />
-                                            <label htmlFor="state">
-                                              {"State"}
-                                            </label>
-                                            {this.validator.message(
-                                              "state",
-                                              this.state.state,
-                                              `required|string`
-                                            )}
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div className="row my-2">
-                                        <div className="col-md-6">
-                                          <div className="has-float-label">
-                                            <input
-                                              id="gst_in"
-                                              type="text"
-                                              name="gst_in"
-                                              placeholder=" "
-                                              className="form-control"
-                                              onChange={this.checkGstCharacter.bind(
-                                                this,
-                                                null
+                                              <label htmlFor="pincode">
+                                                {"Zip Code / Postal Code"}
+                                              </label>
+                                              {this.validator.message(
+                                                "pincode",
+                                                this.state.pincode,
+                                                `required|numeric`
                                               )}
-                                              value={this.state.gst_in}
-                                            />
-                                            <label htmlFor="gst_in">
-                                              {"GST No. (optional)"}
-                                            </label>
+                                            </div>
+                                            <div
+                                              className="d-none text-danger"
+                                              id="pincodeCheck"
+                                            >
+                                              Pincode is not avalabile
+                                            </div>
                                           </div>
-                                          {this.state.gst_in != "" &&
-                                          this.state.gst_in != null &&
-                                          !this.state.gst_validated ? (
-                                            <div class="d-flex align-items-center p-1">
-                                              <i class="cross-mark">
-                                                <svg
-                                                  xmlns="http://www.w3.org/2000/svg"
-                                                  viewBox="0 0 24 24"
-                                                >
-                                                  <title>cross</title>
-                                                  <path
-                                                    d="M3 0L0 3l9 9-9 9 3 3 9-9 9 9 3-3-9-9 9-9-3-3-9 9z"
-                                                    fill="#fc0006"
-                                                  ></path>
-                                                </svg>
-                                              </i>
-                                              <span className="mx-1">
-                                                GST Invalid
-                                              </span>
+                                        </div>
+                                        <div className="row my-2">
+                                          <div className="col-md-6">
+                                            <div className="has-float-label">
+                                              <input
+                                                id="city"
+                                                type="text"
+                                                name="city"
+                                                placeholder=" "
+                                                className="form-control"
+                                                onChange={
+                                                  this.setStateFromInput
+                                                }
+                                                value={this.state.city}
+                                              />
+                                              <label htmlFor="city">
+                                                {"City"}
+                                              </label>
+                                              {this.validator.message(
+                                                "city",
+                                                this.state.city,
+                                                `required|string`
+                                              )}
                                             </div>
-                                          ) : this.state.gst_in != "" &&
+                                          </div>
+                                          <div className="col-md-6">
+                                            <div className="has-float-label">
+                                              <input
+                                                id="state"
+                                                type="text"
+                                                placeholder=" "
+                                                className="form-control"
+                                                name="state"
+                                                onChange={
+                                                  this.setStateFromInput
+                                                }
+                                                value={this.state.state}
+                                              />
+                                              <label htmlFor="state">
+                                                {"State"}
+                                              </label>
+                                              {this.validator.message(
+                                                "state",
+                                                this.state.state,
+                                                `required|string`
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div className="row my-2">
+                                          <div className="col-md-6">
+                                            <div className="has-float-label">
+                                              <input
+                                                id="gst_in"
+                                                type="text"
+                                                name="gst_in"
+                                                placeholder=" "
+                                                className="form-control"
+                                                onChange={this.checkGstCharacter.bind(
+                                                  this,
+                                                  null
+                                                )}
+                                                value={this.state.gst_in}
+                                              />
+                                              <label htmlFor="gst_in">
+                                                {"GST No. (optional)"}
+                                              </label>
+                                            </div>
+                                            {this.state.gst_in != "" &&
                                             this.state.gst_in != null &&
-                                            this.state.gst_validated ? (
-                                            <div className="d-flex align-items-center p-1">
-                                              <i className="success-mark">
-                                                <svg
-                                                  xmlns="http://www.w3.org/2000/svg"
-                                                  viewBox="0 0 24 18.35"
-                                                >
-                                                  <title>checkmark</title>
-                                                  <path
-                                                    d="M21.13 0L8.48 12.65 2.87 7.04 0 9.91l7.53 7.53 1 .91.95-.91L24 2.87z"
-                                                    fill="#4fcc71"
-                                                  ></path>
-                                                </svg>
-                                              </i>
-                                              <span className="mx-1">
-                                                GST Valid
-                                              </span>
-                                            </div>
-                                          ) : (
-                                            ""
-                                          )}
+                                            !this.state.gst_validated ? (
+                                              <div class="d-flex align-items-center p-1">
+                                                <i class="cross-mark">
+                                                  <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 24 24"
+                                                  >
+                                                    <title>cross</title>
+                                                    <path
+                                                      d="M3 0L0 3l9 9-9 9 3 3 9-9 9 9 3-3-9-9 9-9-3-3-9 9z"
+                                                      fill="#fc0006"
+                                                    ></path>
+                                                  </svg>
+                                                </i>
+                                                <span className="mx-1">
+                                                  GST Invalid
+                                                </span>
+                                              </div>
+                                            ) : this.state.gst_in != "" &&
+                                              this.state.gst_in != null &&
+                                              this.state.gst_validated ? (
+                                              <div className="d-flex align-items-center p-1">
+                                                <i className="success-mark">
+                                                  <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 24 18.35"
+                                                  >
+                                                    <title>checkmark</title>
+                                                    <path
+                                                      d="M21.13 0L8.48 12.65 2.87 7.04 0 9.91l7.53 7.53 1 .91.95-.91L24 2.87z"
+                                                      fill="#4fcc71"
+                                                    ></path>
+                                                  </svg>
+                                                </i>
+                                                <span className="mx-1">
+                                                  GST Valid
+                                                </span>
+                                              </div>
+                                            ) : (
+                                              ""
+                                            )}
+                                          </div>
                                         </div>
                                       </div>
                                     </div>
-                                  </div>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                        {this.state.address !== "" &&
-                        this.state.pincode !== "" &&
-                        this.state.city !== "" &&
-                        this.state.state !== "" &&
-                        this.state.landmark !== "" ? (
-                          <div className="col-md-12 justify-content-around">
-                            <div className="float-left">
-                              <input
-                                type="checkbox"
-                                name="setdefault"
-                                id="setdefault"
-                              />
-                              <label
-                                className="mouse_pointer ml-2"
-                                htmlFor="setdefault"
-                              >
-                                {" "}
-                                Set to Default
-                              </label>
-                            </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
                           </div>
-                        ) : (
-                          ""
-                        )}
-                        {this.state.delivery_address !== null ? (
-                          this.state.delivery_address.length > 0 ? (
-                            <div
-                              className={`col-md-12 ${
-                                this.state.delivery_address.length > 3
-                                  ? "overflowAddress"
-                                  : ""
-                              }`}
-                            >
-                              <ul className="list-group list-group-horizontal-sm">
-                                <React.Fragment>
-                                  {this.state.delivery_address.map(
-                                    (eachadress, index) => (
-                                      <li
-                                        className="list-group-item border-0"
-                                        key={index}
-                                        style={{ width: "230px" }}
-                                        id={`li_${eachadress.id}`}
-                                      >
-                                        <div className="justify-content-around">
-                                          <div className="float-right adjustClose">
-                                            <span
-                                              className="mouse_pointer"
-                                              onClick={this.deleteAddress.bind(
-                                                null,
-                                                eachadress
-                                              )}
-                                            >
-                                              <i className="fa fa-trash"></i>
-                                            </span>
-                                          </div>
-                                        </div>
-                                        <div
-                                          className="card mouse_pointer"
-                                          id={eachadress.id}
-                                          onClick={this.selectAddress.bind(
-                                            null,
-                                            eachadress
-                                          )}
-                                        >
-                                          <div
-                                            className={`card-body ${
-                                              this.state.selectedaddressId ==
-                                              eachadress.id
-                                                ? "selectedaddress"
-                                                : ""
-                                            }`}
-                                          >
-                                            <h5 className="card-title">
-                                              {eachadress.name}
-                                            </h5>
-                                            <p className="card-text p-0 m-0">
-                                              {eachadress.address1}
-                                            </p>
-                                            <p className="card-text p-0 m-0 text-truncate">
-                                              {eachadress.area}
-                                            </p>
-                                            <p className="card-text p-0 m-0 text-truncate">
-                                              {eachadress.zipcode}{" "}
-                                              {eachadress.city}
-                                            </p>
-                                            <p className="card-text p-0 m-0">
-                                              {eachadress.state}{" "}
-                                              {eachadress.country}
-                                            </p>
-                                          </div>
-                                        </div>
-                                      </li>
-                                    )
-                                  )}
-                                </React.Fragment>
-                              </ul>
+                          {this.state.address !== "" &&
+                          this.state.pincode !== "" &&
+                          this.state.city !== "" &&
+                          this.state.state !== "" &&
+                          this.state.landmark !== "" ? (
+                            <div className="col-md-12 justify-content-around">
+                              <div className="float-left">
+                                <input
+                                  type="checkbox"
+                                  name="setdefault"
+                                  id="setdefault"
+                                />
+                                <label
+                                  className="mouse_pointer ml-2"
+                                  htmlFor="setdefault"
+                                >
+                                  {" "}
+                                  Set to Default
+                                </label>
+                              </div>
                             </div>
                           ) : (
                             ""
-                          )
-                        ) : (
-                          ""
-                        )}
-                      </div>
-                      <div className="mt-2">
+                          )}
+                          {this.state.delivery_address !== null ? (
+                            this.state.delivery_address.length > 0 ? (
+                              <div
+                                className={`col-md-12 ${
+                                  this.state.delivery_address.length > 3
+                                    ? "overflowAddress"
+                                    : ""
+                                }`}
+                              >
+                                <ul className="list-group list-group-horizontal-sm">
+                                  <React.Fragment>
+                                    {this.state.delivery_address.map(
+                                      (eachadress, index) => (
+                                        <li
+                                          className="list-group-item border-0"
+                                          key={index}
+                                          style={{ width: "230px" }}
+                                          id={`li_${eachadress.id}`}
+                                        >
+                                          <div className="justify-content-around">
+                                            <div className="float-right adjustClose">
+                                              <span
+                                                className="mouse_pointer"
+                                                onClick={this.deleteAddress.bind(
+                                                  null,
+                                                  eachadress
+                                                )}
+                                              >
+                                                <i className="fa fa-trash"></i>
+                                              </span>
+                                            </div>
+                                          </div>
+                                          <div
+                                            className="card mouse_pointer"
+                                            id={eachadress.id}
+                                            onClick={this.selectAddress.bind(
+                                              null,
+                                              eachadress
+                                            )}
+                                          >
+                                            <div
+                                              className={`card-body ${
+                                                this.state.selectedaddressId ==
+                                                eachadress.id
+                                                  ? "selectedaddress"
+                                                  : ""
+                                              }`}
+                                            >
+                                              <h5 className="card-title">
+                                                {eachadress.name}
+                                              </h5>
+                                              <p className="card-text p-0 m-0">
+                                                {eachadress.address1}
+                                              </p>
+                                              <p className="card-text p-0 m-0 text-truncate">
+                                                {eachadress.area}
+                                              </p>
+                                              <p className="card-text p-0 m-0 text-truncate">
+                                                {eachadress.zipcode}{" "}
+                                                {eachadress.city}
+                                              </p>
+                                              <p className="card-text p-0 m-0">
+                                                {eachadress.state}{" "}
+                                                {eachadress.country}
+                                              </p>
+                                            </div>
+                                          </div>
+                                        </li>
+                                      )
+                                    )}
+                                  </React.Fragment>
+                                </ul>
+                              </div>
+                            ) : (
+                              ""
+                            )
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                        {/* <div className="mt-2">
                         <div>Estimated Lead Time: </div>
                         <div>
                           Ship within 2 - 7 business days after supplier
                           receiving payment.
                         </div>
+                      </div> */}
                       </div>
                     </div>
                   </div>
@@ -2106,13 +2237,22 @@ class StartOrderTest extends Component {
                   ""
                 )}
                 {this.state.checked == "razorpay" ||
+                this.state.checked == "" ||
                 this.state.checked == "paytm" ? (
                   <button
                     className="btn btn-solid  mb-5 my-3 unique_class"
                     id={cartItems.cartitemid}
                     onClick={this.orderSubmit}
                   >
-                    confirm order
+                    <div
+                      class="spinner-border text-dark d-none"
+                      id="confirm_order_sppinner"
+                      role="status"
+                      style={{ width: "1rem", height: "1rem" }}
+                    >
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                    &nbsp; confirm order
                   </button>
                 ) : (
                   ""
@@ -2259,19 +2399,19 @@ class StartOrderTest extends Component {
                     ))} */}
                 {/* : ""} */}
 
-                <RazorpayForm
+                {/* <RazorpayForm
                   totalCost={totalCartValue}
                   name={name}
                   email={email}
                   mobile={mobile}
-                  id={"productOrder"}
+                  id={"all-amount"}
                   sellerid={sellerid}
                   currency={currency}
                   amount={totalCartValue}
                   page={""}
                   type={""}
-                  event={"Product-Order"}
-                  className={"productOrder"}
+                  event={"all-amount"}
+                  className={"all-amount"}
                   method="POST"
                   action={this.state.pay_link}
                   isLoggedIn={this.isLoggedIn}
@@ -2291,6 +2431,40 @@ class StartOrderTest extends Component {
                     ""
                   }
                 />
+
+
+                <RazorpayForm
+                  totalCost={token_amt}
+                  name={name}
+                  email={email}
+                  mobile={mobile}
+                  id={"token-amount"}
+                  sellerid={sellerid}
+                  currency={currency}
+                  amount={token_amt}
+                  page={""}
+                  type={""}
+                  event={"token-amount"}
+                  className={"token-amount"}
+                  method="POST"
+                  action={this.state.pay_link}
+                  isLoggedIn={this.isLoggedIn}
+                  item={cartItems}
+                  value={
+                    "order_code=" +
+                    this.state.order_code +
+                    ",order_id=" +
+                    this.state.order_id +
+                    ",sellerid=" +
+                    ls.get("sellerid") +
+                    ",mainurl=" +
+                    window.location.hostname +
+                    ",plateform_type=" +
+                    "web" +
+                    ",security_token=" +
+                    ""
+                  }
+                /> */}
 
                 {/* <RazorpayForm
                   totalCost={totalCartValue}
@@ -2374,6 +2548,7 @@ class StartOrderTest extends Component {
                   isToken={this.state.payAmtType1}
               />
                 :''} */}
+                <div className="mr-1 ml-3">{this.state.checkoutmsg}</div>
                 <PayOnDelivery
                   totalCost={totalCartValue}
                   name={name}
@@ -2565,7 +2740,70 @@ class StartOrderTest extends Component {
                                           this.state.coupon_code == "") &&
                                         currency == "INR" ? (
                                           <>
-                                            <li>
+                                            {this.state.paymentType !== "" &&
+                                            this.state.paymentType !== null
+                                              ? Object.keys(
+                                                  this.state.paymentType
+                                                ).map((item, index) => (
+                                                  <li>
+                                                    {this.state.paymentType[
+                                                      item
+                                                    ].checkedStatus == true
+                                                      ? this.setState({
+                                                          checked: this.state
+                                                            .paymentType[item]
+                                                            .paymentType,
+                                                        })
+                                                      : ""}
+                                                    <div className="radio-option paypal">
+                                                      <input
+                                                        type="radio"
+                                                        name="payment-group"
+                                                        method={
+                                                          this.state
+                                                            .paymentType[item]
+                                                            .paymentType
+                                                        }
+                                                        id={
+                                                          this.state
+                                                            .paymentType[item]
+                                                            .paymentType
+                                                        }
+                                                        defaultChecked={
+                                                          this.state
+                                                            .paymentType[item]
+                                                            .checkedStatus ==
+                                                          "true"
+                                                            ? true
+                                                            : false
+                                                        }
+                                                        onClick={() =>
+                                                          this.changeMethod(
+                                                            this.state
+                                                              .paymentType[item]
+                                                              .paymentType
+                                                          )
+                                                        }
+                                                      />
+                                                      <label
+                                                        htmlFor={
+                                                          this.state
+                                                            .paymentType[item]
+                                                            .paymentType
+                                                        }
+                                                      >
+                                                        {
+                                                          this.state
+                                                            .paymentType[item]
+                                                            .text
+                                                        }
+                                                      </label>
+                                                    </div>
+                                                  </li>
+                                                ))
+                                              : ""}
+
+                                            {/* <li>
                                               <div className="radio-option paypal">
                                                 <input
                                                   type="radio"
@@ -2578,11 +2816,11 @@ class StartOrderTest extends Component {
                                                   }
                                                 />
                                                 <label htmlFor="payment-1">
-                                                  Pay using Paytm
+                                                  Use Paytm
                                                 </label>
                                               </div>
                                             </li>
-                                            {/* <li>
+                                            <li>
                                               <div className="radio-option stripe">
                                                 <input
                                                   type="radio"
@@ -2597,8 +2835,7 @@ class StartOrderTest extends Component {
                                                   }
                                                 />
                                                 <label htmlFor="payment-2">
-                                                  Pay using Cards/Net
-                                                  Banking,/Wallet/UPI/QR
+                                                  Use Razorpay
                                                 </label>
                                               </div>
                                             </li> */}
@@ -2617,8 +2854,7 @@ class StartOrderTest extends Component {
                                                 }
                                               />
                                               <label htmlFor="payment-2">
-                                                Pay using Cards/Net
-                                                Banking,/Wallet/UPI/QR
+                                                Use Razorpay
                                               </label>
                                             </div>
                                           </li>
@@ -2677,60 +2913,355 @@ class StartOrderTest extends Component {
                           (this.state.coupon_code == "" &&
                             currency == "INR") ? (
                             <>
-                              <button
-                                className="btn btn-solid my-3 mr-2"
-                                id={cartItems.cartitemid}
-                                data-id="1"
-                                onClick={this.submitPaymentProcessToken}
-                              >
-                                <i
-                                  className={
-                                    currency == "INR"
-                                      ? "fa fa-inr"
-                                      : "fa fa-usd"
-                                  }
-                                ></i>{" "}
-                                Pay Token{" "}
-                                {new Intl.NumberFormat().format(
-                                  this.state.token_amt
-                                )}{" "}
-                                now
-                              </button>
+                              {this.state.checked == "razorpay" ? (
+                                <>
+                                  {isMobile ? (
+                                    <div className="">
+                                      <RazorpayForm
+                                        totalCost={token_amt}
+                                        name={name}
+                                        email={email}
+                                        mobile={mobile}
+                                        buttonName={
+                                          "Pay Token Inr " + token_amt + " Now"
+                                        }
+                                        id={"token-amount"}
+                                        sellerid={sellerid}
+                                        currency={currency}
+                                        amount={token_amt}
+                                        page={""}
+                                        type={""}
+                                        event={"token-amount"}
+                                        className={"token-amount"}
+                                        method="POST"
+                                        action={this.state.pay_link}
+                                        isLoggedIn={this.isLoggedIn}
+                                        item={cartItems}
+                                        order_id={this.state.order_id}
+                                        //razorpayorderid={this.state.razorpayorderid}
+                                        value={
+                                          "order_code=" +
+                                          this.state.order_code +
+                                          ",order_id=" +
+                                          this.state.order_id +
+                                          ",sellerid=" +
+                                          ls.get("sellerid") +
+                                          ",mainurl=" +
+                                          window.location.hostname +
+                                          ",plateform_type=" +
+                                          "web" +
+                                          ",security_token=" +
+                                          "" +
+                                          ",is_Token=" +
+                                          "1" +
+                                          ",amount=" +
+                                          token_amt
+                                        }
+                                      />
 
-                              <button
-                                className="btn btn-solid my-3 mr-2"
-                                id={cartItems.cartitemid}
-                                data-id="2"
-                                onClick={this.submitPaymentProcess}
-                              >
-                                <i
-                                  className={
-                                    currency == "INR"
-                                      ? "fa fa-inr"
-                                      : "fa fa-usd"
-                                  }
-                                ></i>{" "}
-                                Pay{" "}
-                                {new Intl.NumberFormat().format(totalCartValue)}{" "}
-                                now
-                              </button>
+                                      <RazorpayForm
+                                        totalCost={totalCartValue}
+                                        name={name}
+                                        email={email}
+                                        mobile={mobile}
+                                        buttonName={
+                                          "Pay Inr " + totalCartValue + " Now"
+                                        }
+                                        id={"all-amount"}
+                                        sellerid={sellerid}
+                                        currency={currency}
+                                        amount={totalCartValue}
+                                        page={""}
+                                        type={""}
+                                        event={"all-amount"}
+                                        className={"all-amount"}
+                                        method="POST"
+                                        action={this.state.pay_link}
+                                        isLoggedIn={this.isLoggedIn}
+                                        item={cartItems}
+                                        order_id={this.state.order_id}
+                                        //razorpayorderid={this.state.razorpayorderid}
+                                        value={
+                                          "order_code=" +
+                                          this.state.order_code +
+                                          ",order_id=" +
+                                          this.state.order_id +
+                                          ",sellerid=" +
+                                          ls.get("sellerid") +
+                                          ",mainurl=" +
+                                          window.location.hostname +
+                                          ",plateform_type=" +
+                                          "web" +
+                                          ",security_token=" +
+                                          "" +
+                                          ",is_Token=" +
+                                          "0" +
+                                          ",amount=" +
+                                          totalCartValue
+                                        }
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="d-flex justify-content-between">
+                                      <RazorpayForm
+                                        totalCost={token_amt}
+                                        name={name}
+                                        email={email}
+                                        mobile={mobile}
+                                        buttonName={
+                                          "Pay Token Inr " + token_amt + " Now"
+                                        }
+                                        id={"token-amount"}
+                                        sellerid={sellerid}
+                                        currency={currency}
+                                        amount={token_amt}
+                                        page={""}
+                                        type={""}
+                                        event={"token-amount"}
+                                        className={"token-amount"}
+                                        method="POST"
+                                        action={this.state.pay_link}
+                                        isLoggedIn={this.isLoggedIn}
+                                        item={cartItems}
+                                        order_id={this.state.order_id}
+                                        //razorpayorderid={this.state.razorpayorderid}
+                                        value={
+                                          "order_code=" +
+                                          this.state.order_code +
+                                          ",order_id=" +
+                                          this.state.order_id +
+                                          ",sellerid=" +
+                                          ls.get("sellerid") +
+                                          ",mainurl=" +
+                                          window.location.hostname +
+                                          ",plateform_type=" +
+                                          "web" +
+                                          ",security_token=" +
+                                          "" +
+                                          ",is_Token=" +
+                                          "1" +
+                                          ",amount=" +
+                                          token_amt
+                                        }
+                                      />
+
+                                      <RazorpayForm
+                                        totalCost={totalCartValue}
+                                        name={name}
+                                        email={email}
+                                        mobile={mobile}
+                                        buttonName={
+                                          "Pay Inr " + totalCartValue + " Now"
+                                        }
+                                        id={"all-amount"}
+                                        sellerid={sellerid}
+                                        currency={currency}
+                                        amount={totalCartValue}
+                                        page={""}
+                                        type={""}
+                                        event={"all-amount"}
+                                        className={"all-amount"}
+                                        method="POST"
+                                        action={this.state.pay_link}
+                                        isLoggedIn={this.isLoggedIn}
+                                        item={cartItems}
+                                        order_id={this.state.order_id}
+                                        //razorpayorderid={this.state.razorpayorderid}
+                                        value={
+                                          "order_code=" +
+                                          this.state.order_code +
+                                          ",order_id=" +
+                                          this.state.order_id +
+                                          ",sellerid=" +
+                                          ls.get("sellerid") +
+                                          ",mainurl=" +
+                                          window.location.hostname +
+                                          ",plateform_type=" +
+                                          "web" +
+                                          ",security_token=" +
+                                          "" +
+                                          ",is_Token=" +
+                                          "0" +
+                                          ",amount=" +
+                                          totalCartValue
+                                        }
+                                      />
+                                    </div>
+                                  )}
+                                </>
+                              ) : this.state.checked == "paytm" ? (
+                                <>
+                                  <button
+                                    className="btn btn-solid my-3 mr-2"
+                                    id={cartItems.cartitemid}
+                                    data-id="1"
+                                    onClick={this.submitPaymentProcessToken}
+                                  >
+                                    <i
+                                      className={
+                                        currency == "INR"
+                                          ? "fa fa-inr"
+                                          : "fa fa-usd"
+                                      }
+                                    ></i>{" "}
+                                    Pay Token{" "}
+                                    {new Intl.NumberFormat().format(
+                                      this.state.token_amt
+                                    )}{" "}
+                                    now
+                                  </button>
+
+                                  <button
+                                    className="btn btn-solid my-3 mr-2"
+                                    id={cartItems.cartitemid}
+                                    data-id="2"
+                                    onClick={this.submitPaymentProcess}
+                                  >
+                                    <i
+                                      className={
+                                        currency == "INR"
+                                          ? "fa fa-inr"
+                                          : "fa fa-usd"
+                                      }
+                                    ></i>{" "}
+                                    Pay{" "}
+                                    {new Intl.NumberFormat().format(
+                                      totalCartValue
+                                    )}{" "}
+                                    now
+                                  </button>
+                                </>
+                              ) : (
+                                ""
+                              )}
                             </>
                           ) : (
-                            <button
-                              className="btn btn-solid my-3 mr-2"
-                              id={cartItems.cartitemid}
-                              data-id="2"
-                              onClick={this.submitPaymentProcessRazorPay}
-                            >
-                              <i
-                                className={
-                                  currency == "INR" ? "fa fa-inr" : "fa fa-usd"
-                                }
-                              ></i>{" "}
-                              Pay{" "}
-                              {new Intl.NumberFormat().format(totalCartValue)}{" "}
-                              now
-                            </button>
+                            <>
+                              {currency == "INR" ? (
+                                <>
+                                  {this.state.checked == "razorpay" ? (
+                                    <RazorpayForm
+                                      totalCost={totalCartValue}
+                                      name={name}
+                                      email={email}
+                                      mobile={mobile}
+                                      buttonName={
+                                        "Pay Inr " + totalCartValue + " Now"
+                                      }
+                                      id={"all-amount"}
+                                      sellerid={sellerid}
+                                      currency={currency}
+                                      amount={totalCartValue}
+                                      page={""}
+                                      type={""}
+                                      event={"all-amount"}
+                                      className={"all-amount"}
+                                      method="POST"
+                                      action={this.state.pay_link}
+                                      isLoggedIn={this.isLoggedIn}
+                                      item={cartItems}
+                                      order_id={this.state.order_id}
+                                      //razorpayorderid={this.state.razorpayorderid}
+                                      value={
+                                        "order_code=" +
+                                        this.state.order_code +
+                                        ",order_id=" +
+                                        this.state.order_id +
+                                        ",sellerid=" +
+                                        ls.get("sellerid") +
+                                        ",mainurl=" +
+                                        window.location.hostname +
+                                        ",plateform_type=" +
+                                        "web" +
+                                        ",security_token=" +
+                                        "" +
+                                        ",is_Token=" +
+                                        "0" +
+                                        ",amount=" +
+                                        totalCartValue
+                                      }
+                                    />
+                                  ) : (
+                                    <button
+                                      className="btn btn-solid my-3 mr-2"
+                                      id={cartItems.cartitemid}
+                                      data-id="2"
+                                      onClick={this.submitPaymentProcess}
+                                    >
+                                      <i
+                                        className={
+                                          currency == "INR"
+                                            ? "fa fa-inr"
+                                            : "fa fa-usd"
+                                        }
+                                      ></i>{" "}
+                                      Pay{" "}
+                                      {new Intl.NumberFormat().format(
+                                        totalCartValue
+                                      )}{" "}
+                                      now
+                                    </button>
+                                  )}
+                                </>
+                              ) : (
+                                <RazorpayForm
+                                  totalCost={totalCartValue}
+                                  name={name}
+                                  email={email}
+                                  mobile={mobile}
+                                  buttonName={
+                                    "Pay Usd " + totalCartValue + " Now"
+                                  }
+                                  id={"all-amount"}
+                                  sellerid={sellerid}
+                                  currency={currency}
+                                  amount={totalCartValue}
+                                  page={""}
+                                  type={""}
+                                  event={"all-amount"}
+                                  className={"all-amount"}
+                                  method="POST"
+                                  action={this.state.pay_link}
+                                  isLoggedIn={this.isLoggedIn}
+                                  item={cartItems}
+                                  order_id={this.state.order_id}
+                                  //razorpayorderid={this.state.razorpayorderid}
+                                  value={
+                                    "order_code=" +
+                                    this.state.order_code +
+                                    ",order_id=" +
+                                    this.state.order_id +
+                                    ",sellerid=" +
+                                    ls.get("sellerid") +
+                                    ",mainurl=" +
+                                    window.location.hostname +
+                                    ",plateform_type=" +
+                                    "web" +
+                                    ",security_token=" +
+                                    "" +
+                                    ",is_Token=" +
+                                    "0" +
+                                    ",amount=" +
+                                    totalCartValue
+                                  }
+                                />
+                              )}
+                            </>
+                            // <button
+                            //   className="btn btn-solid my-3 mr-2"
+                            //   id={cartItems.cartitemid}
+                            //   data-id="2"
+                            //   onClick={this.submitPaymentProcessRazorPay}
+                            // >
+                            //   <i
+                            //     className={
+                            //       currency == "INR" ? "fa fa-inr" : "fa fa-usd"
+                            //     }
+                            //   ></i>{" "}
+                            //   Pay{" "}
+                            //   {new Intl.NumberFormat().format(totalCartValue)}{" "}
+                            //   now
+                            // </button>
                             // <button
                             //   className="btn btn-solid  mb-5 my-3"
                             //   id={cartItems.cartitemid}

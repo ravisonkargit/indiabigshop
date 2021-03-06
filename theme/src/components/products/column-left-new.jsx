@@ -529,7 +529,8 @@ class ColumnLeft extends Component {
                         <div>
                           <Modal
                             open={this.state.open}
-                            onClose={() => ""}
+                            onClose={this.onCloseModal}
+                            //onClose={() => ""}
                             center
                             className="cart-modal"
                           >
@@ -540,7 +541,7 @@ class ColumnLeft extends Component {
                               <div className="modal-content min-modal-size modal-content-1">
                                 <div className="modal-header modal-header-1">
                                   <h5 className="modal-title modal-title-1">
-                                    {item.name}
+                                    {item.name.substring(0,60)}...
                                   </h5>
                                   <button
                                     type="button"

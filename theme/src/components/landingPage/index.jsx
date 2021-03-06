@@ -63,6 +63,7 @@ class LandingPage extends Component {
                         catDesc: response.data.result.desc1,
                         cat_id: response.data.result.cat_id,
                         keyword: response.data.result.keyword,
+                        is_search_by_keyword: response.data.result.is_search_by_keyword,
                         type:'1',
                     })
 
@@ -175,7 +176,7 @@ class LandingPage extends Component {
                                                                     <div className="col-12 p-0">
                                                                         {this.state.cat_id ?
                                                                             <ProductByLP
-                                                                                colSize={this.state.layoutColumns} cat_id={this.state.cat_id} type={this.state.type} datatype={this.state.datatype} />
+                                                                                colSize={this.state.layoutColumns} cat_id={this.state.cat_id} type={this.state.type} datatype={this.state.datatype}  is_search_by_keyword={this.state.is_search_by_keyword}/>
                                                                         : ''}
                                                                     </div>
                                                                 </div>

@@ -366,6 +366,8 @@ class cartComponent extends Component {
             cartSmallDetails: response.data.result.cartamount,
             shippingCountryName: getCookie("country_name"),
             cartid: response.data.result.cartamount.cartID,
+            cartmsg: response.data.result.cartmsg,
+            checkoutmsg: response.data.result.checkoutmsg,
           });
           if (response.data.result.cart.length > 0) {
             var length = response.data.result.cart.length;
@@ -1302,7 +1304,10 @@ class cartComponent extends Component {
                                       : "India"}
                                   </span>
                                 </div>
-                                {item.offer_stock == 0 || item.available_stock == "" || item.available_stock == "0" || item.available_stock == null ? (
+                                {item.offer_stock == 0 ||
+                                item.available_stock == "" ||
+                                item.available_stock == "0" ||
+                                item.available_stock == null ? (
                                   <div className="text-danger">
                                     OUT OF STOCK
                                   </div>
@@ -1333,7 +1338,7 @@ class cartComponent extends Component {
                                   target="_blank"
                                   href={`${process.env.PUBLIC_URL}/product/${item.url}.html`}
                                 >
-                                  {item.name}
+                                  {item.name.substring(0,80)}...
                                 </a>
                                 <a className="my-2 d-block" href="./cart.html">
                                   {item.company}
@@ -1656,54 +1661,87 @@ class cartComponent extends Component {
                       {symbol} {this.state.totalProductCost}
                     </div>
                   </div> */}
-                  <React.Fragment>
-                    {Object.keys(this.state.shippingCharges).map(
-                      (eachcountry, index) => {
-                        return (
-                          <React.Fragment key={index}>
-                            <div className="row my-3 align-items-center">
-                              <div className={`col-md-3`}>
-                                Shipping from{" "}
-                                {
-                                  this.state.shippingCharges[eachcountry]
-                                    .country
-                                }
-                                :{" "}
-                              </div>
-                              <div
-                                //style={{ width: "40%" }}
-                                className="col-md-6"
-                              >
-                                {this.state.shippingCountryName ? (
-                                  this.state.shippingCountryName.toLowerCase() ==
-                                  this.state.shippingCharges[
-                                    eachcountry
-                                  ].country.toLowerCase() ? (
-                                    <Select
-                                      id={
-                                        this.state.shippingCharges[eachcountry]
-                                          .country
-                                      }
-                                      isOptionSelected="true"
-                                      options={this.shipDetMethod(
-                                        shipMethod,
-                                        1,
-                                        1
-                                      )}
-                                      defaultValue={this.shipDetMethod(
-                                        shipMethod,
-                                        1,
-                                        2
-                                      )}
-                                      onChange={(e) => {
-                                        this.handleShipping(
-                                          e,
+                  {getCookie("country_code") == "in" ||
+                  getCookie("country_code") == "IN" ? (
+                    ""
+                  ) : (
+                    <React.Fragment>
+                      {Object.keys(this.state.shippingCharges).map(
+                        (eachcountry, index) => {
+                          return (
+                            <React.Fragment key={index}>
+                              <div className="row my-3 align-items-center">
+                                <div className={`col-md-3`}>
+                                  Shipping from{" "}
+                                  {
+                                    this.state.shippingCharges[eachcountry]
+                                      .country
+                                  }
+                                  :{" "}
+                                </div>
+                                <div
+                                  //style={{ width: "40%" }}
+                                  className="col-md-6"
+                                >
+                                  {this.state.shippingCountryName ? (
+                                    this.state.shippingCountryName.toLowerCase() ==
+                                    this.state.shippingCharges[
+                                      eachcountry
+                                    ].country.toLowerCase() ? (
+                                      <Select
+                                        id={
                                           this.state.shippingCharges[
                                             eachcountry
                                           ].country
-                                        );
-                                      }}
-                                    />
+                                        }
+                                        isOptionSelected="true"
+                                        options={this.shipDetMethod(
+                                          shipMethod,
+                                          1,
+                                          1
+                                        )}
+                                        defaultValue={this.shipDetMethod(
+                                          shipMethod,
+                                          1,
+                                          2
+                                        )}
+                                        onChange={(e) => {
+                                          this.handleShipping(
+                                            e,
+                                            this.state.shippingCharges[
+                                              eachcountry
+                                            ].country
+                                          );
+                                        }}
+                                      />
+                                    ) : (
+                                      <Select
+                                        id={
+                                          this.state.shippingCharges[
+                                            eachcountry
+                                          ].country
+                                        }
+                                        isOptionSelected="true"
+                                        options={this.shipDetMethod(
+                                          shipMethod,
+                                          2,
+                                          1
+                                        )}
+                                        defaultValue={this.shipDetMethod(
+                                          shipMethod,
+                                          1,
+                                          2
+                                        )}
+                                        onChange={(e) => {
+                                          this.handleShipping(
+                                            e,
+                                            this.state.shippingCharges[
+                                              eachcountry
+                                            ].country
+                                          );
+                                        }}
+                                      />
+                                    )
                                   ) : (
                                     <Select
                                       id={
@@ -1711,16 +1749,8 @@ class cartComponent extends Component {
                                           .country
                                       }
                                       isOptionSelected="true"
-                                      options={this.shipDetMethod(
-                                        shipMethod,
-                                        2,
-                                        1
-                                      )}
-                                      defaultValue={this.shipDetMethod(
-                                        shipMethod,
-                                        1,
-                                        2
-                                      )}
+                                      options={shipMethod}
+                                      defaultValue={shipMethod[0]}
                                       onChange={(e) => {
                                         this.handleShipping(
                                           e,
@@ -1730,28 +1760,10 @@ class cartComponent extends Component {
                                         );
                                       }}
                                     />
-                                  )
-                                ) : (
-                                  <Select
-                                    id={
-                                      this.state.shippingCharges[eachcountry]
-                                        .country
-                                    }
-                                    isOptionSelected="true"
-                                    options={shipMethod}
-                                    defaultValue={shipMethod[0]}
-                                    onChange={(e) => {
-                                      this.handleShipping(
-                                        e,
-                                        this.state.shippingCharges[eachcountry]
-                                          .country
-                                      );
-                                    }}
-                                  />
-                                )}
-                              </div>
-                              <div className="col-md-3">
-                                {/* <div className="text-right w-50 mr-5">
+                                  )}
+                                </div>
+                                <div className="col-md-3">
+                                  {/* <div className="text-right w-50 mr-5">
                                   Shipping Cost From{" "}
                                   {
                                     this.state.shippingCharges[eachcountry]
@@ -1759,58 +1771,60 @@ class cartComponent extends Component {
                                   }
                                   :
                                 </div> */}
-                                {/* {
+                                  {/* {
                                 parseInt(this.state.isShippingCountry) ==
                                 parseInt(1) ? (
                                   (parseFloat(
                                     this.state.shippingCharges[eachcountry]
                                       .shippingCost
                                   ) > parseFloat(0)) || this.state.noShippinCost? ( */}
-                                {this.state.noShippinCost ? (
-                                  <div className="mx-2 h6">
-                                    {" "}
-                                    <span className="count">
-                                      <div
-                                        class="spinner-border spinner-border-sm common_class_for_spin mr-1 d-none"
-                                        role="status"
-                                        style={{ color: "#f1aa61" }}
-                                      >
-                                        <span class="sr-only">Loading...</span>
-                                      </div>
-                                      {symbol == "INR" ? (
-                                        <i className="fa fa-inr"></i>
-                                      ) : (
-                                        <i className="fa fa-usd"></i>
-                                      )}
-                                      {" " +
-                                        new Intl.NumberFormat().format(
-                                          this.state.shippingCharges[
-                                            eachcountry
-                                          ].shippingCost
-                                        )}{" "}
-                                    </span>
-                                  </div>
-                                ) : (
-                                  <div className="text-left">
-                                    {" "}
-                                    Please select another Shipping Method / QTY
-                                    to Continue{" "}
-                                  </div>
-                                )
-                                // ) : (
-                                //   <div className="text-left">
-                                //     {" "}
-                                //     Select Shipping Country to check Shipping Cost{" "}
-                                //   </div>
-                                // )
-                                }
+                                  {this.state.noShippinCost ? (
+                                    <div className="mx-2 h6">
+                                      {" "}
+                                      <span className="count">
+                                        <div
+                                          class="spinner-border spinner-border-sm common_class_for_spin mr-1 d-none"
+                                          role="status"
+                                          style={{ color: "#f1aa61" }}
+                                        >
+                                          <span class="sr-only">
+                                            Loading...
+                                          </span>
+                                        </div>
+                                        {symbol == "INR" ? (
+                                          <i className="fa fa-inr"></i>
+                                        ) : (
+                                          <i className="fa fa-usd"></i>
+                                        )}
+                                        {" " +
+                                          new Intl.NumberFormat().format(
+                                            this.state.shippingCharges[
+                                              eachcountry
+                                            ].shippingCost
+                                          )}{" "}
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    <div className="text-left">
+                                      {" "}
+                                      Please select another Shipping Method /
+                                      QTY to Continue{" "}
+                                    </div>
+                                  )
+                                  // ) : (
+                                  //   <div className="text-left">
+                                  //     {" "}
+                                  //     Select Shipping Country to check Shipping Cost{" "}
+                                  //   </div>
+                                  // )
+                                  }
+                                </div>
                               </div>
-                            </div>
-                          </React.Fragment>
-                        );
-                      }
-                    )}
-                    {/* <div className="d-flex align-items-center">
+                            </React.Fragment>
+                          );
+                        }
+                      )}
+                      {/* <div className="d-flex align-items-center">
                       <div className="text-right w-50 mr-5">Total Price :</div>
 
                       {parseInt(this.state.isShippingCountry) == parseInt(1) ? (
@@ -1833,7 +1847,8 @@ class cartComponent extends Component {
                         </div>
                       )}
                     </div> */}
-                  </React.Fragment>
+                    </React.Fragment>
+                  )}
                 </div>
                 <div
                   id="right_div"
@@ -2020,6 +2035,7 @@ class cartComponent extends Component {
                       </button>
                     </div>
                   </div>
+                  <div className="mr-1 ml-3">{this.state.cartmsg}</div>
                 </div>
               </div>
               {/* <div className="row cart-buttons"> */}

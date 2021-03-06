@@ -378,7 +378,7 @@ class ProductVariantModal extends Component {
             >
               <div className="modal-content min-modal-size">
                 <div className="modal-header">
-                <h3 className="modal-title">{`${this.props.varData.parentproductarray.name} (Min.Order: ${this.props.varData.parentproductarray.qty}/${this.props.varData.parentproductarray.unit})`}</h3>
+                <h5 className="modal-title">{`${this.props.varData.parentproductarray.name.substring(0,60)}... (Min.Order: ${this.props.varData.parentproductarray.qty}/${this.props.varData.parentproductarray.unit})`}</h5>
                   <button
                     type="button"
                     className="close"
@@ -431,7 +431,7 @@ class ProductVariantModal extends Component {
                                     <tr
                                     className={`my-2 mx-2 ${value.variation2} all_prod hoverprice`}
                                   >
-                                    <td>
+                                    <td style={{width: "1px"}}>
                                       {value.variation1}
                                     </td>
                                     <td>

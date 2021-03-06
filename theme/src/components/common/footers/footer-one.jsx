@@ -296,7 +296,20 @@ class FooterOne extends Component {
                     </ul>
                   </div>
                 </div>
+                <div class="d-flex col-md-4 justify-content-aroud my-5" style={{marginLeft: "-12px"}}>
+                  <div class="float-left mr-2">
+                    <a href="https://apps.apple.com/us/app/beldara-b2b-marketplace/id1455069486?ls=1" target="_blank">
+                      <img src="https://img.beldara.com/images/ios_mobile_logo.png" />
+                    </a>
+                  </div>
+                  <div class="float-right mr-2">
+                    <a href="https://play.google.com/store/apps/details?id=app.beldara.com" target="_blank">
+                      <img src="https://img.beldara.com/images/android_mobile_logo.png"/>
+                    </a>
+                  </div>
+                </div>
               </div>
+              
               <div className="col offset-xl-1">
                 <div className="sub-title">
                   <div className="footer-title">

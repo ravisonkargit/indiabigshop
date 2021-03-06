@@ -1062,6 +1062,7 @@ class Details extends Component {
             product_mrp: response.data.result[0].product_mrp,
             selling_price: response.data.result[0].selling_price,
             variation: response.data.result[0].variation,
+            shipping_charge: response.data.result[0].shipping_charge,
             // pincodeDeliverable: country_code != 'in' ? true : false
           });
           if (country_code !== "in") {
@@ -1559,7 +1560,7 @@ class Details extends Component {
                           ) : (
                             ""
                           )}
-                          {item.free_shipping == "1" ? (
+                          {this.state.shipping_charge == "0" ? (
                             <>
                               <span
                                 data-tip
@@ -1579,7 +1580,14 @@ class Details extends Component {
                               </div>
                             </>
                           ) : (
-                            ""
+                            <span
+                              data-tip
+                              data-for="ToolTip"
+                              className="mouse_pointer shippingBeldaraFirst"
+                            >
+                              Shipping&nbsp;Charge&nbsp;{this.state.currency}
+                              &nbsp;{this.state.shipping_charge}
+                            </span>
                           )}
                         </div>
                       </div>
@@ -1725,102 +1733,206 @@ class Details extends Component {
               /> */}
               </div>
             </div>
-            <div
-              className="row d-flex justify-content-start align-items-center mt-1"
-              style={{ marginLeft: "10px", marginRight: "10px" }}
-            >
-              {/* <div>
+            {isMobile ? (
+              <div
+                className="row d-flex justify-content-start align-items-center mt-1"
+                style={{ marginLeft: "10px", marginRight: "10px" }}
+              >
+                {/* <div>
               Shipping Charges:{` `}
               {this.state.currency} {this.state.shipping_cost}
             </div> */}
-              {this.state.gst_val != null ? (
-                <div
-                  id="prices_cards"
-                  className="bg-grey float-left col-sm-5 text-center productBorder"
-                >
-                  <div className="row justify-content-between mx-2">
-                    <div className="float-left">Price of items</div>
-                    <div className="float-right">
-                      {this.state.currency}{" "}
-                      {/* {parseFloat(
+                {this.state.gst_val != null ? (
+                  <div
+                    id="prices_cards"
+                    className="bg-grey float-left col-sm-5 text-center productBorder"
+                  >
+                    <div className="row justify-content-between mx-2">
+                      <div className="float-left">Price of items</div>
+                      <div className="float-right">
+                        {this.state.currency}{" "}
+                        {/* {parseFloat(
                       parseFloat(this.state.price) -
                         parseFloat(this.state.gst_cal)
                     ).toFixed(2)} */}
-                      {new Intl.NumberFormat().format(
-                        parseFloat(
-                          parseFloat(this.state.price) -
-                            parseFloat(this.state.gst_cal)
-                        ).toFixed(2)
-                      )}
+                        {new Intl.NumberFormat().format(
+                          parseFloat(
+                            parseFloat(this.state.price) -
+                              parseFloat(this.state.gst_cal)
+                          ).toFixed(2)
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div className="row justify-content-between mx-1">
-                    <div className="float-left">
-                      Tax @ {this.state.gst_val}%
+                    <div className="row justify-content-between mx-1">
+                      <div className="float-left">
+                        Tax @ {this.state.gst_val}%
+                      </div>
+                      <div className="float-right">
+                        {this.state.currency}{" "}
+                        {new Intl.NumberFormat().format(
+                          parseFloat(this.state.gst_cal).toFixed(2)
+                        )}
+                      </div>
                     </div>
-                    <div className="float-right">
-                      {this.state.currency}{" "}
-                      {new Intl.NumberFormat().format(
-                        parseFloat(this.state.gst_cal).toFixed(2)
-                      )}
-                    </div>
-                  </div>
-                  <HRLine color="#0e0e0e" />
-                  <div className="row justify-content-between mx-1">
-                    <div className="float-left">Final Price</div>
-                    <div className="float-right">
-                      {this.state.currency}{" "}
-                      {new Intl.NumberFormat().format(
-                        parseFloat(this.state.price).toFixed(2)
-                      )}
-                      {/* {parseFloat(this.state.price).toFixed(2)} */}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                ""
-              )}
-              <div className="float-right col-sm-2 mt-2"></div>
-
-              {this.state.product_mrp !== null &&
-              this.state.selling_price !== null ? (
-                <div
-                  id="prices_cards"
-                  className="bg-grey float-left col-sm-5 text-center productBorder"
-                >
-                  <div className="row justify-content-between mx-2">
-                    <div className="row">
-                      <div className="col">
-                        MRP {this.state.currency}{" "}
-                        {new Intl.NumberFormat().format(this.state.product_mrp)}
+                    <HRLine color="#0e0e0e" />
+                    <div className="row justify-content-between mx-1">
+                      <div className="float-left">Final Price</div>
+                      <div className="float-right">
+                        {this.state.currency}{" "}
+                        {new Intl.NumberFormat().format(
+                          parseFloat(this.state.price).toFixed(2)
+                        )}
+                        {/* {parseFloat(this.state.price).toFixed(2)} */}
                       </div>
                     </div>
                   </div>
-                  <HRLine color="#0e0e0e" />
-                  <div className="row justify-content-between mx-1">
-                    <div className="row">
-                      <div className="col">
-                        Retail Margin:{" "}
-                        {/* {parseFloat(
+                ) : (
+                  ""
+                )}
+                <div className="float-right col-sm-2 mt-2"></div>
+
+                {this.state.product_mrp !== null &&
+                this.state.selling_price !== null ? (
+                  <div
+                    id="prices_cards"
+                    className="bg-grey float-left col-sm-5 text-center productBorder"
+                  >
+                    <div className="row justify-content-between mx-2">
+                      <div className="row">
+                        <div className="col">
+                          MRP {this.state.currency}{" "}
+                          {new Intl.NumberFormat().format(
+                            this.state.product_mrp
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <HRLine color="#0e0e0e" />
+                    <div className="row justify-content-between mx-1">
+                      <div className="row">
+                        <div className="col">
+                          Retail Margin:{" "}
+                          {/* {parseFloat(
                     (parseFloat(this.state.product_mrp) -
                       parseFloat(this.state.selling_price)) /
                       (parseFloat(this.state.product_mrp) * 0.01).toFixed(2)
                   ).toFixed(2)} */}
-                        {parseFloat(
-                          ((parseFloat(this.state.product_mrp) -
-                            parseFloat(this.state.selling_price)) /
-                            parseFloat(this.state.product_mrp)) *
-                            100
-                        ).toFixed(2)}
-                        %
+                          {parseFloat(
+                            ((parseFloat(this.state.product_mrp) -
+                              parseFloat(this.state.selling_price)) /
+                              parseFloat(this.state.product_mrp)) *
+                              100
+                          ).toFixed(2)}
+                          %
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                ""
-              )}
-            </div>
+                ) : (
+                  ""
+                )}
+              </div>
+            ) : (
+              <div
+                className="row d-flex justify-content-start align-items-center mt-1"
+                style={{ marginLeft: "40px", marginRight: "10px" }}
+              >
+                {/* <div>
+              Shipping Charges:{` `}
+              {this.state.currency} {this.state.shipping_cost}
+            </div> */}
+                {this.state.gst_val != null ? (
+                  <div
+                    id="prices_cards"
+                    className="bg-grey float-left col-sm-5 text-center productBorder"
+                  >
+                    <div className="row justify-content-between mx-2">
+                      <div className="float-left">Price of items</div>
+                      <div className="float-right">
+                        {this.state.currency}{" "}
+                        {/* {parseFloat(
+                      parseFloat(this.state.price) -
+                        parseFloat(this.state.gst_cal)
+                    ).toFixed(2)} */}
+                        {new Intl.NumberFormat().format(
+                          parseFloat(
+                            parseFloat(this.state.price) -
+                              parseFloat(this.state.gst_cal)
+                          ).toFixed(2)
+                        )}
+                      </div>
+                    </div>
+                    <div className="row justify-content-between mx-1">
+                      <div className="float-left">
+                        Tax @ {this.state.gst_val}%
+                      </div>
+                      <div className="float-right">
+                        {this.state.currency}{" "}
+                        {new Intl.NumberFormat().format(
+                          parseFloat(this.state.gst_cal).toFixed(2)
+                        )}
+                      </div>
+                    </div>
+                    <HRLine color="#0e0e0e" />
+                    <div className="row justify-content-between mx-1">
+                      <div className="float-left">Final Price</div>
+                      <div className="float-right">
+                        {this.state.currency}{" "}
+                        {new Intl.NumberFormat().format(
+                          parseFloat(this.state.price).toFixed(2)
+                        )}
+                        {/* {parseFloat(this.state.price).toFixed(2)} */}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  ""
+                )}
+                <div className="float-right col-sm-2 mt-2"></div>
+
+                {this.state.product_mrp !== null &&
+                this.state.selling_price !== null ? (
+                  <div
+                    id="prices_cards"
+                    className="bg-grey float-left col-sm-5 text-center productBorder"
+                  >
+                    <div className="row justify-content-between mx-2">
+                      <div className="row">
+                        <div className="col">
+                          MRP {this.state.currency}{" "}
+                          {new Intl.NumberFormat().format(
+                            this.state.product_mrp
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <HRLine color="#0e0e0e" />
+                    <div className="row justify-content-between mx-1">
+                      <div className="row">
+                        <div className="col">
+                          Retail Margin:{" "}
+                          {/* {parseFloat(
+                    (parseFloat(this.state.product_mrp) -
+                      parseFloat(this.state.selling_price)) /
+                      (parseFloat(this.state.product_mrp) * 0.01).toFixed(2)
+                  ).toFixed(2)} */}
+                          {parseFloat(
+                            ((parseFloat(this.state.product_mrp) -
+                              parseFloat(this.state.selling_price)) /
+                              parseFloat(this.state.product_mrp)) *
+                              100
+                          ).toFixed(2)}
+                          %
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
+            )}
+
             <ProductVariation
               getProdDetl={this.getProdDetails}
               prodId={item.id}

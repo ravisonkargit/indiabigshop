@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import "../common/index.scss";
 import Slider from "react-slick";
 import $ from "jquery";
 import {
@@ -18,6 +19,7 @@ import { imgUrl } from "../../constants/variable";
 import LoadingComponent from "../products/common/loading-bar";
 import { getCookie } from "../../functions/index";
 import CategoryComponent from "../common/getStoreCategoryComponent";
+import { isMobile } from "react-device-detect";
 
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from "react-loader-spinner";
@@ -188,6 +190,15 @@ class StoreFront extends Component {
   };
 
   render() {
+    var settings = {
+      dots: true,
+      //vertical: true,
+      infinite: true,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      autoplay: true,
+      autoplaySpeed: 2000,
+    };
     const { symbol } = this.props.symbol;
     const { translate } = this.props;
     return (
@@ -265,7 +276,7 @@ class StoreFront extends Component {
                                 )}
                               </div>
                             </div>
-                            <div className="col-sm-12 my-3">
+                            <div className="col-sm-4 my-3">
                               <div className="media">
                                 <ReactImageFallback
                                   src={
@@ -368,6 +379,55 @@ class StoreFront extends Component {
                                 </div>
                               </div>
                             </div>
+                            {isMobile ? (
+                              ""
+                            ) : (
+                              <div
+                                className="col-sm-8 container"
+                                style={{ height: "200px", marginTop: "15px" }}
+                              >
+                                {this.state.sellerDetail.banner.length > 0 ? (
+                                  <div className="">
+                                    <Slider {...settings} className="">
+                                      {this.state.sellerDetail.banner
+                                        ? this.state.sellerDetail.banner.map(
+                                            (item) => (
+                                              <div>
+                                                {item.link !== "" &&
+                                                item.link !== null &&
+                                                item.link !== "0" ? (
+                                                  <a href={item.link} target="_blank">
+                                                    <img
+                                                      style={{
+                                                        width: "710px",
+                                                        height: "197px",
+                                                      }}
+                                                      src={item.bimg}
+                                                      alt={item.alt_track}
+                                                    />
+                                                  </a>
+                                                ) : (
+                                                  <img
+                                                    style={{
+                                                      width: "710px",
+                                                      height: "197px",
+                                                    }}
+                                                    src={item.bimg}
+                                                    alt={item.alt_track}
+                                                  />
+                                                )}
+                                              </div>
+                                            )
+                                          )
+                                        : ""}
+                                    </Slider>
+                                  </div>
+                                ) : (
+                                  ""
+                                )}
+                              </div>
+                            )}
+
                             {/* ------------ product lenth ----------------- */}
                             <div className="col-sm-12 my-2">
                               <div className="row">
@@ -386,7 +446,10 @@ class StoreFront extends Component {
                               </div>
                               <div className="row">
                                 <div className="col-sm-3">
-                                  <CategoryComponent type={this.state} cat_id={cat_id}/>
+                                  <CategoryComponent
+                                    type={this.state}
+                                    cat_id={cat_id}
+                                  />
                                 </div>
                                 <div className="col-sm-9 my-2">
                                   <div className="product-wrapper-grid row">
@@ -413,7 +476,7 @@ class StoreFront extends Component {
                                         </div>
                                       ) : (
                                         <>
-                                          {(this.state.productNotFound) ? (
+                                          {this.state.productNotFound ? (
                                             <div className="row text-center">
                                               <div className="col-12">
                                                 <img
@@ -450,7 +513,7 @@ class StoreFront extends Component {
                                       {/* </div> */}
                                       <div className="row justify-content-md-center">
                                         {this.state.products ? (
-                                          this.state.pageCount > 1  ? (
+                                          this.state.pageCount > 1 ? (
                                             <ReactPaginate
                                               initialPage={this.state.pageNo}
                                               previousLabel={"previous"}

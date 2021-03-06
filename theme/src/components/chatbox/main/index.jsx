@@ -1468,14 +1468,14 @@ class Main extends Component {
                                                                                                         <div className="col-md-12 my-2 px-0">
                                                                                                             <div className="has-float-label ">
                                                                                                                 <input
-                                                                                                                    id="email"
+                                                                                                                    id="e_mail"
                                                                                                                     type="email"
                                                                                                                     placeholder="Email"
                                                                                                                     name="email"
                                                                                                                     className="form-control"
                                                                                                                     required
                                                                                                                 />
-                                                                                                                <label htmlFor="email">
+                                                                                                                <label htmlFor="e_mail">
                                                                                                                     {"Enter your email"}
                                                                                                                 </label>
                                                                                                             </div>

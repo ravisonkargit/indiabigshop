@@ -14,7 +14,7 @@ class RazorpayForm extends Component {
     createFrom = (allProps) => {
         const currentdomain = window.location.hostname;
          if (currentdomain === 'uat.beldara.com' || currentdomain === 'localhost'){
-            razorpaykey = "rzp_test_8PjcTCtvKLpR6g";
+            razorpaykey = "rzp_live_YHQFULPoYEUSnY";
          }else{
             razorpaykey = "rzp_live_YHQFULPoYEUSnY";
          }
@@ -32,7 +32,7 @@ class RazorpayForm extends Component {
             script.setAttribute("data-amount", (allProps.amount * 100).toFixed(2));
         }
         script.setAttribute("data-currency", allProps.currency);
-        script.setAttribute("data-buttontext", "Pay Now");
+        script.setAttribute("data-buttontext", allProps.buttonName);
         script.setAttribute("data-name", "Beldara.com");
         script.setAttribute("data-description", "Beldara Purchase");
         script.setAttribute("data-image", "https://img.beldara.com/images/BelDara-logo.png");

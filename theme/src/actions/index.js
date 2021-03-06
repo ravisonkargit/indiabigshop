@@ -642,10 +642,15 @@ export const receiveProductsByLP = ProductsByLP => ({
   ProductsByLP
 });
 
-export const getProductsByLP = (cat_id,type,datatype)=> dispatch => {
-  if(type == '1'){
+export const getProductsByLP = (cat_id,typeData,datatype,is_search_by_keyword)=> dispatch => {
+  if(is_search_by_keyword == '1'){
+    is_search_by_keyword="listing"
+  }else{
+    is_search_by_keyword=""
+  }
+  if(typeData == '1'){
     axios.post("https://api.beldara.com/common/get_prod_by_lp.php",
-      { security_token: "", plateform_type: "", cat_id: cat_id },
+      { security_token: "", plateform_type: "", cat_id: cat_id, type: is_search_by_keyword },
       {headers: {'Content-Type': 'multipart/form-data'}}
     )
     .then(response => {

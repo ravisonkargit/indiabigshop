@@ -64,6 +64,7 @@ class ProductVariation extends Component {
             await this.setState({
               productarray: response.data.result["child_products"],
               variation: response.data.result["parent_products"]["variation"],
+              variation_color : response.data.result["parent_products"]["variation_color"],
               parentproductarray: response.data.result["parent_products"],
               current_product_id: response.data.result["child_access_products"],
             });
@@ -212,7 +213,7 @@ class ProductVariation extends Component {
               {this.state.variation !== null &&
               this.state.variation !== undefined &&
               this.state.variation !== ""
-                ? this.state.variation.map((index, key) => {
+                ? this.state.variation_color.map((index, key) => {
                     return (
                       <React.Fragment>
                         {this.state.variation[0].color == "1" ? (

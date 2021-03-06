@@ -42,7 +42,7 @@ class Register extends Component {
       inrValue: "",
       time: {},
       seconds: 0,
-      DispalySkipResend: true,
+      DispalySkipResend: false,
       timer: 0,
     };
     //this.timer = 0;
@@ -298,17 +298,50 @@ class Register extends Component {
   };
 
   skipOtp = () => {
-    captureEvent(
-      "register",
-      "register",
-      "otp_skip",
-      "map_cart",
-      ls.get("sellerid"),
-      getCookie("mhinpbnb")
-    );
-    //window.location.href = '/cart.html'
-    //window.location.href = this.state.link
-    this.redirect_to_start_order();
+    $(".errOtp")
+      .addClass("d-none")
+      .removeClass("d-block alert alert-danger");
+    axios
+      .post(
+        "https://api.beldara.com/common/otp_verify.php",
+        {
+          security_token: "",
+          plateform_type: "",
+          otp: "",
+          mobile: number,
+          email: this.state.email,
+          //sellerid:ls.get('sellerid'),
+          type: "without_otp_verify",
+        },
+        { headers: { "Content-Type": "multipart/form-data" } }
+      )
+      .then((response) => {
+        if (response.data.status === "Failed") {
+          $(".errOtp")
+            .html(response.data.message)
+            .addClass("d-block alert alert-danger")
+            .removeClass("d-none");
+        } else {
+          setCookie("mhinpbn", response.data.result, "365");
+          store.dispatch(getLoggedIn());
+          this.setState({
+            result: 1,
+          });
+          captureEvent(
+            "register",
+            "register",
+            "correct_otp",
+            "map_cart",
+            ls.get("sellerid"),
+            getCookie("mhinpbnb")
+          );
+          $(".errOtp")
+            .addClass("d-none")
+            .removeClass("d-block alert alert-danger");
+          //window.location.href = this.state.link
+          this.redirect_to_start_order();
+        }
+      });
   };
 
   otpSubmit = (e) => {
@@ -430,7 +463,7 @@ class Register extends Component {
 
   startTimer() {
     this.setState({
-      seconds: 30,
+      seconds: 50,
       timer: 0,
     });
     if (this.state.timer == 0 && this.state.seconds > 0) {
@@ -644,7 +677,7 @@ class Register extends Component {
                         `required|text|min:4|max:4`
                       )}
                     </div>
-                    
+
                     <div className="form-group">
                       <div className="d-flex justify-content-center">
                         Remaining Time : 00:{this.state.time.s}
@@ -662,7 +695,7 @@ class Register extends Component {
                           Enter OTP
                         </button>
                       </div>
-                      <div className="d-flex justify-content-end">
+                      {/* <div className="d-flex justify-content-end">
                         {this.state.DispalySkipResend ? (
                           <>
                             <button
@@ -672,20 +705,42 @@ class Register extends Component {
                             >
                               Resend OTP
                             </button>
-                            {/* <button
+                            <button
                               className="btn btn-link rounded-1  text-capitalize mr-1 resendBtn"
                               type="button"
-                              onClick={this.skipOtp}
+                              onClick={this.otpSubmit}
                             >
                               Skip
-                            </button> */}
+                            </button>
                           </>
                         ) : (
                           ""
                         )}
-                      </div>
+                      </div> */}
                     </div>
                   </form>
+                  <div className="d-flex justify-content-end">
+                    {this.state.DispalySkipResend ? (
+                      <>
+                        <button
+                          className="btn btn-link rounded-1  text-capitalize mr-1 resendBtn"
+                          type="button"
+                          onClick={this.ResendOtp}
+                        >
+                          Resend OTP
+                        </button>
+                        <button
+                          className="btn btn-link rounded-1  text-capitalize mr-1 resendBtn"
+                          type="button"
+                          onClick={this.skipOtp}
+                        >
+                          Skip
+                        </button>
+                      </>
+                    ) : (
+                      ""
+                    )}
+                  </div>
                 </Suspense>
               </React.Fragment>
             )}
