@@ -132,6 +132,7 @@ class ProductListing extends Component {
         // console.log('render',132);
         //const { products, addToCart, symbol, addToWishlist, addToCompare, totalCount, callstate ,translate } = this.props;
         const {  symbol ,translate } = this.props;
+        console.log("n")
         return (
             <div className="col-12 p-0">
                 <div className="product-wrapper-grid">

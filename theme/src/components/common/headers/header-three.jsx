@@ -39,6 +39,8 @@ function getSuggestionValue(suggestion) {
 }
 
 function renderSuggestion(suggestion, { query }) {
+  console.log(suggestion ,"jhbfjhbfhjvb")
+  console.log(suggestion)
   const matches = AutosuggestHighlightMatch
     ? AutosuggestHighlightMatch(suggestion.name, query)
     : "";
@@ -46,6 +48,7 @@ function renderSuggestion(suggestion, { query }) {
     ? AutosuggestHighlightParse(suggestion.name, matches)
     : "";
   // console.log(suggestion,parts);
+  console.log(matches)
   return (
     <span>
       {parts.map((part, index) => {
@@ -55,7 +58,7 @@ function renderSuggestion(suggestion, { query }) {
         const newClass = suggestion.type == 1 ? "text-danger" : "text-dark";
         return (
           <span className={`${className}`} key={index}>
-            {part.text}
+            {part.text }
           </span>
         );
       })}
@@ -253,6 +256,8 @@ class HeaderThree extends Component {
           suggestions: data,
           // suggestions: getSuggestions(value)
         });
+        console.log(this.state.suggestions, "uugug")
+
       })
       .catch((error) => {
         const result = error.response;

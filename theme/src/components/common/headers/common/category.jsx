@@ -51,7 +51,7 @@ export class Category extends Component {
   render() {
     return (
       <div id="root_category">
-        <h4 id="main_cat_to_hover" className="main_cat_to_hover hoverclass">
+        <h4 id="main_cat_to_hover" className="main_cat_to_hover hoverclass d-none d-sm-block">
           Categories{" "}
           <i
             className="arrow"

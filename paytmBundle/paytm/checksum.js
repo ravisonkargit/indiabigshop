@@ -10,7 +10,6 @@ function paramsToString(params, mandatoryflag) {
   var data = '';
   var tempKeys = Object.keys(params);
   tempKeys.sort();
-
   tempKeys.forEach(function (key) {
   var n = params[key].includes("REFUND"); 
 

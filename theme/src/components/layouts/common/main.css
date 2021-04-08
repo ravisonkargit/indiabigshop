@@ -25,3 +25,6 @@
 .visiControl{
     visibility: hidden;
 }
+.product-icon:hover{
+    color:red
+}

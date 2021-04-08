@@ -65,14 +65,14 @@ class SmallImages extends Component {
                     {this.props.navOne != null && this.props.navOne.innerSlider !== undefined && this.props.navOne.innerSlider !== null ?
                     
                         <Slider {...productsnav} asNavFor={this.props.navOne} ref={slider => (this.slider2 = slider)} className="slider-nav" >
-                        <div key={item.img} className="small_images" style={{width:'125px !important'}}>
-                            <img src={imgUrl+`/product_images_small/${item.img}`} key={item.img} alt={item.name}  className="img-fluid" />
+                        <div key={item.img} className="small_images w-xs-25" style={{width:'125px !important',zIndex:9999}}>
+                            <img src={item.image[0].img} key={item.img} alt={item.name}  className="img-fluid" />
                         </div>
                     
-                        {item.other_images.map((vari, index) =>
-                            <div key={index} className="small_images" style={{width:'125px !important'}}>
+                        {item.image.slice(1,4).map((vari, index) =>
+                            <div key={index} className="small_images" style={{width:'125px !important',zIndex:9999}}>
                                 {/* {console.log("77777777",vari)} */}
-                                <img src={imgUrl+`/product_images_small/${vari}`} key={index} alt={item.name}  className="img-fluid" />
+                                <img src={vari.img} key={index} alt={item.name}  className="img-fluid" />
                             </div>
                         )}
                         </Slider>

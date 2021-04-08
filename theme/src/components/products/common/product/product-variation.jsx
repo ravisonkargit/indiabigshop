@@ -70,7 +70,8 @@ class ProductVariation extends Component {
             });
             response.data.result["parent_products"]["variation"].filter(
               (variants) => {
-                if (variants.product_id == this.props.prodId) {
+                console.log("variants.product_id",variants.product_id,"prodId",this.props.prodId);
+                if (variants.product_id == this.props.prodId) {                  
                   var selectedlabel = [
                     {
                       value: variants.variation2,
@@ -151,7 +152,10 @@ class ProductVariation extends Component {
   changesize = async (e) => {
     // console.log(e);
     if (this.state.currentselectedProduct !== null) {
-      if (this.state.currentselectedProduct.variation2 == e.value) {
+      console.log(this.state.currentselectedProduct);
+      console.log("-----------");
+      console.log(e.value);
+     /* if (this.state.currentselectedProduct.variation2 == e.value) {
         // console.log('available');
         this.setState({
           err: false,
@@ -163,7 +167,11 @@ class ProductVariation extends Component {
           validator: "Product is not available",
         });
         // console.log('not available');
-      }
+      }*/
+      this.setState({
+        err: false,
+        validator: "",
+      });
     } else {
       this.setState({
         err: false,
@@ -200,7 +208,7 @@ class ProductVariation extends Component {
     // ];
     // console.log('render',this.state.variation);
     return (
-      <div className="row mx-2 my-2">
+      <div className="row mx-2">
         {this.state.variation !== null ? (
           <React.Fragment>
             {this.state.colour !== null &&
@@ -209,7 +217,7 @@ class ProductVariation extends Component {
             ) : (
               ""
             )}
-            <div className="col-md-12 d-flex my-2">
+            <div className="col-md-12 d-flex">
               {this.state.variation !== null &&
               this.state.variation !== undefined &&
               this.state.variation !== ""

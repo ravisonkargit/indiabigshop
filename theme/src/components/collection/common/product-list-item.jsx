@@ -132,7 +132,32 @@ class ProductListItem extends Component {
       { headers: { "Content-Type": "multipart/form-data" } }
     ).then(response => {
       // this.goToExpressCheckout(productid, qty, product_currency, product_sellerid)
-      window.location.href="/cart.html";
+      //window.location.href="/cart.html";
+     // window.location.href="/start-order/" + Math.random().toString(36).replace(/[^a-z]+/g, "").substr(0, 8) +".html"
+      this.props.history.push({
+        // pathname: "/cart.html",
+        // pathname: "/start-order/"+ Math.random().toString(36).replace(/[^a-z]+/g, "").substr(0, 8) +".html",
+        pathname: "/start-order.html",
+        state: {
+         totalCartValue: this.state.totalCartValue,
+         totalProductCost: parseFloat(this.state.totalProductCost).toFixed(
+           2
+         ),
+         totalShippingCost: this.state.totalShippingCost,
+         finalShippingCost: this.state.totalShippingCost,
+         cartItems: this.state.cartItems,
+         countryName: this.state.shippingCountryName,
+         symbol: this.state.symbol,
+         cartid: this.state.cartid,
+         //pixeldata: pixeldata,
+         shippingCharges: this.state.shippingCharges,
+         inrValue: this.state.inrValue,
+         totalCartStaticValue: this.state.totalCartStaticValue,
+         //cashback_amount_inr: cashback_amount_inr,
+         //cashback_amount_usd: cashback_amount_usd,
+         txn_type: this.state.txn_type,
+        },
+       });
     })
       .catch(error => {
         const result = error.response;

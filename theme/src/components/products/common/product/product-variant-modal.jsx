@@ -51,18 +51,28 @@ class ProductVariantModal extends Component {
     var multi_array = [];
     if(this.state.priceArray !== null){
       this.state.priceArray.map((eachvalue, keys) => {
+        console.log("productarray",this.props.varData.productarray);
         var product_data = this.props.varData.productarray[eachvalue.id];
-        // console.log(product_data.disscount_info);
+        if(product_data != undefined){
+          
+          var disc = product_data.disscount_info[0].discount;
+          //console.log("dicount",disc,"currencyValue",this.props.currencyValue[0]['INR']);
+          
+        }        
+      //   var disco = product_data.disscount_info[0];
+      //  console.log("disscount_info",disco);
+        //console.log("discount",disc,"currencyValue",this.props.currencyValue[0]['INR']);
         var objects = {
           id: eachvalue.id,
           quantity: eachvalue.quantity,
           selling_price: parseFloat(eachvalue.selling_price),
           mrp: parseFloat(eachvalue.mrp),
-          calcprice: getCookie('currency') == 'INR' ? parseFloat(eachvalue.selling_price) : parseFloat(eachvalue.selling_price)/this.props.currencyValue[0]['INR'],
+          calcprice: getCookie('currency') == 'INR' ? parseFloat(eachvalue.selling_price) - (parseFloat(eachvalue.selling_price)*disc/100 ): parseFloat(eachvalue.selling_price)/this.props.currencyValue[0]['INR'],
           selling_price_usd: parseFloat(eachvalue.selling_price)/this.props.currencyValue[0]['INR']
         };
         multi_array[eachvalue.id] = objects;
       });
+      //console.log("---------------------priceArray if--------------",this.state.priceArray);
     }else{
       this.props.varData.variation.map((eachvalue, keys) => {
         var product_data = this.props.varData.productarray[eachvalue.product_id];
@@ -77,6 +87,7 @@ class ProductVariantModal extends Component {
         };
         multi_array[eachvalue.product_id] = objects;
       });
+      //console.log("---------------------priceArray else--------------",this.state.priceArray);
     }
     await this.setState({
       priceArray: multi_array,
@@ -86,6 +97,7 @@ class ProductVariantModal extends Component {
       moq_qty: parseInt(this.props.varData.parentproductarray.qty),
       validate_text:`Select quantity (MOQ ${parseInt(this.props.varData.parentproductarray.qty)} ${this.props.varData.parentproductarray.unit}) to Proceed`
     });
+    //console.log("---------------------priceArray--------------",this.state.priceArray);
   };
   async componentDidUpdate(nextProps) {
     // console.log(nextProps);
@@ -109,6 +121,7 @@ class ProductVariantModal extends Component {
     // console.log(nextProps,this.props);
   }
   plusQty = async (product_id) => {
+    console.log("------------------test----------------------",product_id);
     var product_data = this.props.varData.productarray[product_id];
     var new_array = this.state.priceArray;
     var objects = {
@@ -155,6 +168,7 @@ class ProductVariantModal extends Component {
     }
   };
   changeQty = async (product_id,e) => {
+    //console.log("------------------123--------------",product_id);
     var product_data = this.props.varData.productarray[product_id];
     var new_quantity = e.target.value !== '' && e.target.value >= 0 ? e.target.value : 0;
     // console.log(new_quantity);
@@ -205,21 +219,27 @@ class ProductVariantModal extends Component {
           type += 1;
           var range_array = this.props.varData.productarray[value.id]
             .disscount_info;
+          
           if (range_array !== null) {
             // console.log('start')
             var i;
             for (i = 0; i < range_array.length; i++) {
+              //console.log("------------------123--------------",quantity,range_array[i].from_qty,range_array[i].to_qty);
               // console.log('start for',quantity)
               if (
                 parseInt(quantity) >= parseInt(range_array[i].from_qty) &&
                 parseInt(quantity) <= parseInt(range_array[i].to_qty)
               ) {
+                
                 // if(this.state.currency == 'INR'){
+                 console.log("------------------123--------------",range_array[i].discount);
                   var sellingprice = parseFloat(
                     parseFloat(selling_price) -
                       parseFloat(selling_price) *
                         parseFloat(range_array[i].discount / 100)
                   );
+                
+                  
                 // }else{
                 //   var sellingprice = parseFloat(
                 //     parseFloat(selling_price) -
@@ -249,8 +269,16 @@ class ProductVariantModal extends Component {
                 newPricearray[value.id] = objects;
                 break;
               } else if (i == parseInt(range_array.length - 1)) {
+                //console.log("-------------else if--------------");
                 // if(i == parseInt(range_array.length-1)){
-                var sellingprice = parseFloat(selling_price);
+
+                  var sellingprice = parseFloat(
+                    parseFloat(selling_price) -
+                      parseFloat(selling_price) *
+                        parseFloat(range_array[i].discount / 100)
+                  );
+
+                //var sellingprice = parseFloat(selling_price);
                 // console.log(
                 //   "for else",
                 //   sellingprice,
@@ -274,6 +302,7 @@ class ProductVariantModal extends Component {
               }
             }
           } else {
+            //console.log("-------------else--------------");
             var sellingprice = parseFloat(selling_price);
             // console.log(
             //   "no range",
@@ -350,7 +379,31 @@ class ProductVariantModal extends Component {
         ele.removeAttribute('disabled','true');
           // console.log(response);
           if(response.data.statusId == "1"){
-              window.location.href="/cart.html";
+              //window.location.href="/cart.html";
+              this.props.history.push({
+                // pathname: "/cart.html",
+                //pathname: "/start-order/"+ Math.random().toString(36).replace(/[^a-z]+/g, "").substr(0, 8) +".html",
+                pathname: "/start-order.html",
+                state: {
+                 totalCartValue: this.state.totalCartValue,
+                 totalProductCost: parseFloat(this.state.totalProductCost).toFixed(
+                   2
+                 ),
+                 totalShippingCost: this.state.totalShippingCost,
+                 finalShippingCost: this.state.totalShippingCost,
+                 cartItems: this.state.cartItems,
+                 countryName: this.state.shippingCountryName,
+                 symbol: this.state.symbol,
+                 cartid: this.state.cartid,
+                 //pixeldata: pixeldata,
+                 shippingCharges: this.state.shippingCharges,
+                 inrValue: this.state.inrValue,
+                 totalCartStaticValue: this.state.totalCartStaticValue,
+                 //cashback_amount_inr: cashback_amount_inr,
+                 //cashback_amount_usd: cashback_amount_usd,
+                 txn_type: this.state.txn_type,
+                },
+               });
           }else{
             $('#error_label').removeClass('d-none');
           }
@@ -422,6 +475,7 @@ class ProductVariantModal extends Component {
                         <div className="col-md-12 m-0 p-0">
                         <div class="d-flex justify-content-center">
                           <table className="my-2">
+                            {/* {console.log("----------------1-----------------",this.state.variation)} */}
                             {this.state.variation.map((value, key) => {
                               return (
                                 <React.Fragment>
@@ -458,9 +512,19 @@ class ProductVariantModal extends Component {
                                         : <i class="fa fa-usd" aria-hidden="true"></i>
                                       }{" "}
                                       {
+                                       
                                         parseFloat(this.state.priceArray[value.product_id][
                                           "calcprice"
                                         ]).toFixed(2)
+                                      }
+                                      {
+                                        console.log("~~~~~~~",value.product_id,"----",this.state.priceArray[value.product_id])
+                                        
+                                      }
+                                      {
+                                        console.log("00000...........",parseFloat(this.state.priceArray[value.product_id][
+                                          "calcprice"
+                                        ]).toFixed(2))
                                       }
                                     </td>
                                     <td>

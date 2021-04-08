@@ -23,6 +23,7 @@ var translations, langDomain
     //     translations = await resp.data
     //     // console.log(translations)
     // })
+    
 
 switch(langDomain){
     case 'hindi':
@@ -480,7 +481,8 @@ import('./components/membership/membership_monthly').then(module => module.defau
  <Route path={`${process.env.PUBLIC_URL}/beldara-logistics-services.html`} component={BeldaraLogisticServices} />
  <Route path={`${process.env.PUBLIC_URL}/thankyou.html`} component={ThankYou} />
  <Route path={`${process.env.PUBLIC_URL}/buy-leads.html`} component={BuyLead} />
- <Route path={`${process.env.PUBLIC_URL}/start-order/:id`} component={startOrder} />
+ {/* <Route path={`${process.env.PUBLIC_URL}/start-order/:id`} component={startOrder} /> */}
+ <Route path={`${process.env.PUBLIC_URL}/start-order.html`} component={startOrder} />
  {/* <Route path={`${process.env.PUBLIC_URL}/start-order-test/:id`} component={startOrderTest} /> */}
  <Route path={`${process.env.PUBLIC_URL}/cart.html`} component={cartComponent} />
  <Route path={`${process.env.PUBLIC_URL}/cart-test.html`} component={cartTestComponent} />

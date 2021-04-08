@@ -72,9 +72,9 @@ class DetailsTopTabs extends Component {
                                     <div className="material-border"></div>
                                 </Tab> */}
                             </TabList>
-                            {item.description ?
+                            {item.desc1 ?
                                 <TabPanel className="desc_content tab-pane fade mt-4 show active">
-                                    <p className="desc_content mt-4 p-0" dangerouslySetInnerHTML={{ __html: item.description }}>
+                                    <p className="desc_content mt-4 p-0" dangerouslySetInnerHTML={{ __html: item.desc1}}>
                                     </p>
                                 </TabPanel>
                             : ''}

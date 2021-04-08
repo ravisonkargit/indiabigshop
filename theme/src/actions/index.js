@@ -210,6 +210,7 @@ export const getTotalCost = value => dispatch => {
 
 //update User
 export const getUpdateUser = sellerid => dispatch => {
+  console.log(sellerid)
   try {
     axios
       .post(
@@ -561,14 +562,18 @@ export const SingleProduct = productId => ({
   productId
 });
 export const getSingleProduct = url => dispatch => {
+  console.log(url)
+  
   try {
     dispatch(ClearSingleProduct(''));
     return axios
       .post(
-        `${ApiUrl}/common/fetch_single_prod.php`,
+        `${ApiUrl}/common/product-details.php`,
         // `${ApiUrl}/common/fetch_single_prod_test.php`,
+        // common/fetch_single_prod.php
+        // /common/product-details.php
         {
-          url: url,
+          id: url,
           sellerid: ls.get("sellerid"),
           security_token: "",
           plateform_type: ""
@@ -578,6 +583,7 @@ export const getSingleProduct = url => dispatch => {
       .then(response => {
         dispatch(SingleProduct(response.data.result));
         // return Promise.reject(error)
+        console.log(response.data.result,"b")
         return response.data.result;
         // return Promise.resolve()
       })
@@ -1259,8 +1265,11 @@ export const clearCartListItems = () => ({
 //fetch cartlength
 export const getCartLength = (sellerid,visitorid) => dispatch => {
   try{
+    console.log(sellerid,visitorid)
     // console.log(sellerid,visitorid,1256);
     dispatch(clearCartListItems());
+
+   
     axios
       .post(
         `${ApiUrl}/common/getCartlength.php`,
@@ -1278,6 +1287,7 @@ export const getCartLength = (sellerid,visitorid) => dispatch => {
         // return Promise.reject(error)
         // return response.data.result;
         // return Promise.resolve()
+        console.log(response.data.result, "h")
       })
       .catch(error => {
         const result = error.response;

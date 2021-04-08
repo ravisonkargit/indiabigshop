@@ -21,9 +21,14 @@ import { imgUrl, apiUrl, betaApi } from "../../../../constants/variable";
 // import StarReview from "./rating";
 import StarReview from "../../../collection/common/rating";
 import axios from "axios";
-import { getAllCurrencyValue, getChatWithSupplier } from "../../../../actions";
+import {
+  getAllCurrencyValue,
+  getChatWithSupplier,
+  getCartLength,
+  getUpdateUser
+} from "../../../../actions";
 import ReactPixel from "react-facebook-pixel";
-import $ from "jquery";
+import $, { get } from "jquery";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group"; // ES6
 import TagManager from "react-gtm-module";
 // import ReactGA from 'react-ga';
@@ -70,34 +75,191 @@ function priceCond(item, ele, deliverable, pincode) {
         <div>
           {/* <button className="btn btn-solid my-2" onClick={ele.validate} id="buyBtn" clickevent="Buy_Now"> Add To Cart </button>  */}
           {deliverable ? (
-            <button
-              className="btn btn-solid my-2 ml-2 "
-              onClick={ele.validate}
-              id="expressCheckOut"
-              clickevent="Express_checkout"
-            >
-              {" "}
-              Buy Now{" "}
-            </button>
+            <div>
+              <div>
+                <div
+                  className="d-sm-none mobile-fix-option p-0"
+                  style={{
+                    position: "fixed",
+                    bottom: "0px",
+                    left: "0px",
+                    right: "0",
+                    zIndex: "9999",
+                  }}
+                >
+                  <div className="col-xs-12">
+                    <div className="d-flex">
+                      <button
+                        className="btn btn-solid w-50 text-center"
+                        onClick={ele.validate}
+                        id="addToCart"
+                      >
+                        <i class="fa fa-shopping-cart pr-2"></i>Add to cart
+                      </button>
+                      <button
+                        className="btn w-50 text-center"
+                        onClick={ele.validate}
+                        id="expressCheckOut"
+                        style={{ backgroundColor: "#00adee", color: "white" }}
+                      >
+                        Buy Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <button
+                  className="btn btn-solid mr-2"
+                  onClick={ele.validate}
+                  id="addToCart"
+                >
+                  <i class="fa fa-shopping-cart pr-2"></i>
+                  Add to cart
+                </button>
+                <button
+                  className="btn btn-solid my-2"
+                  onClick={ele.validate}
+                  id="expressCheckOut"
+                  clickevent="Express_checkout"
+                >
+                  Buy Now
+                </button>
+              </div>
+            </div>
           ) : getCookie("country_name") === "India" ||
             getCookie("country_name") === "india" ? (
-            <OverlayTrigger
-              // key="top"
-              placement="top"
-              overlay={
-                <Tooltip id={`buy_now`}>
-                  <i
-                    class="fa fa-exclamation-circle mr-2"
-                    aria-hidden="true"
-                  ></i>
-                  {pincode != "" && pincode !== undefined
-                    ? "Information not found for entered pincode"
-                    : " Please enter pincode"}
-                </Tooltip>
-              }
-            >
+            <div>
+              <div>
+                <div className="row mobile-fix-option">
+                  <div
+                    className="d-sm-none mobile-fix-option"
+                    style={{
+                      position: "fixed",
+                      bottom: "0px",
+                      left: "0px",
+                      right: "0",
+                      zIndex: "9999",
+                    }}
+                  >
+                    <div className="col-xs-12">
+                      <div className="d-flex">
+                        <button
+                          className="btn btn-solid w-50 p-2"
+                          onClick={ele.validate}
+                          id="addToCart"
+                        >
+                          {" "}
+                          <i class="fa fa-shopping-cart pr-2"></i>Add to cart
+                        </button>
+                        <OverlayTrigger
+                          // key="top"
+                          placement="top"
+                          overlay={
+                            <Tooltip id={`buy_now`}>
+                              <i
+                                class="fa fa-exclamation-circle mr-2"
+                                aria-hidden="true"
+                              ></i>
+                              {pincode != "" && pincode !== undefined
+                                ? "Information not found for entered pincode"
+                                : " Please enter pincode"}
+                            </Tooltip>
+                          }
+                        >
+                          <button
+                            className="btn w-50"
+                            onClick={ele.validate}
+                            id="expressCheckOut"
+                            style={{ backgroundColor: "#00adee" }}
+                          >
+                            Buy Now
+                          </button>
+                        </OverlayTrigger>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  className="btn btn-solid mr-3"
+                  onClick={ele.validate}
+                  id="addToCart"
+                >
+                  <i class="fa fa-shopping-cart pr-2"></i>
+                  Add to cart
+                </button>
+                <OverlayTrigger
+                  // key="top"
+                  placement="top"
+                  overlay={
+                    <Tooltip id={`buy_now`}>
+                      <i
+                        class="fa fa-exclamation-circle mr-2"
+                        aria-hidden="true"
+                      ></i>
+                      {pincode != "" && pincode !== undefined
+                        ? "Information not found for entered pincode"
+                        : " Please enter pincode"}
+                    </Tooltip>
+                  }
+                >
+                  <button
+                    className="btn btn-solid my-2"
+                    onClick={ele.validate}
+                    id="expressCheckOut"
+                    clickevent="Express_checkout"
+                  >
+                    {" "}
+                    Buy Now{" "}
+                  </button>
+                </OverlayTrigger>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div className="row mobile-fix-option">
+                <div
+                  className="d-sm-none mobile-fix-option"
+                  style={{
+                    position: "fixed",
+                    bottom: "0px",
+                    left: "0px",
+                    right: "0",
+                    zIndex: "9999",
+                  }}
+                >
+                  <div className="col-xs-12">
+                    <div className="d-flex">
+                      <button
+                        className="btn btn-solid w-50 p-2"
+                        onClick={ele.validate}
+                        id="addToCart"
+                      >
+                        {" "}
+                        <i class="fa fa-shopping-cart pr-2"></i>Add to cart
+                      </button>
+                      <button
+                        className="btn w-50"
+                        onClick={ele.validate}
+                        id="expressCheckOut"
+                        style={{ backgroundColor: "#00adee" }}
+                      >
+                        Buy Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <button
-                className="btn btn-solid my-2 ml-2 "
+                className="btn btn-solid"
+                onClick={ele.validate}
+                id="addToCart"
+                clickevent="Express_checkout"
+              >
+                <i class="fas fa-shopping-cart pr-2"></i> Add to cart{" "}
+              </button>
+              <button
+                className="btn btn-solid "
                 onClick={ele.validate}
                 id="expressCheckOut"
                 clickevent="Express_checkout"
@@ -105,17 +267,7 @@ function priceCond(item, ele, deliverable, pincode) {
                 {" "}
                 Buy Now{" "}
               </button>
-            </OverlayTrigger>
-          ) : (
-            <button
-              className="btn btn-solid my-2 ml-2 "
-              onClick={ele.validate}
-              id="expressCheckOut"
-              clickevent="Express_checkout"
-            >
-              {" "}
-              Buy Now{" "}
-            </button>
+            </div>
           )}
           {/* <button
             className="btn btn-solid my-2 ml-2 "
@@ -188,31 +340,60 @@ function priceCond(item, ele, deliverable, pincode) {
       );
     } else {
       return (
-        <div
-          className="d-flex justify-content-between"
-          style={{ marginLeft: "10px" }}
-        >
-          <div className="p-0 mx-2 mr-1 productBorder">
-            <h5 className="p-text-color px-1" style={{ marginTop: "5px" }}>
-              Out Of Stock
-            </h5>
-          </div>
-          {/* <div className="dangerBorder mr-1">
+        <div>
+          <div
+            className="d-flex justify-content-between mb-3"
+            style={{ marginLeft: "10px" }}
+          >
+            <div className="p-0 mr-1 productBorder">
+              <h5 className="p-text-color px-1" style={{ marginTop: "5px" }}>
+                Out Of Stock
+              </h5>
+            </div>
+            {/* <div className="dangerBorder mr-1">
             <h5 className="text-danger px-1" style={{ marginTop: "5px" }}>
               Out Of Stock
             </h5>
           </div> */}
 
-          <div className="mr-1">
-            <button
-              className="btn btn-solid mr-1"
-              onClick={ele.NotifyMe}
-              id="expressCheckOut"
-              clickevent="Express_checkout"
-            >
-              {" "}
-              Notify Me{" "}
-            </button>
+            <div className="mr-1">
+              <button
+                className="btn btn-solid mr-1"
+                onClick={ele.NotifyMe}
+                id="expressCheckOut"
+                clickevent="Express_checkout"
+              >
+                {" "}
+                Notify Me{" "}
+              </button>
+            </div>
+          </div>
+          <div
+            className="d-sm-none mobile-fix-option"
+            style={{
+              position: "fixed",
+              bottom: "0px",
+              left: "0px",
+              right: "0",
+              zIndex: "9999",
+            }}
+          >
+            <div className="col-xs-12">
+              <div className="d-flex">
+                  <button
+                    className="productBorder btn btn-solid w-50"
+                  >
+                    Out Of Stock
+                  </button>
+                <button
+                  className="btn btn-solid w-50"
+                  onClick={ele.NotifyMe}
+                  id="expressCheckOut"
+                >
+                  Notify Me
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       );
@@ -525,8 +706,10 @@ class Details extends Component {
     //   },
     // };
     // TagManager.initialize(tagManagerArgs);
+    console.log("kjn");
     var pincode = getCookie("pincode");
     if (pincode !== "" && pincode !== null) {
+      console.log("kj");
       this.checkZipCode(pincode);
     }
   };
@@ -644,7 +827,6 @@ class Details extends Component {
   //Check Login
   validate = async (e) => {
     let id = e.target.id;
-
     if (
       this.state.quantity >= this.props.item.qty &&
       this.state.quantity > 0 &&
@@ -663,6 +845,11 @@ class Details extends Component {
         getCookie("mhinpbnb")
       );
       //console.log('validate', ls.get("sellerid"))
+      this.createCart(id);
+    } else if (
+      this.state.quantity >= this.props.item.qty &&
+      this.state.quantity > 0
+    ) {
       this.createCart(id);
     } else {
       // await this.setState({
@@ -710,22 +897,24 @@ class Details extends Component {
         { headers: { "Content-Type": "multipart/form-data" } }
       )
       .then((response) => {
+        if (id == "addToCart") {  
+          store.dispatch(getCartLength(ls.get("log_id"),getCookie("mhinpbnb")));
+        }
         // if (!this.state.moqErr) {
-        //   id == 'expressCheckOut' ?
-        //   this.goToExpressCheckout()
-        //   : ls.get("sellerid") ?
-        //   this.goToStartOrder()
-        //    :
-        //    this.goToLogin(id)
-
+        //   console.log("newwwwwwwww");
+        //   id == "expressCheckOut"
+        //     ? this.goToExpressCheckout()
+        //     : ls.get("sellerid")
+        //     ? this.goToStartOrder()
+        //     : this.goToLogin(id);
         // }
-
         if (!this.state.moqErr) {
+          if(id=="expressCheckOut"){
           id == "expressCheckOut"
             ? this.goToStartOrder()
             : // this.goToExpressCheckout()
               this.goToStartOrder();
-        }
+        }}
       })
       .catch((error) => {
         const result = error.response;
@@ -812,9 +1001,30 @@ class Details extends Component {
       value: each_product_price,
       currency: "USD",
     });
-
+    store.dispatch(
+      getCartLength(ls.get("log_id"), getCookie("mhinpbnb"))
+    );
     this.props.history.push({
       pathname: "/cart.html",
+       pathname: "/start-order.html",
+
+      state: {
+        totalCartValue: this.state.totalCartValue,
+        totalProductCost: parseFloat(this.state.totalProductCost).toFixed(2),
+        totalShippingCost: this.state.totalShippingCost,
+        finalShippingCost: this.state.totalShippingCost,
+        cartItems: this.state.cartItems,
+        countryName: this.state.shippingCountryName,
+        symbol: this.state.symbol,
+        cartid: this.state.cartid,
+        //pixeldata: pixeldata,
+        shippingCharges: this.state.shippingCharges,
+        inrValue: this.state.inrValue,
+        totalCartStaticValue: this.state.totalCartStaticValue,
+        //cashback_amount_inr: cashback_amount_inr,
+        //cashback_amount_usd: cashback_amount_usd,
+        txn_type: this.state.txn_type,
+      },
     });
   };
 
@@ -1029,6 +1239,7 @@ class Details extends Component {
     axios
       .post(
         // `${apiUrl}get_product_details.php`,
+        // common/product-details.php
         `${apiUrl}get_seller_product_detail.php`,
         {
           security_token: "",
@@ -1106,7 +1317,7 @@ class Details extends Component {
       var pincode = pincodeAvail;
     } else {
       // console.log('if',877);
-      var pincode = document.getElementById("pincode").value;
+      var pincode = this.state.pincode;
     }
     if (pincode == "") {
       ele.classList.remove("d-none");
@@ -1181,10 +1392,10 @@ class Details extends Component {
         }}
       />
     );
-
+    console.log(this.props.item)
     return (
       <>
-        <div className="col-lg-8">
+        <div className="col-lg-5 border-right">
           <div
             id="toast_message"
             role="alert"
@@ -1196,81 +1407,132 @@ class Details extends Component {
               <i className="fas fa-check"></i> Product Added To Wishlist
             </div>
           </div>
-          <div className="product-right product-description-box">
-            {/* <h5> {item_name ? item_name.replace(/[^a-zA-Z ]/g, "") : ""} </h5> */}
-            <h5> {item_name ? item_name : ""} </h5>
-            <div className="d-flex align-items-center mt-2 border-bottom">
-              <div className="">
-                Sold by:{" "}
-                {this.props.item.surl !== undefined &&
-                this.props.item.surl != "" ? (
-                  <a
-                    className="h6"
-                    href={`/store/${this.props.item.surl}.html`}
-                    target="_blank"
-                  >
-                    {item.company}
-                    {item.country !== null && item.country !== undefined
-                      ? "/" + item.country
-                      : ""}
-                  </a>
-                ) : (
-                  <span className="h6">
-                    {item.company}
-                    {item.country !== null && item.country !== undefined
-                      ? "/" + item.country
-                      : ""}
-                  </span>
-                )}
+          {/* new */}
+          <div>
+            <div className="d-none d-sm-block">
+              <div
+                className="sticky-top bg-white"
+                style={{ zIndex: "0" }}
+              >
+                <h5 className="text-dark">
+                  <strong>{this.props.item.name}</strong>
+                </h5>
               </div>
-              <div className="mx-3">
-                {this.props.item.company && this.props.item.is_active == "1" ? (
-                  <ReactCSSTransitionGroup
-                    transitionName="example"
-                    transitionEnterTimeout={500}
-                    transitionLeaveTimeout={600}
-                  >
-                    <div
-                      className="py-1"
-                      style={{ color: "#ff9944", cursor: "pointer" }}
-                      onClick={this.chatBtn}
-                      id="chatBtn"
-                    >
-                      <i className="fa fa-comments mr-1" /> Chat with supplier
-                    </div>
-                  </ReactCSSTransitionGroup>
-                ) : (
-                  ""
-                )}
-              </div>
-            </div>
-            <a
+              <div className="product-right product-description-box">
+                {/* <h5> {item_name ? item_name.replace(/[^a-zA-Z ]/g, "") : ""} </h5> */}
+                <div className="d-flex align-items-center">
+                  {this.props.item.company ? (
+                    <>
+                      <p
+                        className=""
+                        style={{
+                          fontSize: "16px",
+                          letterSpacing: "0px",
+                          color: "#40c2f2",
+                          fontWeight: "600",
+                          marginRight:"5px"
+                        }}
+                      >
+                        Brand:{" "}
+                        {this.props.item.surl !== undefined &&
+                        this.props.item.surl != "" ? (
+                          <a
+                            className="h6"
+                            href={`/store/${this.props.item.surl}.html`}
+                            target="_blank"
+                            style={{
+                              fontSize: "16px",
+                              letterSpacing: "0px",
+                              color: "#40c2f2",
+                              fontWeight: "500",
+                            }}
+                          >
+                            {item.company}
+                            {item.country !== null && item.country !== undefined
+                              ? "/" + item.country
+                              : ""}
+                          </a>
+                        ) : (
+                          <span className="h6" fontSize={{fontWeigh:"500px"}}>
+                            {item.company}
+                            {item.country !== null && item.country !== undefined
+                              ? "/" + item.country
+                              : ""}
+                          </span>
+                        )}
+                      </p>
+                      {/* <div>
+                        {this.props.item.company &&
+                        this.props.item.is_active == "1" ? (
+                          <ReactCSSTransitionGroup
+                            transitionName="example"
+                            transitionEnterTimeout={500}
+                            transitionLeaveTimeout={600}
+                          >
+                            <span
+                              className="py-1"
+                              style={{
+                                color: "#ff9944",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                                fontWeight: "500",
+                              }}
+                              onClick={this.chatBtn}
+                              id="chatBtn"
+                            >
+                              <i className="fa fa-comments" /> Chat with
+                              supplier
+                            </span>
+                          </ReactCSSTransitionGroup>
+                        ) : (
+                          ""
+                        )}
+                      </div> */}
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </div>
+
+
+    
+                {/* old */}
+                {/* <a
               onClick={this.ScrollTospec}
               className="mouse_pointer text-primary"
             >
               Show description/specification
-            </a>
-            {this.props.reviewCount && this.props.reviewCount > 0 ? (
-              <React.Fragment>
-                <div className="d-flex mt-2">
-                  <span>Product Rating ({this.props.reviewCount})</span>
-                  <StarReview
-                    dataFromRating={this.props.dataFromRating}
-                    page={`${process.env.PUBLIC_URL}/rating/${item.url}.html`}
-                    avgRating={this.props.avgRating}
-                    item={item}
-                    average={true}
-                    readonly={true}
-                  />
-                </div>
-              </React.Fragment>
-            ) : (
-              ""
-            )}
-            <div className="row mt-2 align-items-center border-bottom">
-              <div className="col-lg-6">
+            </a> */}
+              </div>
+            </div>
+            <React.Fragment>
+              <div
+                className="d-flex mt-1 d-none d-sm-block"
+                style={{
+                  fontSize: "16px",
+                  letterSpacing: "0px",
+                  fontWeight: "600",
+                }}
+              >
+                <span className="mr-2 d-none d-sm-inline-block">
+                  Product Rating: ({this.props.reviewCount})
+                </span>
+                <span className="d-none d-sm-inline-block">
+                <StarReview
+                  dataFromRating={this.props.dataFromRating}
+                  page={`${process.env.PUBLIC_URL}/rating/${item.url}.html`}
+                  avgRating={this.props.avgRating}
+                  item={item}
+                  average={true}
+                  readonly={true}
+                />
+                </span>
+              </div>
+            </React.Fragment>
+            <div className="mt-3 mb-3 border-product bg-white border-bottom border-top py-1 text-center">
+              <div>
                 {item.price.length > 0 ? (
-                  <div className="timer border-product w-100 p-0 m-auto text-center">
+                  <div className="timer d-inline pl-0">
                     <div id="demo" className=" py-2 ">
                       {item.offer_price !== null &&
                       item.offer_mrp_price !== null &&
@@ -1280,8 +1542,8 @@ class Details extends Component {
                         item.offer_from_date,
                         item.offer_to_date
                       ) ? (
-                        <div class="mx-auto">
-                          <div className="time-cal">
+                        <div>
+                          <div className="time-cal m-auto">
                             <del className="d-flex justify-content-center">
                               MRP:<div>&nbsp;</div>
                               {this.state.mrp_price > 0
@@ -1309,11 +1571,19 @@ class Details extends Component {
                         this.state.price_array.map((vari, index) => (
                           <React.Fragment key={index}>
                             <span>
-                              <div class="timer-cal">{`${vari.rangestart}-${vari.rangeend} ${this.state.unit}`}</div>
-                              <div class="timer-cal">
+                              <div
+                                style={{ color: "#7d7d7d" }}
+                              >{`${vari.rangestart}-${vari.rangeend} ${this.state.unit}`}</div>
+                              <div>
                                 <div>
                                   <div
                                     class={`font-weight-bold ${vari.eachunit}`}
+                                    style={{
+                                      fontSize: "16px",
+                                      letterSpacing: "0px",
+                                      color: "black",
+                                      fontWeight: "300",
+                                    }}
                                   >
                                     {vari.eachunit > 0
                                       ? `${
@@ -1340,148 +1610,9 @@ class Details extends Component {
                   ""
                 )}
               </div>
-              <div className="col-lg-6" id="pincodemodule">
-                {!this.state.pincodeValidate ? (
-                  <>
-                    <form className="d-flex align-items-center mb-2">
-                      <div className="justify-content-center">
-                        <img
-                          className="imglocation"
-                          src="https://img.beldara.com/images/location_marker.png"
-                          alt="location"
-                        />
-                      </div>
-                      <div className="has-float-label col-sm-11 col-xs-11 col-md-11">
-                        <NumberFormat
-                          id="pincode"
-                          name="pincode"
-                          placeholder=" "
-                          className="form-control input-number"
-                          value={this.state.pincode}
-                          onChange={this.ChangePincode.bind(this)}
-                          onKeyPress={this.allowPincode.bind(this)}
-                        />
-                        <label htmlFor="pincode" className="mx-2">
-                          {"Enter Pincode"}
-                        </label>
-                        {this.validator.message(
-                          "pincode",
-                          this.state.pincode,
-                          `required|numeric`
-                        )}
-                      </div>
-                      {!isMobile ? (
-                        <div className="col-sm-1 col-md-1 col-sx-1 p-0 adjust-content">
-                          <span
-                            className="p-text-color mouse_pointer"
-                            onClick={this.checkZipCode.bind(this, null)}
-                          >
-                            CHECK
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="col-sm-1 col-md-1 col-sx-1 p-0 adjust-content-end">
-                          <span
-                            className="p-text-color change-pincode-button p-1 mouse_pointer"
-                            onClick={this.checkZipCode.bind(this, null)}
-                          >
-                            CHECK
-                          </span>
-                        </div>
-                      )}
-                    </form>
-                    <p id="error_pincode" className="text-danger d-none">
-                      Please enter valid pincode
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <div className="row">
-                      {/* <div className="col-md-12"> */}
-                      <div className="col-md-9 col-sm-9 col-sm-9 p-0">
-                        {/* <div className="justify-content-center"> */}
-                        <img
-                          className="imglocation"
-                          src="https://img.beldara.com/images/location_marker.png"
-                          alt="location"
-                        />
-                        <span>
-                          <strong>
-                            DELIVERY OPTIONS FOR{" "}
-                            <span className="p-text-color">
-                              {this.state.pincode}
-                            </span>
-                          </strong>
-                        </span>
-                        {/* </div> */}
-                      </div>
-                      <div className="col-md-1 col-sm-1 col-sm-1 m-0 p-0">
-                        <span
-                          className="p-text-color change-pincode-button p-1 mouse_pointer"
-                          onClick={this.checkPincodeAgain}
-                        >
-                          CHANGE
-                        </span>
-                      </div>
-                      {/* </div> */}
-                    </div>
-                    {this.state.pincodeDeliverable ? (
-                      <div className="row">
-                        <div className="col-sm-12 col-xs-12 col-md-12 px-1 m-0 d-flex align-items-center">
-                          <p>
-                            Shipping To:{" "}
-                            <strong>{this.state.pincodeTitle}</strong>
-                          </p>
-                        </div>
-                        {this.state.pincodeMsg.map((value, index) => (
-                          <React.Fragment>
-                            <div className="col-sm-12 col-xs-12 col-md-12 px-1 m-0 d-flex align-items-center">
-                              <i className="success-mark">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 24 18.35"
-                                >
-                                  <title>checkmark</title>
-                                  <path
-                                    d="M21.13 0L8.48 12.65 2.87 7.04 0 9.91l7.53 7.53 1 .91.95-.91L24 2.87z"
-                                    fill="#4fcc71"
-                                  ></path>
-                                </svg>
-                              </i>
-                              <p className="mx-1">{value}</p>
-                            </div>
-                          </React.Fragment>
-                        ))}
-                        {/* <div className="col-sm-12 col-xs-12 col-md-12 px-1 m-0 d-flex align-items-center">
-                                  <i class="success-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 18.35"><title>checkmark</title><path d="M21.13 0L8.48 12.65 2.87 7.04 0 9.91l7.53 7.53 1 .91.95-.91L24 2.87z" fill="#4fcc71"></path></svg></i>
-                                  <p className="mx-1">Information not found for entered pincode</p>
-                                </div> */}
-                      </div>
-                    ) : (
-                      <div className="row">
-                        <div className="col-sm-12 col-xs-12 col-md-12 p-0 m-0 d-flex align-items-center">
-                          <i class="cross-mark p-1">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                            >
-                              <title>cross</title>
-                              <path
-                                d="M3 0L0 3l9 9-9 9 3 3 9-9 9 9 3-3-9-9 9-9-3-3-9 9z"
-                                fill="#fc0006"
-                              ></path>
-                            </svg>
-                          </i>
-                          <p>{this.state.pincodeTitle}</p>
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
             </div>
-            <div id="hide_general" className="row mt-2 align-items-center mx-1">
-              <div className="col-lg-4">
+            <div className="row mt-2 align-items-center mx-3 mb-3 d-block d-sm-none">
+              <div>
                 {/* {(item.price.length > 0 && (item.beldara_prime == 1 || ((this.state.buyer_country.toLowerCase() != 'us' && this.state.buyer_country_id != '1' && this.state.buyer_country.toLowerCase() != 'in' && this.state.buyer_country_id != '91') || ( (this.state.buyer_country_id.toLowerCase() == '' || this.state.buyer_country_id.toLowerCase() === undefined || this.state.buyer_country_id.toLowerCase() === null) && getCookie('country_code').toLowerCase()!='in' && getCookie('country_code').toLowerCase()!='us' )) ) )? ( */}
                 {Array.isArray(item.price) && item.price.length > 0 ? (
                   <div className="single-product-tables detail-section py-2">
@@ -1489,42 +1620,59 @@ class Details extends Component {
                       <tbody>
                         <tr>
                           <td>{translate("Quantity")}:</td>
-                          <td>
-                            <div className="qty-box">
-                              <div className="input-group">
-                                <span className="input-group-prepend">
-                                  <button
-                                    type="button"
-                                    className="btn quantity-left-minus"
-                                    onClick={this.minusQty}
-                                    data-type="minus"
-                                    data-field=""
+                          <td className="rounded">  
+                            <div style={{ borderRadius: "5px" }}>
+                              <div className="qty-box ml-1">
+                                <div className="input-group">
+                                  <span className="input-group-prepend">
+                                    <button
+                                      type="button"
+                                      className="btn quantity-left-minus"
+                                      onClick={this.minusQty}
+                                      data-type="minus"
+                                      data-field=""
+                                      style={{
+                                        borderTopLeftRadius: "12px",
+                                        borderBottomLeftRadius: "12px",
+                                        border: "1px solid #ef7b00",
+                                      }}
+                                    >
+                                      <i className="fa fa-minus" />
+                                    </button>
+                                  </span>
+                                  <NumberFormat
+                                    format="####"
+                                    name="quantity"
+                                    value={this.state.quantity}
+                                    onChange={this.changeQty}
+                                    className="form-control input-number"
+                                    style={{
+                                      borderTop: "1px solid #ef7b00",
+                                      borderBottom: "1px solid #ef7b00",
+                                    }}
+                                  />
+                                  {/* <input type="text" name="quantity" value={this.state.quantity} onChange={this.changeQty}  /> */}
+                                  <span
+                                    className="input-group-prepend"
+                                    style={{ marginRight: "-32px" }}
                                   >
-                                    <i className="fa fa-minus" />
-                                  </button>
-                                </span>
-                                <NumberFormat
-                                  format="####"
-                                  name="quantity"
-                                  value={this.state.quantity}
-                                  onChange={this.changeQty}
-                                  className="form-control input-number"
-                                />
-                                {/* <input type="text" name="quantity" value={this.state.quantity} onChange={this.changeQty}  /> */}
-                                <span
-                                  className="input-group-prepend"
-                                  style={{ marginRight: "-32px" }}
-                                >
-                                  <button
-                                    type="button"
-                                    className="btn quantity-right-plus"
-                                    onClick={this.plusQty}
-                                    data-type="plus"
-                                    data-field=""
-                                  >
-                                    <i className="fa fa-plus" />
-                                  </button>
-                                </span>
+                                    <button
+                                      type="button"
+                                      className="btn quantity-right-plus"
+                                      onClick={this.plusQty}
+                                      data-type="plus"
+                                      data-field=""
+                                      style={{
+                                        borderTopRightRadius: "12px",
+                                        borderBottomRightRadius: "12px",
+                                        border: "1px solid #ef7b00",
+                                        zIndex:0
+                                      }}
+                                    >
+                                      <i className="fa fa-plus" />
+                                    </button>
+                                  </span>
+                                </div>
                               </div>
                             </div>
                           </td>
@@ -1538,97 +1686,6 @@ class Details extends Component {
                 ) : (
                   ""
                 )}
-                <div className="">
-                  {this.state.product_mrp !== null &&
-                  this.state.selling_price !== null ? (
-                    <>
-                      <div className="d-flex justify-content-between">
-                        <div className="font-weight-bold">
-                          {this.state.currency}{" "}
-                          {new Intl.NumberFormat().format(this.state.eachunit)}{" "}
-                          / {item.unit}
-                        </div>
-                        <div className="font-weight-bold d-flex justify-content-end">
-                          {item.beldara_first_web !== "" ? (
-                            <Link to="/beldara-first.html">
-                              <img
-                                src={item.beldara_first_web}
-                                alt="Beldara first on beldara.com"
-                                className="imgBeldaraFirst"
-                              ></img>
-                            </Link>
-                          ) : (
-                            ""
-                          )}
-                          {this.state.shipping_charge == "0" ? (
-                            <>
-                              <span
-                                data-tip
-                                data-for="ToolTip"
-                                className="mouse_pointer shippingBeldaraFirst"
-                              >
-                                Free&nbsp;Shipping
-                              </span>
-                              <div>
-                                <ReactTooltip
-                                  id="ToolTip"
-                                  type="warning"
-                                  effect="solid"
-                                >
-                                  <span>{item.free_shipping_text}</span>
-                                </ReactTooltip>
-                              </div>
-                            </>
-                          ) : (
-                            <span
-                              data-tip
-                              data-for="ToolTip"
-                              className="mouse_pointer shippingBeldaraFirst"
-                            >
-                              Shipping&nbsp;Charge&nbsp;{this.state.currency}
-                              &nbsp;{this.state.shipping_charge}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="row d-flex justify-content-between">
-                        {/* <div className="col">
-                        {item.beldara_first_web !== "" ? (
-                          <img
-                            src={item.beldara_first_web}
-                            alt="Beldara first on beldara.com"
-                          ></img>
-                        ) : (
-                          ""
-                        )}
-                      </div> */}
-
-                        {/* <div className="col font-weight-bold">
-                        {item.free_shipping == "1" ? (
-                          <>
-                            <span data-tip data-for="ToolTip" className="mouse_pointer" style={{color: "#24adee"}}>
-                              Free&nbsp;Shipping
-                            </span>
-                            <div>
-                              <ReactTooltip
-                                id="ToolTip"
-                                type="warning"
-                                effect="solid"
-                              >
-                                <span>{item.free_shipping_text}</span>
-                              </ReactTooltip>
-                            </div>
-                          </>
-                        ) : (
-                          ""
-                        )}
-                      </div> */}
-                      </div>
-                    </>
-                  ) : (
-                    ""
-                  )}
-                </div>
               </div>
               {/* <div className="col-lg-4">
               <div className="font-weight-bold">
@@ -1647,23 +1704,7 @@ class Details extends Component {
               ""
             )} */}
             </div>
-
-            <div className="border-product d-none">
-              <h3>
-                <div className="product-buttons">
-                  {/* <a className="btn btn-solid" onClick={() => addToCartClicked(item, this.state.quantity)}>Contact Supplier</a> */}
-                  <Link
-                    to={`${process.env.PUBLIC_URL}/checkout`}
-                    className="btn btn-solid"
-                    onClick={() => BuynowClicked(item, this.state.quantity)}
-                  >
-                    Start Order
-                  </Link>
-                </div>
-              </h3>
-            </div>
-
-            <div className="d-flex align-items-end">
+            <div className="d-flex align-items-end d-block d-sm-none">
               <div className="px-1">
                 {this.state.qtyerror ? (
                   <div className="text-danger">
@@ -1733,206 +1774,424 @@ class Details extends Component {
               /> */}
               </div>
             </div>
+            <div className="mb-3 d-flex mx-1">
+              {this.state.product_mrp !== null &&
+              this.state.selling_price !== null ? (
+                <>
+                  <div className="d-flex col-sm-12 justify-content-between">
+                    <span
+                      className="font-weight-bold"
+                      style={{ fontSize: "13px" }}
+                    >
+                      {this.state.currency}{" "}
+                      {new Intl.NumberFormat().format(this.state.eachunit)} /{" "}
+                      {item.unit}
+                    </span>
+                    <div className="font-weight-bold d-flex justify-content-between">
+                      {item.beldara_first_web !== "" ? (
+                        <Link to="/beldara-first.html">
+                          <img
+                            src={item.beldara_first_web}
+                            alt="Beldara first on beldara.com"
+                            className="imgBeldaraFirst"
+                          ></img>
+                        </Link>
+                      ) : (
+                        ""
+                      )}
+                      {this.state.shipping_charge == "0" ? (
+                        <>
+                          <span
+                            data-tip
+                            data-for="ToolTip"
+                            className="mouse_pointer shippingBeldaraFirst mr-0"
+                          >
+                            Free&nbsp;Shipping
+                          </span>
+                          <div>
+                            <ReactTooltip
+                              id="ToolTip"
+                              type="warning"
+                              effect="solid"
+                            >
+                              <span style={{zIndex:99}}>{item.shipping_content}</span>
+                            </ReactTooltip>
+                          </div>
+                        </>
+                      ) : (
+                        // shippingBeldaraFirst
+                        <span
+                        data-tip
+                        data-for="ToolTip"
+                        className="mouse_pointer shippingBeldaraFirst mr-1"
+                        style={{ fontSize: "13px" }}
+                      >
+                        Shipping&nbsp;{this.state.currency}
+                        &nbsp;{this.state.shipping_charge}&nbsp;For&nbsp;
+                        {this.state.quantity}&nbsp;/&nbsp;{item.unit}
+                      </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="row d-flex justify-content-between">
+                    {/* <div className="col">
+                        {item.beldara_first_web !== "" ? (
+                          <img
+                            src={item.beldara_first_web}
+                            alt="Beldara first on beldara.com"
+                          ></img>
+                        ) : (
+                          ""
+                        )}
+                      </div> */}
+
+                    {/* <div className="col font-weight-bold">
+                        {item.free_shipping == "1" ? (
+                          <>
+                            <span data-tip data-for="ToolTip" className="mouse_pointer" style={{color: "#24adee"}}>
+                              Free&nbsp;Shipping
+                            </span>
+                            <div>
+                              <ReactTooltip
+                                id="ToolTip"
+                                type="warning"
+                                effect="solid"
+                              >
+                                <span>{item.free_shipping_text}</span>
+                              </ReactTooltip>
+                            </div>
+                          </>
+                        ) : (
+                          ""
+                        )}
+                      </div> */}
+                  </div>
+                </>
+              ) : (
+                ""
+              )}
+            </div>
             {isMobile ? (
-              <div
-                className="row d-flex justify-content-start align-items-center mt-1"
-                style={{ marginLeft: "10px", marginRight: "10px" }}
-              >
-                {/* <div>
+              <div>
+                <div
+                  className="row d-flex justify-content-start align-items-center mt-1"
+                  style={{ marginLeft: "10px", marginRight: "10px" }}
+                >
+                  {/* <div>
               Shipping Charges:{` `}
               {this.state.currency} {this.state.shipping_cost}
-            </div> */}
-                {this.state.gst_val != null ? (
-                  <div
-                    id="prices_cards"
-                    className="bg-grey float-left col-sm-5 text-center productBorder"
-                  >
-                    <div className="row justify-content-between mx-2">
-                      <div className="float-left">Price of items</div>
-                      <div className="float-right">
-                        {this.state.currency}{" "}
-                        {/* {parseFloat(
+             </div> */}
+                  {this.state.gst_val != null ? (
+                    <div
+                      id="prices_cards"
+                      className="bg-grey float-left text-center productBorder"
+                    >
+                      <div className="row justify-content-between mx-2">
+                        <div className="float-left">Price of items</div>
+                        <div className="float-right">
+                          {/* {parseFloat(
                       parseFloat(this.state.price) -
                         parseFloat(this.state.gst_cal)
                     ).toFixed(2)} */}
-                        {new Intl.NumberFormat().format(
-                          parseFloat(
-                            parseFloat(this.state.price) -
-                              parseFloat(this.state.gst_cal)
-                          ).toFixed(2)
-                        )}
-                      </div>
-                    </div>
-                    <div className="row justify-content-between mx-1">
-                      <div className="float-left">
-                        Tax @ {this.state.gst_val}%
-                      </div>
-                      <div className="float-right">
-                        {this.state.currency}{" "}
-                        {new Intl.NumberFormat().format(
-                          parseFloat(this.state.gst_cal).toFixed(2)
-                        )}
-                      </div>
-                    </div>
-                    <HRLine color="#0e0e0e" />
-                    <div className="row justify-content-between mx-1">
-                      <div className="float-left">Final Price</div>
-                      <div className="float-right">
-                        {this.state.currency}{" "}
-                        {new Intl.NumberFormat().format(
-                          parseFloat(this.state.price).toFixed(2)
-                        )}
-                        {/* {parseFloat(this.state.price).toFixed(2)} */}
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  ""
-                )}
-                <div className="float-right col-sm-2 mt-2"></div>
-
-                {this.state.product_mrp !== null &&
-                this.state.selling_price !== null ? (
-                  <div
-                    id="prices_cards"
-                    className="bg-grey float-left col-sm-5 text-center productBorder"
-                  >
-                    <div className="row justify-content-between mx-2">
-                      <div className="row">
-                        <div className="col">
-                          MRP {this.state.currency}{" "}
                           {new Intl.NumberFormat().format(
-                            this.state.product_mrp
+                            parseFloat(
+                              parseFloat(this.state.price) -
+                                parseFloat(this.state.gst_cal)
+                            ).toFixed(2)
                           )}
                         </div>
                       </div>
+                      <div className="row justify-content-between mx-1">
+                        <div className="float-left">
+                          Tax @ {this.state.gst_val}%
+                        </div>
+                        <div className="float-right">
+                          {this.state.currency}{" "}
+                          {new Intl.NumberFormat().format(
+                            parseFloat(this.state.gst_cal).toFixed(2)
+                          )}
+                        </div>
+                      </div>
+                      <HRLine color="#0e0e0e" />
+                      <div className="row justify-content-between mx-1">
+                        <div className="float-left">Final Price</div>
+                        <div className="float-right">
+                          {this.state.currency}{" "}
+                          {new Intl.NumberFormat().format(
+                            parseFloat(this.state.price).toFixed(2)
+                          )}
+                          {/* {parseFloat(this.state.price).toFixed(2)} */}
+                        </div>
+                      </div>
                     </div>
-                    <HRLine color="#0e0e0e" />
-                    <div className="row justify-content-between mx-1">
-                      <div className="row">
-                        <div className="col">
-                          Retail Margin:{" "}
-                          {/* {parseFloat(
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <div className="float-right  mt-2"></div>
+                <div>
+                  {this.state.product_mrp !== null &&
+                  this.state.selling_price !== null ? (
+                    <div
+                      id="prices_cards"
+                      className="bg-grey float-left col-sm-5 text-center productBorder"
+                    >
+                      <div className="row justify-content-between mx-2">
+                        <div className="row">
+                          <div className="col">
+                            MRP {this.state.currency}{" "}
+                            {new Intl.NumberFormat().format(
+                              this.state.product_mrp
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <HRLine color="#0e0e0e" />
+                      <div className="row justify-content-between mx-1">
+                        <div className="row">
+                          <div className="col">
+                            Retail Margin:{" "}
+                            {/* {parseFloat(
                     (parseFloat(this.state.product_mrp) -
                       parseFloat(this.state.selling_price)) /
                       (parseFloat(this.state.product_mrp) * 0.01).toFixed(2)
                   ).toFixed(2)} */}
-                          {parseFloat(
-                            ((parseFloat(this.state.product_mrp) -
-                              parseFloat(this.state.selling_price)) /
-                              parseFloat(this.state.product_mrp)) *
-                              100
-                          ).toFixed(2)}
-                          %
+                            {parseFloat(
+                              ((parseFloat(this.state.product_mrp) -
+                                parseFloat(this.state.selling_price)) /
+                                parseFloat(this.state.product_mrp)) *
+                                100
+                            ).toFixed(2)}
+                            %
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ) : (
-                  ""
-                )}
+                  ) : (
+                    ""
+                  )}
+                </div>
               </div>
             ) : (
-              <div
-                className="row d-flex justify-content-start align-items-center mt-1"
-                style={{ marginLeft: "40px", marginRight: "10px" }}
-              >
-                {/* <div>
+              <div>
+                <div
+                  className="row d-flex justify-content-start mt-1 mb-1"
+                  style={{ marginLeft: "1px", marginRight: "1px" }}
+                >
+                  {/* <div>
               Shipping Charges:{` `}
               {this.state.currency} {this.state.shipping_cost}
             </div> */}
-                {this.state.gst_val != null ? (
-                  <div
-                    id="prices_cards"
-                    className="bg-grey float-left col-sm-5 text-center productBorder"
-                  >
-                    <div className="row justify-content-between mx-2">
-                      <div className="float-left">Price of items</div>
-                      <div className="float-right">
-                        {this.state.currency}{" "}
-                        {/* {parseFloat(
+                  {this.state.gst_val != null ? (
+                    <div
+                      id="prices_cards"
+                      className="bg-grey float-left col-sm-12  productBorder"
+                      style={{ padding: "10px" }}
+                    >
+                      <table class="table table-sm table-borderless mb-0">
+                        <tr>
+                          <th>Total price</th>
+                          <td>-</td>
+                          <td className="text-right">
+                            {" "}
+                            {this.state.currency}
+                            {/* {parseFloat(
+                      parseFloat(this.state.price) -
+                        parseFloat(this.state.gst_cal)
+                    ).toFixed(2)} */}{" "}
+                            {new Intl.NumberFormat().format(
+                          parseFloat(this.state.price).toFixed(2))}
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>Tax @ {this.state.gst_val}%</th>
+                          <td>-</td>
+                          <td className="text-right">
+                            {this.state.currency}{" "}
+                            {new Intl.NumberFormat().format(
+                              parseFloat(this.state.gst_cal).toFixed(2)
+                            )}
+                          </td>
+                        </tr>
+                        <tr style={{ borderTop: "2px solid" }}>
+                          <th>Final Price</th>
+                          <td>-</td>
+                          <td className="text-right">
+                            {this.state.currency}
+                            {/* {parseFloat(
                       parseFloat(this.state.price) -
                         parseFloat(this.state.gst_cal)
                     ).toFixed(2)} */}
-                        {new Intl.NumberFormat().format(
-                          parseFloat(
-                            parseFloat(this.state.price) -
-                              parseFloat(this.state.gst_cal)
-                          ).toFixed(2)
-                        )}
-                      </div>
+                           {new Intl.NumberFormat().format(
+                          parseFloat(this.state.price).toFixed(2))}
+                          </td>
+                        </tr>
+                      </table>
                     </div>
-                    <div className="row justify-content-between mx-1">
-                      <div className="float-left">
-                        Tax @ {this.state.gst_val}%
-                      </div>
-                      <div className="float-right">
-                        {this.state.currency}{" "}
-                        {new Intl.NumberFormat().format(
-                          parseFloat(this.state.gst_cal).toFixed(2)
-                        )}
-                      </div>
-                    </div>
-                    <HRLine color="#0e0e0e" />
-                    <div className="row justify-content-between mx-1">
-                      <div className="float-left">Final Price</div>
-                      <div className="float-right">
-                        {this.state.currency}{" "}
-                        {new Intl.NumberFormat().format(
-                          parseFloat(this.state.price).toFixed(2)
-                        )}
-                        {/* {parseFloat(this.state.price).toFixed(2)} */}
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  ""
-                )}
-                <div className="float-right col-sm-2 mt-2"></div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <div>
+                  {this.state.product_mrp !== null &&
+                  this.state.selling_price !== null ? (
+                    <>
+                      <div
+                        id="prices_cards"
+                        className="bg-grey  text-center productBorder"
+                        style={{ padding: "16px" }}
+                      >
+                        <div className="row justify-content-between mx-1 mb-2">
+                          <div>
+                            <th>MRP</th>
+                          </div>
+                          <div className="text-center ml-3">-</div>
+                          <div className="float-right">
+                            {this.state.currency}{" "}
+                            {new Intl.NumberFormat().format(
+                              this.state.product_mrp
+                            )}
+                          </div>
+                        </div>
 
-                {this.state.product_mrp !== null &&
-                this.state.selling_price !== null ? (
-                  <div
-                    id="prices_cards"
-                    className="bg-grey float-left col-sm-5 text-center productBorder"
-                  >
-                    <div className="row justify-content-between mx-2">
-                      <div className="row">
-                        <div className="col">
-                          MRP {this.state.currency}{" "}
-                          {new Intl.NumberFormat().format(
-                            this.state.product_mrp
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <HRLine color="#0e0e0e" />
-                    <div className="row justify-content-between mx-1">
-                      <div className="row">
-                        <div className="col">
-                          Retail Margin:{" "}
+                        <HRLine color="#0e0e0e" />
+                        <div className="row justify-content-between mx-1 mt-1">
+                          <div>
+                            <th>Retail Margin</th>
+                          </div>
                           {/* {parseFloat(
-                    (parseFloat(this.state.product_mrp) -
-                      parseFloat(this.state.selling_price)) /
-                      (parseFloat(this.state.product_mrp) * 0.01).toFixed(2)
-                  ).toFixed(2)} */}
-                          {parseFloat(
-                            ((parseFloat(this.state.product_mrp) -
-                              parseFloat(this.state.selling_price)) /
-                              parseFloat(this.state.product_mrp)) *
-                              100
-                          ).toFixed(2)}
-                          %
+                            (parseFloat(this.state.product_mrp) -
+                            parseFloat(this.state.selling_price)) /
+                            (parseFloat(this.state.product_mrp) * 0.01).toFixed(2)
+                            ).toFixed(2)} */}
+                          <div style={{ marginRight: "51px" }}>-</div>
+                          <div className="float-right">
+                            {" "}
+                            {parseFloat(
+                              ((parseFloat(this.state.product_mrp) -
+                                parseFloat(this.state.selling_price)) /
+                                parseFloat(this.state.product_mrp)) *
+                                100
+                            ).toFixed(2)}
+                            %
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                ) : (
-                  ""
-                )}
+                      <div className="mt-3 pl-3">
+                        {this.state.variation ? (
+                          this.state.shipping_charge == "0" ? (
+                            <>
+                              <span
+                                data-tip
+                                data-for="ToolTip"
+                                className="mouse_pointer shippingBeldaraFirst"
+                              >
+                                Free&nbsp;Shipping
+                              </span>
+                              <div>
+                                <ReactTooltip
+                                  id="ToolTip"
+                                  type="warning"
+                                  effect="solid"
+                                >
+                                  <span>{item.shipping_content}</span>
+                                </ReactTooltip>
+                              </div>
+                            </>
+                          ) : (
+                            <span
+                              data-tip
+                              data-for="ToolTip"
+                              className="mouse_pointer shippingBeldaraFirst mt-3"
+                              style={{ fontSize: "13px" }}
+                            >
+                              Shipping&nbsp;{this.state.currency}
+                              &nbsp;{this.state.shipping_charge}&nbsp;For&nbsp;
+                              {this.state.quantity}&nbsp;/&nbsp;{item.unit}
+                            </span>
+                          )
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </div>
               </div>
             )}
-
+              <div
+                        className="single-product-tables border-product detail-section pb-0 my-2 p-3 mt-3 d-block d-sm-none"
+                        style={{
+                          border: "dotted 1px",
+                          borderRadius: "5px",
+                        }}
+                      >
+                        <table>
+                          <tbody>
+                            <tr>
+                              <td>{translate("Free Sample")}:</td>
+                              <td>
+                                <strong>
+                                  {this.props.item.free_sample == "0"
+                                    ? "On Demand"
+                                    : "Yes"}
+                                </strong>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>{translate("Avalibility")}:</td>
+                              <td>
+                                <strong>
+                                  {" "}
+                                  {this.props.item.available_stock !== "0" &&
+                                  this.props.item.available_stock > 0
+                                    ? "InStock"
+                                    : "Out Of Stock"}
+                                </strong>
+                              </td>
+                            </tr>
+                            {parseFloat(this.props.item.weight) >
+                            parseFloat(0) ? (
+                              <tr>
+                                <td>{translate("Weight")}:</td>
+                                <td>
+                                  <strong>
+                                    {" "}
+                                    {this.props.item.weight}{" "}
+                                    {this.props.item.available_stock_unit}
+                                  </strong>
+                                </td>
+                              </tr>
+                            ) : (
+                              ""
+                            )}
+                          </tbody>
+                        </table>
+                      </div> 
+            <React.Fragment>
+              <div
+                className="d-flex mt-2 d-block d-sm-none"
+                style={{
+                  fontSize: "16px",
+                  letterSpacing: "0px",
+                  fontWeight: "600",
+                }}
+              >
+                <span className="mr-2">
+                  Product Rating: ({this.props.reviewCount})
+                </span>
+                <StarReview
+                  dataFromRating={this.props.dataFromRating}
+                  page={`${process.env.PUBLIC_URL}/rating/${item.url}.html`}
+                  avgRating={this.props.avgRating}
+                  item={item}
+                  average={true}
+                  readonly={true}
+                />
+              </div>
+            </React.Fragment>
             <ProductVariation
               getProdDetl={this.getProdDetails}
               prodId={item.id}
@@ -1944,33 +2203,390 @@ class Details extends Component {
               selling_price={this.state.selling_price}
               prodData={item}
             />
-            <div
-              className="col-lg-5 d-flex justify-content-center"
-              id="general_products_event"
-            >
-              {this.props.item.is_active == "1" ? (
+            {/* <div>
+              <div className="mt-2 row mb-3 col-sm-12 d-none" >
                 <div>
-                  {priceCond(
-                    item,
-                    this,
-                    this.state.pincodeDeliverable,
-                    this.state.pincode
-                  )}
+                  <span class="fa-stack">
+                    <i
+                      class="fa fa-certificate fa-3x mr-1"
+                      style={{ color: "#ff9944" }}
+                    />
+                      <i class=" fa-stack-1x fa-inverse">%</i>
+                  </span>
+                  <span class="fa-stack fa-1x mr-1">
+                    <i
+                      class="fa fa-certificate fa-stack-2x"
+                      style={{ color: "#ff9944" }}  
+                    ></i>
+                    <i class="fa-stack-1x fa-inverse">%</i>
+                  </span>
+                </div>
+                <div className="mt-1">
+                  <strong>Save extra with offers</strong>
+                </div>
+              </div>
+              <div style={{ border: "dashed 1px" }}>
+                <div className="p-3">
+                  <p className="mb-3">
+                    <span style={{ color: "#ff9944" }}>
+                      <strong>Cashback:</strong>
+                    </span>
+                    <span style={{ fontSize: "500", color: "black" }}>
+                      {" "}
+                      5% cashback with Beldara ICICI credit card
+                    </span>
+                  </p>
+                  <p>
+                    <span style={{ color: "#ff9944" }}>
+                      <strong>Cashback:</strong>
+                    </span>
+                    <span style={{ fontSize: "500", color: "black" }}>
+                      {" "}
+                      5% instant offer with HDFC credit card
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div> */}
+
+            <div className="border-product d-none">
+              <h3>
+                <div className="product-buttons">
+                  {/* <a className="btn btn-solid" onClick={() => addToCartClicked(item, this.state.quantity)}>Contact Supplier</a> */}
+                  <Link
+                    to={`${process.env.PUBLIC_URL}/checkout`}
+                    className="btn btn-solid"
+                    onClick={() => BuynowClicked(item, this.state.quantity)}
+                  >
+                    Start Order
+                  </Link>
+                </div>
+              </h3>
+            </div>
+            {/* "col-sm-12 col-lg-12" */}
+            <div>
+              <DetailsTopTabs item={item} />
+            </div>
+            <LiveReq
+              price={item}
+              askAuction={this.state.askAuctionInit}
+              shouldReload={this.state.shouldReload}
+              showAuctionPop={this.state.showAuctionPop}
+              undoCallAuction={this.undoCallAuction}
+            />
+          </div>
+          <LoginPopUp
+            footerData={this.footerData}
+            login={this.state}
+            openSignUpModal={this.openSignUpModal}
+            closeModal={this.closeModal}
+          />
+          <SignUpPopUp
+            footerData={this.footerData}
+            signup={this.state}
+            openLoginModal={this.openLoginModal}
+            closeModal={this.closeModal}
+          />
+          {/* {Chat} */}
+          <Suspense loading={""}>
+            <ChatBox
+              product={item}
+              chatToSeller={
+                this.props.chatToSeller ? this.props.chatToSeller : false
+              }
+            />
+          </Suspense>
+        </div>
+        <div className="col-lg-3">
+          <div className="border-product mb-2">
+            <div className="row">
+              <h5 className="product-title mx-3 mt-1">
+                <strong>Share with:</strong>
+              </h5>
+              <div className="product-icon">
+                <ul className="product-social">
+                  <li
+                    className="rounded-circle bg-white mr-3 shadow"
+                    style={{ width: "30px", height: "30px" }}
+                  >
+                    <div className="text-center mt-1 logo">
+                      <a
+                        href="https://www.facebook.com/"
+                        target="_blank"
+                        rel="nofollow"
+                      >
+                        <i
+                          className="fa fa-facebook "
+                          style={{ color: "#ff9944", fontSize: "20px" }}
+                        />
+                      </a>
+                    </div>
+                  </li>
+                  <li
+                    className="rounded-circle bg-white mr-3 shadow"
+                    style={{ width: "30px", height: "30px" }}
+                  >
+                    <div className="text-center mt-1">
+                      <a
+                        href="https://www.instagram.com/"
+                        target="_blank"
+                        rel="nofollow"
+                      >
+                        <i
+                          className="fa fa-instagram"
+                          style={{ color: "#ff9944", fontSize: "20px" }}
+                        />
+                      </a>
+                    </div>
+                  </li>
+                  <li
+                    className="rounded-circle bg-white shadow"
+                    style={{ width: "30px", height: "30px" }}
+                  >
+                    <div className="text-center mt-1">
+                      <a
+                        href="https://twitter.com/"
+                        target="_blank"
+                        rel="nofollow"
+                      >
+                        <i
+                          className="fa fa-twitter"
+                          style={{ color: "#ff9944", fontSize: "20px" }}
+                        />
+                      </a>
+                    </div>
+                  </li>
+                  {/* <li className="rounded-circle bg-dark" style={{width:"40px",height:"40px"}}>
+                    <a
+                      href="https://www.instagram.com/"
+                      target="_blank"
+                      rel="nofollow"
+                    >
+                      <i className="fa fa-instagram" />
+                    </a>
+                  </li> */}
+                </ul>
+                {/* <button className="wishlist-btn" onClick={() => addToWishlistClicked(item)}>
+                                    <i className="fa fa-heart"></i><span className="title-font">Add To WishList</span>
+                                </button> */}
+              </div>
+            </div>
+          </div>
+          <div className="border mb-3"></div>
+          <div className="row mt-2 align-items-center mx-1 mb-3 d-sm-block d-none">
+            <div>
+              {/* {(item.price.length > 0 && (item.beldara_prime == 1 || ((this.state.buyer_country.toLowerCase() != 'us' && this.state.buyer_country_id != '1' && this.state.buyer_country.toLowerCase() != 'in' && this.state.buyer_country_id != '91') || ( (this.state.buyer_country_id.toLowerCase() == '' || this.state.buyer_country_id.toLowerCase() === undefined || this.state.buyer_country_id.toLowerCase() === null) && getCookie('country_code').toLowerCase()!='in' && getCookie('country_code').toLowerCase()!='us' )) ) )? ( */}
+              {Array.isArray(item.price) && item.price.length > 0 ? (
+                <div className="single-product-tables detail-section py-2">
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td>{translate("Quantity")}:</td>
+                        <td className="rounded">
+                          <div style={{ borderRadius: "5px" }}>
+                            <div className="qty-box ml-1">
+                              <div
+                                className="input-group"
+                                style={{ marginLeft: "-54px" }}
+                              >
+                                <span className="input-group-prepend">
+                                  <button
+                                    type="button"
+                                    className="btn quantity-left-minus"
+                                    onClick={this.minusQty}
+                                    data-type="minus"
+                                    data-field=""
+                                    style={{
+                                      borderTopLeftRadius: "12px",
+                                      borderBottomLeftRadius: "12px",
+                                      border: "1px solid #ef7b00",
+                                    }}
+                                  >
+                                    <i className="fa fa-minus" />
+                                  </button>
+                                </span>
+                                <NumberFormat
+                                  format="####"
+                                  name="quantity"
+                                  value={this.state.quantity}
+                                  onChange={this.changeQty}
+                                  className="form-control input-number"
+                                  style={{
+                                    borderTop: "1px solid #ef7b00",
+                                    borderBottom: "1px solid #ef7b00",
+                                  }}
+                                />
+                                {/* <input type="text" name="quantity" value={this.state.quantity} onChange={this.changeQty}  /> */}
+                                <span
+                                  className="input-group-prepend"
+                                  style={{ marginRight: "-32px" }}
+                                >
+                                  <button
+                                    type="button"
+                                    className="btn quantity-right-plus"
+                                    onClick={this.plusQty}
+                                    data-type="plus"
+                                    data-field=""
+                                    style={{
+                                      borderTopRightRadius: "12px",
+                                      borderBottomRightRadius: "12px",
+                                      border: "1px solid #ef7b00",
+                                    }}
+                                  >
+                                    <i className="fa fa-plus" />
+                                  </button>
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      {/* <tr>   
+                    <td><a href="javascript:void(0)" className="text-solid"><small> <i className="fa fa-paper-plane mr-1"></i>Calculate Shipment Cost </small></a></td>
+                  </tr> */}
+                    </tbody>
+                  </table>
                 </div>
               ) : (
-                <>
-                  <div className="p-0 mx-2 productBorder">
-                    <h5
-                      className="p-text-color px-1"
-                      style={{ marginTop: "4px" }}
-                    >
-                      Product Unavailable
-                    </h5>
-                  </div>
-                </>
+                ""
               )}
+            </div>
+            {/* <div className="col-lg-4">
+              <div className="font-weight-bold">
+                {this.state.currency}{" "}
+                {new Intl.NumberFormat().format(this.state.eachunit)} /{" "}
+                {item.unit}
+              </div>
+            </div> */}
+            {/* {this.state.gst_val != null ? (
+              <div className="col-lg-4">
+                <span className="h6 mouse_pointer" onClick={this.openPrcieCard}>
+                  {this.state.gst_val}% GST + GST Charges
+                </span>
+              </div>
+            ) : (
+              ""
+            )} */}
+          </div>
+          <div className="d-flex align-items-end d-sm-block d-none">
+            <div className="px-1">
+              {this.state.qtyerror ? (
+                <div className="text-danger">
+                  {item.offer_stock == 0
+                    ? `OUT OF STOCK`
+                    : `only ${item.offer_stock} stock left!`}
+                </div>
+              ) : (
+                // :(this.state.min_qty_error)?(
+                //   <div className="text-danger">
+                //        {`MOQ ${this.state.min_qty} ${this.state.unit}`}
+                //   </div>
+                // )
+                ""
+              )}
+              <div
+                className={`alert alert-danger ${
+                  this.state.moqErr ? "d-block" : "d-none"
+                }`}
+              >
+                <i className="fa fa-info-circle mr-1" /> Order must be greater
+                than MOQ {item.qty} {item.unit}
+              </div>
 
-              {/* {(item.available_stock !== "0" && item.available_stock > 0) ||
+              {/* {( this.state.quantity && (item.beldara_prime == 1 || ((this.state.buyer_country.toLowerCase() != 'us' && this.state.buyer_country_id != '1' && this.state.buyer_country.toLowerCase() != 'in' && this.state.buyer_country_id != '91') || ( (this.state.buyer_country_id.toLowerCase() == '' || this.state.buyer_country_id.toLowerCase() === undefined || this.state.buyer_country_id.toLowerCase() === null) && getCookie('country_code').toLowerCase()!='in' && getCookie('country_code').toLowerCase()!='us' )) ) ) ? (
+                <GetPriceSelected product={item} qty={this.state.quantity} />
+              ) : (
+                ""
+                )} */}
+
+              {/* {this.state.quantity ? (
+                // <GetPriceSelected productCost={this.productCost}
+                // finalCost={this.finalCost} product={item} qty={this.state.quantity} />
+                <div className="border-product text-center border-0 ">
+                  <span>
+                    <div class="timer-cal">
+                      {this.state.quantity} {this.state.unit} is selected
+                    </div>
+                    <div class="timer-cal">
+                      <div>
+                        <div class="font-weight-bold">
+                          {this.state.price > 0 ? (
+                            <>
+                              <div
+                                class="spinner-border spinner-border-sm common_class_for_spin mr-1 d-none"
+                                role="status"
+                                style={{ color: "#f1aa61" }}
+                              >
+                                <span class="sr-only">Loading...</span>
+                              </div>
+                              {this.state.currency} {this.state.price}
+                            </>
+                          ) : (
+                            "Ask for price"
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </span>
+                </div>
+              ) : (
+                ""
+              )} */}
+              {/* <OfferTimer
+                offer_from_date={item.offer_from_date}
+                offer_to_date={item.offer_to_date}
+              /> */}
+            </div>
+          </div>
+          {this.state.msgNotifyME ? (
+            <div
+              className="alert alert-info toast_pull_right-1"
+              role="alert"
+              id="msgNotifyME"
+            >
+              {this.state.NotifyMessage}
+            </div>
+          ) : (
+            ""
+          )}
+          <div className="mb-3">
+            {this.props.item.is_active == "1" ? (
+              <div>
+                {priceCond(
+                  item,
+                  this,
+                  this.state.pincodeDeliverable,
+                  this.state.pincode
+                )}
+              </div>
+            ) : (
+              <>
+                <div className="p-0 mx-2 productBorder">
+                  <h5
+                    className="p-text-color px-1"
+                    style={{ marginTop: "4px" }}
+                  >
+                    Product Unavailable
+                  </h5>
+                </div>
+                <div
+                  className="d-sm-none p-0"
+                  style={{  
+                    position: "fixed",
+                    bottom: "0px",
+                    left: "0px",
+                    right: "0",
+                    zIndex: "9999",
+                  }}
+                > <button
+                className="btn btn-solid px-1 w-100" style={{backgroundSize:"781"}}
+              >
+                Product Unavailable
+              </button></div>
+              </>
+            )}
+
+            {/* {(item.available_stock !== "0" && item.available_stock > 0) ||
               item.offer_stock > 0 ||
               item.offer_stock == null ? (
                 this.props.item.is_active == "1" ? (
@@ -2013,7 +2629,7 @@ class Details extends Component {
                   </div>
                 </div>
               )} */}
-              {/* {this.state.product_mrp !== null &&
+            {/* {this.state.product_mrp !== null &&
             this.state.selling_price !== null ? (
               <div className="col-sm-9 col-md-9">
                 <div className="row">
@@ -2041,99 +2657,546 @@ class Details extends Component {
             ) : (
               ""
             )} */}
-              {/* <button className="btn btn-solid ml-2 my-2" onClick={this.create_wishlist} id="wishlist_product" clickevent="add_to_wishlist"> Wishlist </button> */}
-            </div>
-            <div className="col-sm-12 col-lg-12">
-              <DetailsTopTabs item={item} />
-            </div>
-            <LiveReq
-              price={item}
-              askAuction={this.state.askAuctionInit}
-              shouldReload={this.state.shouldReload}
-              showAuctionPop={this.state.showAuctionPop}
-              undoCallAuction={this.undoCallAuction}
-            />
-            <div className="border-product d-none">
-              <h6 className="product-title">{translate("Share It")}</h6>
-              <div className="product-icon">
-                <ul className="product-social">
-                  <li>
-                    <a
-                      href="https://www.facebook.com/"
-                      target="_blank"
-                      rel="nofollow"
-                    >
-                      <i className="fa fa-facebook" />
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="https://plus.google.com/discover"
-                      target="_blank"
-                      rel="nofollow"
-                    >
-                      <i className="fa fa-google-plus" />
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="https://twitter.com/"
-                      target="_blank"
-                      rel="nofollow"
-                    >
-                      <i className="fa fa-twitter" />
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="https://www.instagram.com/"
-                      target="_blank"
-                      rel="nofollow"
-                    >
-                      <i className="fa fa-instagram" />
-                    </a>
-                  </li>
-                </ul>
-                {/* <button className="wishlist-btn" onClick={() => addToWishlistClicked(item)}>
-                                    <i className="fa fa-heart"></i><span className="title-font">Add To WishList</span>
-                                </button> */}
-              </div>
+            {/* <button className="btn btn-solid ml-2 my-2" onClick={this.create_wishlist} id="wishlist_product" clickevent="add_to_wishlist"> Wishlist </button> */}
+          </div>
+          <div className="border-product mb-3">
+            <h6 className="product-title text-dark">
+              <strong>{translate("100% SECURE PAYMENT")}</strong>
+            </h6>
+            <div className="payment-card-bottom">
+              <ul>
+                <li>
+                  <a
+                    onClick={(e) => {
+                      e.preventDefault();
+                    }}
+                  >
+                    <img
+                      src={`${process.env.PUBLIC_URL}/assets/images/icon/visa.png`}
+                      alt="beldara.com"
+                      className="mr-3"
+                    />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    onClick={(e) => {
+                      e.preventDefault();
+                    }}
+                  >
+                    <img
+                      src={`${process.env.PUBLIC_URL}/assets/images/icon/mastercard.png`}
+                      alt="beldara.com"
+                      className="mr-3"
+                    />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    onClick={(e) => {
+                      e.preventDefault();
+                    }}
+                  >
+                    <img
+                      src={`${process.env.PUBLIC_URL}/assets/images/icon/paypal.png`}
+                      alt="beldara.com"
+                      className="mr-3"
+                    />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    onClick={(e) => {
+                      e.preventDefault();
+                    }}
+                  >
+                    <img
+                      src={`${process.env.PUBLIC_URL}/assets/images/icon/american-express.png`}
+                      alt="beldara.com"
+                      className="mr-3"
+                    />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    onClick={(e) => {
+                      e.preventDefault();
+                    }}
+                  >
+                    <img
+                      src={`${process.env.PUBLIC_URL}/assets/images/icon/discover.png`}
+                      alt="beldara.com"
+                    />
+                  </a>
+                </li>
+              </ul>
             </div>
           </div>
-          <LoginPopUp
-            footerData={this.footerData}
-            login={this.state}
-            openSignUpModal={this.openSignUpModal}
-            closeModal={this.closeModal}
-          />
-          <SignUpPopUp
-            footerData={this.footerData}
-            signup={this.state}
-            openLoginModal={this.openLoginModal}
-            closeModal={this.closeModal}
-          />
-          {/* {Chat} */}
-          <Suspense loading={""}>
-            <ChatBox
-              product={item}
-              chatToSeller={
-                this.props.chatToSeller ? this.props.chatToSeller : false
-              }
-            />
-          </Suspense>
-        </div>
-        <div className="col-lg-4">
-          {this.state.msgNotifyME ? (
-            <div
-              className="alert alert-info toast_pull_right-1"
-              role="alert"
-              id="msgNotifyME"
+          <div id="pincodemodule" className="row">
+            <>
+              <form className="d-flex align-items-center mb-2 mt-2">
+                {/* <div className="justify-content-center">
+                    <img
+                      className="imglocation"
+                      src="https://img.beldara.com/images/location_marker.png"
+                      alt="location"
+                    />has-label-float 
+                  </div> */}
+                <div className="has-float-label col-sm-8 col-xs-8 col-md-8">
+                  <NumberFormat
+                    id="pincode"
+                    name="pincode"
+                    placeholder="pincode"
+                    className="form-control input-number rounded"
+                    value={this.state.pincode}
+                    onChange={this.ChangePincode.bind(this)}
+                    onKeyPress={this.allowPincode.bind(this)}
+                  />
+                  {/* <label htmlFor="pincode" className="mx-2">
+                      {"Enter Pincode"}
+                    </label> */}
+                  {this.validator.message(
+                    "pincode",
+                    this.state.pincode,
+                    `required|numeric`
+                  )}
+                </div>
+
+                {!isMobile ? (
+                  <div>
+                    {!this.state.pincodeValidate ? (
+                      <span
+                        className="mouse_pointer btn btn-solid"
+                        onClick={this.checkZipCode.bind(this, null)}
+                      >
+                        CHECK
+                      </span>
+                    ) : (
+                      <div className="col-md-1 col-sm-1 col-sm-1">
+                        <span
+                          className="change-pincode-button p-1 mouse_pointer btn btn-solid"
+                          onClick={this.checkPincodeAgain}
+                        >
+                          CHANGE
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div>
+                    <span
+                      className="p-text-color change-pincode-button p-1 mouse_pointer"
+                      onClick={this.checkZipCode.bind(this, null)}
+                    >
+                      CHECK
+                    </span>
+                    <div className="col-md-1 col-sm-1 col-sm-1">
+                      <span
+                        className=" change-pincode-button p-1 mouse_pointer"
+                        onClick={this.checkPincodeAgain}
+                      >
+                        CHANGE
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </form>
+              <p id="error_pincode" className="text-danger d-none">
+                Please enter valid pincode
+              </p>
+            </>
+            {this.state.pincodeValidate ? (
+              <>
+                <div className="mx-3">
+                  <div className="row">
+                    {/* <div className="col-md-12"> */}
+                    <div className="col-md-9 col-sm-9 col-sm-9 mt-3 justify-content-center">
+                      {/* <div className="justify-content-center"> */}
+                      {/* <img
+                      className="imglocation"
+                      src="https://img.beldara.com/images/location_marker.png"
+                      alt="location"
+                    /> */}
+                      <span>
+                        <strong>
+                          DELIVERY OPTIONS FOR{" "}
+                          <span className="p-text-color">
+                            {this.state.pincode}
+                          </span>
+                        </strong>
+                      </span>
+                      {/* </div> */}
+                    </div>
+                    {/* </div> */}
+                  </div>
+                  {this.state.pincodeDeliverable ? (
+                    <div className="row">
+                      <div className="col-sm-12 col-xs-12 col-md-12 mt-3 d-flex align-items-center">
+                        <p>
+                          Shipping To:{" "}
+                          <strong>{this.state.pincodeTitle}</strong>
+                        </p>
+                      </div>
+                      {this.state.pincodeMsg.map((value, index) => (
+                        <React.Fragment>
+                          <div className="col-sm-12 col-xs-12 col-md-12 d-flex align-items-center">
+                            <i
+                              className="success-mark"
+                              style={{ marginBottom: "13px" }}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 18.35"
+                              >
+                                <title>checkmark</title>
+                                <path
+                                  d="M21.13 0L8.48 12.65 2.87 7.04 0 9.91l7.53 7.53 1 .91.95-.91L24 2.87z"
+                                  fill="#4fcc71"
+                                ></path>
+                              </svg>
+                            </i>
+                            <p className="mx-1">{value}</p>
+                          </div>
+                        </React.Fragment>
+                      ))}
+                      {/* <div className="col-sm-12 col-xs-12 col-md-12 px-1 m-0 d-flex align-items-center">
+                                  <i class="success-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 18.35"><title>checkmark</title><path d="M21.13 0L8.48 12.65 2.87 7.04 0 9.91l7.53 7.53 1 .91.95-.91L24 2.87z" fill="#4fcc71"></path></svg></i>
+                                  <p className="mx-1">Information not found for entered pincode</p>
+                                </div> */}
+                    </div>
+                  ) : (
+                    <div className="row">
+                      <div className="col-sm-12 col-xs-12 col-md-12 p-0 m-0 d-flex align-items-center">
+                        <i class="cross-mark p-1">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                          >
+                            <title>cross</title>
+                            <path
+                              d="M3 0L0 3l9 9-9 9 3 3 9-9 9 9 3-3-9-9 9-9-3-3-9 9z"
+                              fill="#fc0006"
+                            ></path>
+                          </svg>
+                        </i>
+                        <p>{this.state.pincodeTitle}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              ""
+            )}
+          </div>
+          <div className="accordion" id="accordionExample">
+            {/* Surface Or Ocean*/}
+            {this.state.buyer_country_id == item.countryid ||
+            (parseInt(this.state.buyer_country_id) == 91 &&
+              (item.countryid == "" ||
+                item.countryid === undefined ||
+                item.countryid === null)) ? (
+              <React.Fragment>
+                {/* <div className="card py-0 border  shadow-none">
+                              <div className="card-header py-0" id="headingTwo">
+                                <h2 className="mb-0">
+                                  <button
+                                    className="btn btn-link collapsed"
+                                    type="button"
+                                    data-toggle="collapse"
+                                    data-target="#collapseTwo"
+                                    aria-expanded="false"
+                                    aria-controls="collapseThree"
+                                  >
+                                    <img
+                                      src={`${imgUrl}/images/beldara-express.png`}
+                                      className="mr-1"
+                                      style={{ width: "40px" }}
+                                    />{" "}
+                                    Delivery within 2-5 days
+                                  </button>
+                                </h2>
+                              </div>
+                              <div
+                                id="collapseTwo"
+                                className="collapse"
+                                aria-labelledby="headingTwo"
+                                data-parent="#accordionExample"
+                              >
+                                <div className="card-body">
+                                  <div> - Delivery within 2-5 days</div>
+                                  <div> - Get your own logistics team</div>
+                                  <div> - Make deliveries via air shipments</div>
+                                  <div> - Complete logistics support</div>
+                                  <div> - handling the tedious custom clearance</div>
+                                  <div> - Access to a shipping expert</div>
+                                </div>
+                              </div>
+                            </div> */}
+                <div className="py-0  shadow-none mt-3">
+                  <div className="py-0" id="headingThree">
+                    <h2 className="mb-0">
+                      <button
+                        className="btn  collapsed"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#collapseThree"
+                        aria-expanded="false"
+                        aria-controls="collapseThree"
+                      >
+                        <i
+                          style={{ fontSize: "30px", color: "#ff9944" }}
+                          className="fa fa-truck mr-3"
+                          aria-hidden="true"
+                        ></i>
+                        Delivery within 7 days
+                      </button>
+                    </h2>
+                  </div>
+                  <div
+                    id="collapseThree"
+                    className="collapse"
+                    aria-labelledby="headingThree"
+                    data-parent="#accordionExample"
+                  >
+                    <div className="card-body">
+                      <div> - Delivery within 7 days</div>
+                      <div> - Complete logistics support</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="py-0 shadow-none">
+                  <div className="py-0" id="headingfour">
+                    <h2 className="mb-0">
+                      <button
+                        className="btn collapsed"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#collapsefour"
+                        aria-expanded="false"
+                        aria-controls="collapsefour"
+                      >
+                        <i
+                          style={{ fontSize: "30px", color: "#ff9944" }}
+                          className="fa fa-undo mr-3"
+                          aria-hidden="true"
+                        ></i>
+                        Return Policy
+                      </button>
+                    </h2>
+                  </div>
+                  <div
+                    id="collapsefour"
+                    className="collapse"
+                    aria-labelledby="headingfour"
+                    data-parent="#accordionExample"
+                  >
+                    <div className="card-body">
+                      <div> - Return with in 10 days of delivery</div>
+                      <div>
+                        {" "}
+                        - Return pickup time with in 72 hours hours return
+                        booking
+                      </div>
+                      <div>
+                        {" "}
+                        - Get money refunded with in 48 hours if pickup
+                      </div>
+                      <div>
+                        <a target="blank" href="/return-policy.html">
+                          {" "}
+                          View all{" "}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                {/* <div className="card py-0 border  shadow-none">
+                              <div className="card-header py-0" id="headingTwo">
+                                <h2 className="mb-0">
+                                  <button
+                                    className="btn btn-link collapsed"
+                                    type="button"
+                                    data-toggle="collapse"
+                                    data-target="#collapseTwo"
+                                    aria-expanded="false"
+                                    aria-controls="collapseThree"
+                                  >
+                                    <img
+                                      src={`${imgUrl}/images/beldara-express.png`}
+                                      className="mr-1"
+                                      style={{ width: "40px" }}
+                                    />{" "}
+                                    Delivery within 4-8 days
+                                  </button>
+                                </h2>
+                              </div>
+                              <div
+                                id="collapseTwo"
+                                className="collapse"
+                                aria-labelledby="headingTwo"
+                                data-parent="#accordionExample"
+                              >
+                                <div className="card-body">
+                                  <div> - Delivery within 4-8 days</div>
+                                  <div> - Get your own logistics team</div>
+                                  <div> - Make deliveries via air shipments</div>
+                                  <div> - Complete logistics support</div>
+                                  <div> - handling the tedious custom clearance</div>
+                                  <div> - Access to a shipping expert</div>
+                                </div>
+                              </div>
+                            </div> */}
+                {/* <div className="card py-0 border shadow-none">
+                              <div className="card-header py-0" id="headingThree">
+                                <h2 className="mb-0">
+                                  <button
+                                    className="btn btn-link collapsed"
+                                    type="button"
+                                    data-toggle="collapse"
+                                    data-target="#collapseThree"
+                                    aria-expanded="false"
+                                    aria-controls="collapseThree"
+                                  >
+                                    <img
+                                      src={`${imgUrl}/images/beldara-ocean.png`}
+                                      className="mr-1"
+                                      style={{ width: "40px" }}
+                                    />{" "}
+                                    Delivery within 45-60 days
+                                  </button>
+                                </h2>
+                              </div>
+                              <div
+                                id="collapseThree"
+                                className="collapse"
+                                aria-labelledby="headingThree"
+                                data-parent="#accordionExample"
+                              >
+                                <div className="card-body">
+                                  <div> - Delivery within 45-60 days</div>
+                                  <div> - Provision of sea shipments</div>
+                                  <div> - Complete logistics support</div>
+                                  <div> - Handling the tedious custom clearance</div>
+                                </div>
+                              </div>
+                            </div> */}
+                <div className="card py-0 border shadow-none">
+                  <div className="card-header py-0" id="headingThree">
+                    <h2 className="mb-0">
+                      <button
+                        className="btn btn-link collapsed"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#collapseThree"
+                        aria-expanded="false"
+                        aria-controls="collapseThree"
+                      >
+                        <i
+                          style={{ fontSize: "30px" }}
+                          className="fa fa-truck mr-3"
+                          aria-hidden="true"
+                        ></i>
+                        Delivery within 7 days
+                      </button>
+                    </h2>
+                  </div>
+                  <div
+                    id="collapseThree"
+                    className="collapse"
+                    aria-labelledby="headingThree"
+                    data-parent="#accordionExample"
+                  >
+                    <div className="card-body">
+                      <div> - Delivery within 7 days</div>
+                      <div> - Complete logistics support</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="card py-0 border shadow-none">
+                  <div className="card-header py-0" id="headingfour">
+                    <h2 className="mb-0">
+                      <button
+                        className="btn btn-link collapsed"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#collapsefour"
+                        aria-expanded="false"
+                        aria-controls="collapsefour"
+                      >
+                        <i
+                          style={{ fontSize: "30px" }}
+                          className="fa fa-undo mr-3"
+                          aria-hidden="true"
+                        ></i>
+                        Return Policy
+                      </button>
+                    </h2>
+                  </div>
+                  <div
+                    id="collapsefour"
+                    className="collapse"
+                    aria-labelledby="headingfour"
+                    data-parent="#accordionExample"
+                  >
+                    <div className="card-body">
+                      <div> - Return with in 10 days of delivery</div>
+                      <div>
+                        {" "}
+                        - Return pickup time with in 72 hours hours return
+                        booking
+                      </div>
+                      <div>
+                        {" "}
+                        - Get money refunded with in 48 hours if pickup
+                      </div>
+                      <div>
+                        <a target="blank" href="/return-policy.html">
+                          {" "}
+                          View all{" "}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </React.Fragment>
+            )}
+          </div>
+          <div>
+            {/* <div
+              className="d-sm-none row"
+              style={{
+                position: "fixed",
+                bottom: "0px",
+                left: "0px",
+                right: "0",
+                zIndex: "9999",
+                height: "60px",
+              }}
             >
-              {this.state.NotifyMessage}
+              <button className="btn btn-solid w-50">Add to cart</button>
+              <button className="btn btn-solid w-50">Buy Now</button>
+            </div> */}
+          </div>
+          {/* <div className="row ">
+            <div
+              className="d-block d-sm-none d-flex"
+              style={{
+                position: "fixed",
+                bottom: "0px",
+                left: "0px",
+                right: "0",
+                zIndex: "9999",
+                height:"60px"
+              }}
+            >
+              <button className="btn btn-solid w-50">Out of Stock</button>
+              <button className="btn btn-solid w-50">Notify Me</button>
             </div>
-          ) : (
-            ""
-          )}
+          </div> */}
         </div>
       </>
     );
@@ -2148,5 +3211,7 @@ const mapStateToProps = (state) => ({
   holeData: state,
 });
 export default withRouter(
-  withTranslate(connect(mapStateToProps, { getAllCurrencyValue })(Details))
+  withTranslate(
+    connect(mapStateToProps, { getAllCurrencyValue, getCartLength,getUpdateUser })(Details)
+  )
 );

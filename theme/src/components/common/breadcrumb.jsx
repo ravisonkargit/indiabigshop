@@ -28,17 +28,7 @@ render() {
                     <Link to={`${process.env.PUBLIC_URL}`}>
                       {translate("Home")}
                     </Link>
-                  </li>
-                  {parent ? (
-                    <li className="breadcrumb-item" aria-current="page">
-                      {translate(parent)}
-                    </li>
-                  ) : (
-                    ""
-                  )}
-                  <li className="breadcrumb-item active" aria-current="page">
-                    {translate(title)}
-                  </li>
+                </li>
                 </ol>
               </nav>
             </div>

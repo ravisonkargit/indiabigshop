@@ -16,6 +16,7 @@ import {
   addToCartUnsafe,
   addToWishlist,
   getRelatedProducts,
+  getChatWithSupplier,
 } from "../../actions";
 import SmallImages from "./common/product/small-image";
 import store from "../../store";
@@ -33,6 +34,10 @@ import { getRelatedItems } from "../../services";
 import { offerExist } from "../../functions/index";
 import "./common/product/product.css";
 import { getCookie, captureEvent } from "../../functions";
+import ReactCSSTransitionGroup from "react-addons-css-transition-group";
+import StarReview from "../collection/common/rating";
+import { stat } from "fs";
+
 //import 'react-inner-image-zoom/lib/InnerImageZoom/styles.css';
 //import { InnerImageZoom }  from "react-inner-image-zoom";
 
@@ -173,6 +178,35 @@ class ColumnLeft extends Component {
     }
   };
 
+  chatBtn = () => {
+    // e.preventDefault()
+    let id = "chatBtn";
+    // ls.get("sellerid")
+    //   ?
+    //   window.location.assign('https://msg.beldara.com?ssid='+this.props.item.id)
+    // :
+    // // this.setState({
+    // //   login: true
+    // // });
+    // // this.scrollcntList()
+    // let statePass = {
+    //   // sellerid:sellerid,
+    //   chatWithSupplier:true
+    //   // company:company
+    // }
+    let statePass = {
+      sellerid: this.props.item.sellerid,
+      chatWithSupplier: true,
+      company: this.props.item.company,
+      item: this.props.item,
+    };
+    // console.log(statePass,640);
+    store.dispatch(getChatWithSupplier(statePass));
+    // this.setState({
+    //   fromChatWithSupplier:true
+    // })
+  };
+
   UNSAFE_componentWillReceiveProps = async (nextProps) => {
     // console.log('UNSAFE_componentWillReceiveProps',183,'outside',this.props,nextProps);
     // console.log('product: UNSAFE_componentWillReceiveProps')
@@ -251,11 +285,13 @@ class ColumnLeft extends Component {
       .replace(".html", "");
     const val = query.split("-").splice(-1)[0];
     // console.log(val,241);
+
     await store.dispatch(getSingleProduct(val));
     await store.dispatch(getRelatedProducts(val));
   };
 
   dispatch_variant_products = async (prod_id, prod_url) => {
+    console.log("newr");
     // console.log('function called',prod_id,prod_url);
     is_variant = true;
     prod_variant_url = prod_url;
@@ -307,7 +343,6 @@ class ColumnLeft extends Component {
     //console.log('----------222',this.slider1);
     const {
       symbol,
-      item,
       addToCart,
       addToCartUnsafe,
       addToWishlist,
@@ -349,11 +384,12 @@ class ColumnLeft extends Component {
         get_offer_condition = result;
       });
     }
-    //console.log('render',item,this.props);
 
+    //console.log('render',item,this.props);
+    console.log(this.props, "newww");
     return (
       <div>
-        {item ? (
+        {this.props.item ? (
           <React.Fragment>
             {/* <Breadcrumb title={' Product / ' + item.name} metaTitle={`${item.name} | beldara.com`} metaDesc={`${item.name} | beldara.com`} metaKeyword={`${item.name} | beldara.com`}/> */}
 
@@ -368,17 +404,17 @@ class ColumnLeft extends Component {
 
                 <meta
                   property="product:price:amount"
-                  content={`${item.start_price}`}
+                  content={`${this.props.item.start_price}`}
                 />
 
                 <meta
                   property="product:price:currency"
-                  content={`${item.currency}`}
+                  content={`${this.props.item.currency}`}
                 />
 
                 <meta
                   property="product:retailer_item_id"
-                  content={`${item.id}`}
+                  content={`${this.props.item.id}`}
                 />
               </Helmet>
               <div className="container">
@@ -392,7 +428,7 @@ class ColumnLeft extends Component {
                               {translate("Home")}
                             </Link>
                           </li>
-                          {item.level1 ? (
+                          {this.props.item.level1 ? (
                             <li
                               className="breadcrumb-item small"
                               aria-current="page"
@@ -400,16 +436,18 @@ class ColumnLeft extends Component {
                               <Link
                                 to={`${
                                   process.env.PUBLIC_URL
-                                }/cat/${this.getProductUrl(item.level1)}.html`}
+                                }/cat/${this.getProductUrl(
+                                  this.props.item.level1
+                                )}.html`}
                                 target="_blank"
                               >
-                                {this.getProductLevel(item.level1)}
+                                {this.getProductLevel(this.props.item.level1)}
                               </Link>
                             </li>
                           ) : (
                             ""
                           )}
-                          {item.level2 ? (
+                          {this.props.item.level2 ? (
                             <li
                               className="breadcrumb-item small"
                               aria-current="page"
@@ -419,31 +457,35 @@ class ColumnLeft extends Component {
                                 to={`${
                                   process.env.PUBLIC_URL
                                 }/cat/${this.getProductUrl(
-                                  item.level1
-                                )}/${this.getProductUrl(item.level2)}.html`}
-                              >
-                                {this.getProductLevel(item.level2)}
-                              </Link>
-                            </li>
-                          ) : (
-                            ""
-                          )}
-                          {item.level3 ? (
-                            <li
-                              className="breadcrumb-item small"
-                              aria-current="page"
-                            >
-                              <Link
-                                target="_blank"
-                                to={`${
-                                  process.env.PUBLIC_URL
-                                }/cat/${this.getProductUrl(
-                                  item.level1
+                                  this.props.item.level1
                                 )}/${this.getProductUrl(
-                                  item.level2
-                                )}/${this.getProductUrl(item.level3)}.html`}
+                                  this.props.item.level2
+                                )}.html`}
                               >
-                                {this.getProductLevel(item.level3)}
+                                {this.getProductLevel(this.props.item.level2)}
+                              </Link>
+                            </li>
+                          ) : (
+                            ""
+                          )}
+                          {this.props.item.level3 ? (
+                            <li
+                              className="breadcrumb-item small"
+                              aria-current="page"
+                            >
+                              <Link
+                                target="_blank"
+                                to={`${
+                                  process.env.PUBLIC_URL
+                                }/cat/${this.getProductUrl(
+                                  this.props.item.level1
+                                )}/${this.getProductUrl(
+                                  this.props.item.level2
+                                )}/${this.getProductUrl(
+                                  this.props.item.level3
+                                )}.html`}
+                              >
+                                {this.getProductLevel(this.props.item.level3)}
                               </Link>
                             </li>
                           ) : (
@@ -453,7 +495,7 @@ class ColumnLeft extends Component {
                             className="breadcrumb-item active small d-none"
                             aria-current="page"
                           >
-                            {item.name}
+                            {this.props.item.name}
                           </li>
                         </ol>
                       </nav>
@@ -467,6 +509,14 @@ class ColumnLeft extends Component {
             <section>
               <div className="collection-wrapper">
                 <div className="container">
+                  <div
+                    className="sticky-top bg-white d-block d-sm-none d-md-none"
+                    style={{ zIndex: 3 }}
+                  >
+                    <h5 className="text-dark mt-3 t-0">
+                      <strong>{this.props.item.name}</strong>
+                    </h5>
+                  </div>
                   <div className="row justify-content-center">
                     {/* <OfferTimer offer_from_date={item.offer_from_date} offer_to_date={item.offer_to_date}/> */}
                   </div>
@@ -477,54 +527,185 @@ class ColumnLeft extends Component {
                           className="badge badge-danger text-wrap my-1 p-3"
                           style={offer_tag}
                         >
-                          {item.offer_percent} % Offer
+                          {this.props.item.offer_percent} % Offer
                         </div>
                       ) : (
                         ""
                       )}
-                      <Slider
-                        {...products}
-                        asNavFor={this.state.nav2}
-                        ref={(slider) => (this.slider1 = slider)}
-                        className="product-right-slick"
-                      >
-                        {
-                          <div key={item.img}>
-                            <img
-                              src={imgUrl + `/product_images/` + item.img}
-                              className="img-fluid image_zoom_cls-0 mouse_pointer"
-                              alt={item.img}
-                              style={{ margin: "0 auto", height: "400px" }}
-                              onClick={this.onOpenModal}
-                            />
-                          </div>
-                        }
-                        {item.other_images.map((vari, index) =>
-                          vari ? (
-                            <div key={index}>
+                      <div className="d-block d-sm-none d-md-none">
+                        <div className="d-flex align-items-center">
+                          {this.props.item.company ? (
+                            <>
+                              <p
+                                style={{
+                                  fontSize: "16px",
+                                  letterSpacing: "0px",
+                                  color: "#40c2f2",
+                                  fontWeight: "600",
+                                  marginTop:"10px",
+                                  marginRight:"5px"
+                                }}
+                              >
+                                Brand:{" "}
+                                {this.props.item.surl !== undefined &&
+                                this.props.item.surl != "" ? (
+                                  <a
+                                    className="h6"
+                                    href={`/store/${this.props.item.surl}.html`}
+                                    target="_blank"
+                                    style={{
+                                      fontSize: "16px",
+                                      letterSpacing: "0px",
+                                      color: "#40c2f2",
+                                      fontWeight: "600",
+                                    }}
+                                  >
+                                    {this.props.item.company}
+                                    {this.props.item.country !== null &&
+                                    this.props.item.country !== undefined
+                                      ? "/" + this.propsitem.country
+                                      : ""}
+                                  </a>
+                                ) : (
+                                  <span className="h6">
+                                    {this.props.item.company}
+                                    {this.props.item.country !== null &&
+                                    this.props.item.country !== undefined
+                                      ? "/" + this.props.this.props.item.country
+                                      : ""}
+                                  </span>
+                                )}
+                              </p>
+                              {/* <div>
+                                {this.props.item.company &&
+                                this.props.item.is_active == "1" ? (
+                                  <ReactCSSTransitionGroup
+                                    transitionName="example"
+                                    transitionEnterTimeout={500}
+                                    transitionLeaveTimeout={600}
+                                  >
+                                    <span
+                                      style={{
+                                        color: "#ff9944",
+                                        cursor: "pointer",
+                                        fontSize: "16px",
+                                        fontWeight: "500",
+                                      }}
+                                      onClick={this.chatBtn}
+                                      id="chatBtn"
+                                    >
+                                      <i className="fa fa-comments mr-1" /> Chat
+                                      with supplier
+                                    </span>
+                                  </ReactCSSTransitionGroup>
+                                ) : (
+                                  ""
+                                )}
+                              </div> */}
+                            </>
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                      </div>
+                      {this.props.item.img ? (
+                        <Slider
+                          {...products}
+                          asNavFor={this.state.nav2}
+                          ref={(slider) => (this.slider1 = slider)}
+                          className="product-right-slick"
+                        >
+                          {
+                            <div key={this.props.item.img}>
                               <img
-                                src={imgUrl + `/product_images/` + vari}
+                                src={this.props.item.img}
                                 className="img-fluid image_zoom_cls-0 mouse_pointer"
-                                alt={vari}
-                                id={index}
+                                alt={this.props.item.img}
                                 style={{ margin: "0 auto", height: "400px" }}
                                 onClick={this.onOpenModal}
                               />
                             </div>
+                          }
+                          {/* {this.props.item.image
+                            .slice(1, 4)
+                            .map((vari, index) =>
+                              vari ? (
+                                <div key={index}>
+                                  <img
+                                    src={vari.img}
+                                    className="img-fluid image_zoom_cls-0 mouse_pointer"
+                                    alt={vari}
+                                    id={index}
+                                    style={{
+                                      margin: "0 auto",
+                                      height: "400px",
+                                    }}
+                                    onClick={this.onOpenModal}
+                                  />
+                                </div>
+                              ) : (
+                                ""
+                              )
+                            )} */}
+                        </Slider>
+                      ) : (
+                        <Slider
+                          {...products}
+                          asNavFor={this.state.nav2}
+                          ref={(slider) => (this.slider1 = slider)}
+                          className="product-right-slick"
+                        >
+                          {
+                            <div key={this.props.item.image[0]}>
+                              <img
+                                src={this.props.item.image[0].img}
+                                className="img-fluid image_zoom_cls-0 mouse_pointer"
+                                alt={this.props.item.img}
+                                style={{ margin: "0 auto", height: "400px" }}
+                                onClick={this.onOpenModal}
+                              />
+                            </div>
+                          }
+                          {this.props.item.image
+                            .slice(1, 4)
+                            .map((vari, index) =>
+                              vari ? (
+                                <div key={index}>
+                                  <img
+                                    src={vari.img}
+                                    className="img-fluid image_zoom_cls-0 mouse_pointer"
+                                    alt={vari}
+                                    id={index}
+                                    style={{
+                                      margin: "0 auto",
+                                      height: "400px",
+                                    }}
+                                    onClick={this.onOpenModal}
+                                  />
+                                </div>
+                              ) : (
+                                ""
+                              )
+                            )}
+                        </Slider>
+                      )}
+
+                      {this.props.item.image ? (
+                        <div>
+                          {this.state.loadSmallImage == 1 ? (
+                            <SmallImages
+                              item={this.props.item}
+                              settings={productsnav}
+                              navOne={this.slider1}
+                            />
                           ) : (
                             ""
-                          )
-                        )}
-                      </Slider>
-                      {this.state.loadSmallImage == 1 ? (
-                        <SmallImages
-                          item={item}
-                          settings={productsnav}
-                          navOne={this.slider1}
-                        />
+                          )}
+                        </div>
                       ) : (
                         ""
                       )}
+
                       <>
                         <div>
                           <Modal
@@ -541,7 +722,7 @@ class ColumnLeft extends Component {
                               <div className="modal-content min-modal-size modal-content-1">
                                 <div className="modal-header modal-header-1">
                                   <h5 className="modal-title modal-title-1">
-                                    {item.name.substring(0,60)}...
+                                    {this.props.item.name.substring(0, 60)}...
                                   </h5>
                                   <button
                                     type="button"
@@ -555,47 +736,40 @@ class ColumnLeft extends Component {
                                   <div className="container-fluid p-0">
                                     {/* <div className="row mx-2 my-2"> */}
                                     <div className="d-flex justify-content-end">
-                                      {item.other_images.length > 0 ? (
-                                        item.other_images.map((vari, index) =>
-                                          vari ? (
-                                            <div key={index}>
-                                              <img
-                                                src={
-                                                  imgUrl +
-                                                  `/product_images/` +
-                                                  vari
-                                                }
-                                                alt={vari}
-                                                id={index}
-                                                style={{
-                                                  margin: "0 auto",
-                                                  height: "40px",
-                                                  width: "54.09px",
-                                                }}
-                                                //className="img-thumbnail mr-1"
-                                                className={`img-thumbnail mr-1 ${
-                                                  index ==
-                                                  this.state.activeIndex
-                                                    ? "active-1"
-                                                    : "inactive"
-                                                }`}
-                                                onClick={this.getImage}
-                                              />
-                                            </div>
-                                          ) : (
-                                            ""
-                                          )
+                                      {this.props.item.image?(<div>  {this.props.item.image.length > 0 ? (
+                                        this.props.item.image.map(
+                                          (vari, index) =>
+                                            vari ? (
+                                              <div key={index}>
+                                                <img
+                                                  src={vari.img}
+                                                  alt={vari}
+                                                  id={index}
+                                                  style={{
+                                                    margin: "0 auto",
+                                                    height: "40px",
+                                                    width: "54.09px",
+                                                  }}
+                                                  //className="img-thumbnail mr-1"
+                                                  className={`img-thumbnail mr-1 ${
+                                                    index ==
+                                                    this.state.activeIndex
+                                                      ? "active-1"
+                                                      : "inactive"
+                                                  }`}
+                                                  onClick={this.getImage}
+                                                />
+                                              </div>
+                                            ) : (
+                                              ""
+                                            )
                                         )
                                       ) : (
-                                        <div key={item.img}>
+                                        <div key={this.props.item.img}>
                                           <img
-                                            src={
-                                              imgUrl +
-                                              `/product_images/` +
-                                              item.img
-                                            }
-                                            alt={item.img}
-                                            id={item.img}
+                                            src={this.props.item.image[0].img}
+                                            alt={this.props.item.img}
+                                            id={this.props.item.img}
                                             style={{
                                               margin: "0 auto",
                                               height: "40px",
@@ -605,50 +779,57 @@ class ColumnLeft extends Component {
                                             className="img-thumbnail mr-1 active-1"
                                           />
                                         </div>
-                                      )}
+                                      )}</div>):(<div key={this.props.item.img}>
+                                        <img
+                                          src={this.props.item.img}
+                                          alt={this.props.item.img}
+                                          id={this.props.item.img}
+                                          style={{
+                                            margin: "0 auto",
+                                            height: "40px",
+                                            width: "54.09px",
+                                          }}
+                                          //className="img-thumbnail mr-1"
+                                          className="img-thumbnail mr-1 active-1"
+                                        />
+                                      </div>)}
+                                    
                                     </div>
                                     {/* </div>
                                     <div className="row mx-2 my-2"> */}
                                     <div className="d-flex justify-content-center">
-                                      {item.other_images.length > 0 ? (
-                                        item.other_images.map((vari, index) =>
-                                          vari && index == this.state.ids ? (
-                                            <div
-                                              key={index}
-                                              className="img-wrapper"
-                                            >
-                                              <img
-                                                src={
-                                                  imgUrl +
-                                                  `/product_images/` +
-                                                  vari
-                                                }
-                                                alt={vari}
-                                                id={index}
-                                                style={{
-                                                  margin: "0 auto",
-                                                  width: "340px",
-                                                  height: "350px",
-                                                }}
-                                                className="mr-2 mr-2 hover-zoom"
-                                              />
-                                            </div>
-                                          ) : (
-                                            ""
-                                          )
+                                      {this.props.item.image?(<div> {this.props.item.image.length > 0 ? (
+                                        this.props.item.image.map(
+                                          (vari, index) =>
+                                            vari && index == this.state.ids ? (
+                                              <div
+                                                key={index}
+                                                className="img-wrapper"
+                                              >
+                                                <img
+                                                  src={vari.img}
+                                                  alt={vari}
+                                                  id={index}
+                                                  style={{
+                                                    margin: "0 auto",
+                                                    width: "340px",
+                                                    height: "350px",
+                                                  }}
+                                                  className="mr-2 mr-2 hover-zoom"
+                                                />
+                                              </div>
+                                            ) : (
+                                              ""
+                                            )
                                         )
                                       ) : (
                                         <div
-                                          key={item.img}
+                                          key={this.props.item.image}
                                           className="img-wrapper"
                                         >
                                           <img
-                                            src={
-                                              imgUrl +
-                                              `/product_images/` +
-                                              item.img
-                                            }
-                                            alt={item.img}
+                                            src={this.props.item.image[0].img}
+                                            alt={this.props.item.image[0].img}
                                             id="0"
                                             style={{
                                               margin: "0 auto",
@@ -658,7 +839,23 @@ class ColumnLeft extends Component {
                                             className="mr-2 mr-2 hover-zoom"
                                           />
                                         </div>
-                                      )}
+                                      )}</div>):( <div
+                                        key={this.props.item.img}
+                                        className="img-wrapper"
+                                      >
+                                        <img
+                                          src={this.props.item.img}
+                                          alt={this.props.item.img}
+                                          id="0"
+                                          style={{
+                                            margin: "0 auto",
+                                            width: "340px",
+                                            height: "350px",
+                                          }}
+                                          className="mr-2 mr-2 hover-zoom"
+                                        />
+                                      </div>)}
+                                     
                                     </div>
                                   </div>
                                 </div>
@@ -668,29 +865,47 @@ class ColumnLeft extends Component {
                           </Modal>
                         </div>
                       </>
-                      <div className="border-top single-product-tables border-product detail-section pb-0 my-2">
+                       <div
+                        className="single-product-tables border-product detail-section pb-0 my-2 p-3 mt-3 d-none d-sm-block"
+                        style={{
+                          border: "dotted 1px",
+                          borderRadius: "5px",
+                        }}
+                      >
                         <table>
                           <tbody>
                             <tr>
                               <td>{translate("Free Sample")}:</td>
                               <td>
-                                {item.free_sample == "0" ? "On Demand" : "Yes"}
+                                <strong>
+                                  {this.props.item.free_sample == "0"
+                                    ? "On Demand"
+                                    : "Yes"}
+                                </strong>
                               </td>
                             </tr>
                             <tr>
                               <td>{translate("Avalibility")}:</td>
                               <td>
-                                {item.available_stock !== "0" &&
-                                item.available_stock > 0
-                                  ? "InStock"
-                                  : "Out Of Stock"}
+                                <strong>
+                                  {" "}
+                                  {this.props.item.available_stock !== "0" &&
+                                  this.props.item.available_stock > 0
+                                    ? "InStock"
+                                    : "Out Of Stock"}
+                                </strong>
                               </td>
                             </tr>
-                            {parseFloat(item.weight) > parseFloat(0) ? (
+                            {parseFloat(this.props.item.weight) >
+                            parseFloat(0) ? (
                               <tr>
                                 <td>{translate("Weight")}:</td>
                                 <td>
-                                  {item.weight} {item.available_stock_unit}
+                                  <strong>
+                                    {" "}
+                                    {this.props.item.weight}{" "}
+                                    {this.props.item.available_stock_unit}
+                                  </strong>
                                 </td>
                               </tr>
                             ) : (
@@ -698,8 +913,101 @@ class ColumnLeft extends Component {
                             )}
                           </tbody>
                         </table>
+                      </div> 
+                      {/* old */}
+                      {/* <div className="sticky-top">
+                        <h3 className="text-dark mt-3">
+                          <strong>{this.props.item.name}</strong>
+                        </h3>
                       </div>
-                      <div className="">
+                      <div className="d-flex align-items-center mt-2">
+                        <div
+                          style={{
+                            fontSize: "16px",
+                            letterSpacing: "0px",
+                            color: "#40c2f2",
+                            fontWeight: "600",
+                          }}
+                        >
+                          Brand:{" "}
+                          {this.props.item.surl !== undefined &&
+                          this.props.item.surl != "" ? (
+                            <a
+                              className="h6"
+                              href={`/store/${this.props.item.surl}.html`}
+                              target="_blank"
+                              style={{
+                                fontSize: "16px",
+                                letterSpacing: "0px",
+                                color: "#40c2f2",
+                                fontWeight: "600",
+                              }}
+                            >
+                              {item.company}
+                              {item.country !== null &&
+                              item.country !== undefined
+                                ? "/" + item.country
+                                : ""}
+                            </a>
+                          ) : (
+                            <span className="h6">
+                              {item.company}
+                              {item.country !== null &&
+                              item.country !== undefined
+                                ? "/" + item.country
+                                : ""}
+                            </span>
+                          )}
+                        </div>
+                        <div className="mx-3">
+                          {this.props.item.company &&
+                          this.props.item.is_active == "1" ? (
+                            <ReactCSSTransitionGroup
+                              transitionName="example"
+                              transitionEnterTimeout={500}
+                              transitionLeaveTimeout={600}
+                            >
+                              <div
+                                className="py-1"
+                                style={{
+                                  fontSize: "16px",
+                                  color: "#ff9944",
+                                  cursor: "pointer",
+                                  fontWeight: "600",
+                                }}
+                                onClick={this.chatBtn}
+                                id="chatBtn"
+                              >
+                                <i className="fa fa-comments mr-1" /> Chat with
+                                supplier
+                              </div>
+                            </ReactCSSTransitionGroup>
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                      </div> */}
+                      <div>
+                        {/* new */}
+                        {/* {this.props.reviewCount && this.props.reviewCount > 0 ? (
+              <React.Fragment>
+                <div className="d-flex mt-2 mb-2 border-bottom">
+                  <strong><span>Product Review ({this.props.reviewCount})</span></strong>
+                  <StarReview
+                    dataFromRating={this.props.dataFromRating}
+                    page={`${process.env.PUBLIC_URL}/rating/${item.url}.html`}
+                    avgRating={this.props.avgRating}
+                    item={item}
+                    average={true}
+                    readonly={true}
+                  />
+                </div>
+              </React.Fragment>
+           ) : (
+            ""
+          )} */}
+                      </div>
+                      {/* <div className="">
                         <img
                           src={`${imgUrl}/images/payment-protection-icon.png`}
                           style={{ width: "40px" }}
@@ -707,14 +1015,15 @@ class ColumnLeft extends Component {
                         <small style={{ color: "#ff9944" }}>
                           Beldara Pay helps keep your transactions secure
                         </small>
-                      </div>
-                      <div className="accordion" id="accordionExample">
+                      </div> */}
+                      <div className="accordion d-none" id="accordionExample">
                         {/* Surface Or Ocean*/}
-                        {this.state.buyer_country_id == item.countryid ||
+                        {this.state.buyer_country_id ==
+                          this.props.item.countryid ||
                         (parseInt(this.state.buyer_country_id) == 91 &&
-                          (item.countryid == "" ||
-                            item.countryid === undefined ||
-                            item.countryid === null)) ? (
+                          (this.props.item.countryid == "" ||
+                            this.props.item.countryid === undefined ||
+                            this.props.item.countryid === null)) ? (
                           <React.Fragment>
                             {/* <div className="card py-0 border  shadow-none">
                               <div className="card-header py-0" id="headingTwo">
@@ -1009,82 +1318,13 @@ class ColumnLeft extends Component {
                             </div>
                           </React.Fragment>
                         )}
-                        <div className="border-product">
-                          <h6 className="product-title">
-                            {translate("100% SECURE PAYMENT")}
-                          </h6>
-                          <div className="payment-card-bottom">
-                            <ul>
-                              <li>
-                                <a
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                  }}
-                                >
-                                  <img
-                                    src={`${process.env.PUBLIC_URL}/assets/images/icon/visa.png`}
-                                    alt="beldara.com"
-                                  />
-                                </a>
-                              </li>
-                              <li>
-                                <a
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                  }}
-                                >
-                                  <img
-                                    src={`${process.env.PUBLIC_URL}/assets/images/icon/mastercard.png`}
-                                    alt="beldara.com"
-                                  />
-                                </a>
-                              </li>
-                              <li>
-                                <a
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                  }}
-                                >
-                                  <img
-                                    src={`${process.env.PUBLIC_URL}/assets/images/icon/paypal.png`}
-                                    alt="beldara.com"
-                                  />
-                                </a>
-                              </li>
-                              <li>
-                                <a
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                  }}
-                                >
-                                  <img
-                                    src={`${process.env.PUBLIC_URL}/assets/images/icon/american-express.png`}
-                                    alt="beldara.com"
-                                  />
-                                </a>
-                              </li>
-                              <li>
-                                <a
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                  }}
-                                >
-                                  <img
-                                    src={`${process.env.PUBLIC_URL}/assets/images/icon/discover.png`}
-                                    alt="beldara.com"
-                                  />
-                                </a>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
                       </div>
                     </div>
                     <Details
                       reviewCount={this.state.reviewCount}
                       dataFromRating={this.dataFromRating}
                       avgRating={this.state.avgRating}
-                      item={item}
+                      item={this.props.item}
                       addToWishlistClicked={addToWishlist}
                       dispatch_variant_products={this.dispatch_variant_products}
                     />
@@ -1114,21 +1354,21 @@ class ColumnLeft extends Component {
             </section> */}
 
             {RelatedProduct ? (
-              <RelatedProduct product={item} />
+              <RelatedProduct product={this.props.item} />
             ) : (
               <LoadingComponent />
             )}
 
             <CustomerReview
               key={this.state.reviewRead}
-              item={item}
+              item={this.props.item}
               review={this.state.review}
-              page={`${process.env.PUBLIC_URL}/rating/${item.url}.html`}
+              page={`${process.env.PUBLIC_URL}/rating/${this.props.item.url}.html`}
             />
           </React.Fragment>
         ) : (
           // ""
-          <LoadingComponent />
+          ""
         )}
       </div>
     );
@@ -1140,7 +1380,9 @@ const mapStateToProps = (state, ownProps) => {
   let productId = getFileName(url);
   //  console.log(state.singleProduct,511,productId,is_variant,prod_variant_url);
   try {
-    if (state.singleProduct.product.url === productId.toLowerCase()) {
+    console.log(productId);
+    console.log(state.singleProduct.product.product_url);
+    if (state.singleProduct.product.product_url) {
       return {
         item: state.singleProduct.product,
         symbol: state.data.symbol,

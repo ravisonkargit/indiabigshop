@@ -205,6 +205,7 @@ class TopBarDark extends Component {
   render() {
     // console.log(this.props,165);
     const { translate } = this.props;
+    console.log(this.props.cartList)
     return (
       <div className="top-header top-header-dark3">
         <CountrySelector
@@ -272,7 +273,9 @@ class TopBarDark extends Component {
                     </a>
                   </li> */}
                 <li className="mobile-wishlist cart">
-                  <a href="/cart.html" className="text-white">
+                <a href={"/start-order.html"} className="text-white">
+                {/* <a href={"/start-order/"+ Math.random().toString(36).replace(/[^a-z]+/g, "").substr(0, 8) +".html"} className="text-white"> */}
+                  {/* <a href="/cart.html" className="text-white"> */}
                     <i className="text-white fa fa-shopping-cart"></i> Cart
                     {/* { (ls.get('sellerid'))? */}
                     <span className="badge cart_badge badge-info">
@@ -421,7 +424,7 @@ class TopBarDark extends Component {
                     <ul className="onhover-show-div">
                       <li>
                         <a
-                          href="https://seller.beldara.com/login.html"
+                          href="http://localhost:3000/seller.beldara.com/login.html"
                           data-lng="en"
                           target="_blank"
                         >

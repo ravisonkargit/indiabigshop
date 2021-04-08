@@ -11,7 +11,7 @@ import { ApiUrl, ImgUrl, SellerUrl } from "../../constants/ActionTypes";
 import Paytm from "../payment-gateway/paytm-new";
 import PaytmToken from "../payment-gateway/paytm-new-token";
 import PayOnDelivery from "../payment-gateway/pay-on-delivery";
-import { captureEvent, getCookie, setCookie } from "../../functions";
+import { captureEvent, getCookie, setCookie, showToast } from "../../functions";
 import { priceConversion, minTresholdBarrier } from "../../services";
 import IntlTelInput from "react-intl-tel-input";
 import ReactPixel from "react-facebook-pixel";
@@ -22,6 +22,7 @@ import { apiUrl, betaApi, imgUrl } from "../../constants/variable";
 import Modal from "react-responsive-modal";
 import Table from "react-bootstrap/Table";
 import { isMobile } from "react-device-detect";
+import store from "../../store";
 
 // import {
 //   getCartTotal,
@@ -29,17 +30,7 @@ import { isMobile } from "react-device-detect";
 //   getTotalCartValue,
 //   getTotalShippingCost
 // } from "../../services";
-// import {
-//   removeFromCart,
-//   incrementQty,
-//   decrementQty,
-//   changeQty,
-//   getCart,
-//   updateCart,
-//   getAllCountry,
-//   receiveGetCart,
-//   receiveCart
-// } from "../../actions";
+import { getCartLength } from "../../actions";
 // import store from "../../store";
 
 var complete_address = "";
@@ -47,6 +38,10 @@ var cashback_value = 0;
 var txn_type = "";
 var amt_final = "";
 var isToken_ = "";
+var countryOfSeller = [];
+var cartItems = "";
+var cartid = "";
+
 class StartOrderTest extends Component {
   constructor(props) {
     super(props);
@@ -120,6 +115,7 @@ class StartOrderTest extends Component {
       formid2: "all_payment",
       paymentType: "",
       pincodelength: "6",
+      usdValue: 1,
     };
     this.validator = new SimpleReactValidator();
     this.selectAddress = this.selectAddress.bind(this);
@@ -141,6 +137,9 @@ class StartOrderTest extends Component {
     this.changeCouponValue = this.changeCouponValue.bind(this);
     this.removeCoupon = this.removeCoupon.bind(this);
     this.maxLengthCheck = this.maxLengthCheck.bind(this);
+    this.deleteCartitem = this.deleteCartitem.bind(this);
+    this.decreaseOneQty = this.decreaseOneQty.bind(this);
+    this.increaseOneQty = this.increaseOneQty.bind(this);
   }
 
   setStateFromInput = async (event) => {
@@ -339,242 +338,271 @@ class StartOrderTest extends Component {
   // };
 
   orderSubmit = async (e) => {
-    $(".unique_class").attr("disabled", "true");
-    $("#confirm_order_sppinner").removeClass("d-none");
-    this.setState({
-      addNotValid: 0,
-    });
-    e.preventDefault();
+    if (ls.get("sellerid")) {
+      $(".unique_class").attr("disabled", "true");
+      $("#confirm_order_sppinner").removeClass("d-none");
+      this.setState({
+        addNotValid: 0,
+      });
+      e.preventDefault();
 
-    if (this.validator.allValid()) {
-      if (
-        this.state.gst_in == "" ||
-        (this.state.gst_in != "" && this.state.gst_validated)
-      ) {
-        $("#price_validating_start").removeClass("d-none");
-        //  console.log("valid");
-        $(".chkValidate")
-          .select()
-          .css({ border: "none" });
-        axios
-          .post(
-            "https://api.beldara.com/common/upd_add_buyer.php",
-            {
-              security_token: "",
-              plateform_type: "",
-              sellerid: ls.get("sellerid"),
-              address: this.state.address,
-              city: this.state.city,
-              zipcode: this.state.pincode,
-              landmark: this.state.landmark,
-              state: this.state.state,
-            },
-            { headers: { "Content-Type": "multipart/form-data" } }
-          )
-          .then(async (response) => {
-            // console.log(this.state.totalProductCost,this.state.symbol,this.state.cartId,129);
-            axios
-              .post(
-                `${ApiUrl}/common/check_product_cost.php`,
-                {
-                  security_token: "",
-                  plateform_type: "",
-                  total_product_cost: this.state.totalProductCost,
-                  currency: this.state.symbol,
-                  cart_id: this.state.cartId,
-                },
-                { headers: { "Content-Type": "multipart/form-data" } }
-              )
-              .then((response) => {
-                this.updateAddress();
-                if (response.data.result[0].status == "true") {
-                  axios
-                    .post(
-                      `${ImgUrl}/beta_api/validate-pincode-deliverable-web.php`,
-                      {
-                        pincode: this.state.pincode,
-                        productid: "",
-                        country_name: getCookie("country_name"),
-                      },
-                      {
-                        headers: { "Content-Type": "multipart/form-data" },
-                      }
-                    )
-                    .then((res) => {
-                      if (res.data.statusId == 1) {
-                        //  console.log("pincode validated");
-                        $("#price_validating_start").addClass("d-none");
-                        let product_currency = this.state.symbol;
-                        let total_price = this.state.totalCartValue;
-                        if (
-                          product_currency == "INR" ||
-                          product_currency == "" ||
-                          product_currency === undefined
-                        )
-                          total_price =
-                            parseFloat(total_price) / this.state.inr;
-                        total_price = parseFloat(total_price).toFixed(2);
-                        ReactPixel.trackCustom("Purchase", {
-                          contents: this.props.location.state.pixeldata,
-                          content_type: "product",
-                          value: total_price,
-                          currency: "USD",
-                        });
-                        axios
-                          .post(
-                            this.state.link,
-                            {
-                              cartid: this.props.location.state.cartid,
-                              finalprice: this.state.totalCartValue,
-                              sellerid: ls.get("sellerid"),
-                              currency: this.state.symbol,
-                              fscharge_total: this.state.finalShippingCost,
-                              recipient_email: this.props.user.email,
-                              security_token: "",
-                              plateform_type: "web",
-                              address1: this.state.address,
-                              landmark: this.state.landmark,
-                              state: this.state.state,
-                              pincode: this.state.pincode,
-                              city: this.state.city,
-                              country: this.state.countryName,
-                              txn_type: this.state.txn_type,
-                              payment_type: 1,
-                              cashback_value: this.state.cashback_value,
-                              gst_in: this.state.gst_in,
-                              country_id: getCookie("countryid"),
-                            },
-                            {
-                              headers: {
-                                "Content-Type": "multipart/form-data",
-                              },
-                            }
+      if (this.validator.allValid()) {
+        if (
+          this.state.gst_in == "" ||
+          (this.state.gst_in != "" && this.state.gst_validated)
+        ) {
+          $("#price_validating_start").removeClass("d-none");
+          //  console.log("valid");
+          $(".chkValidate")
+            .select()
+            .css({ border: "none" });
+          axios
+            .post(
+              "https://api.beldara.com/common/upd_add_buyer.php",
+              {
+                security_token: "",
+                plateform_type: "",
+                sellerid: ls.get("sellerid"),
+                address: this.state.address,
+                city: this.state.city,
+                zipcode: this.state.pincode,
+                landmark: this.state.landmark,
+                state: this.state.state,
+              },
+              { headers: { "Content-Type": "multipart/form-data" } }
+            )
+            .then(async (response) => {
+              // console.log(this.state.totalProductCost,this.state.symbol,this.state.cartId,129);
+              axios
+                .post(
+                  `${ApiUrl}/common/check_product_cost.php`,
+                  {
+                    security_token: "",
+                    plateform_type: "",
+                    total_product_cost: this.state.totalProductCost,
+                    currency: this.state.symbol,
+                    cart_id: this.state.cartId,
+                  },
+                  { headers: { "Content-Type": "multipart/form-data" } }
+                )
+                .then((response) => {
+                  this.updateAddress();
+                  if (response.data.result[0].status == "true") {
+                    axios
+                      .post(
+                        `${ImgUrl}/beta_api/validate-pincode-deliverable-web.php`,
+                        {
+                          pincode: this.state.pincode,
+                          productid: "",
+                          country_name: getCookie("country_name"),
+                        },
+                        {
+                          headers: { "Content-Type": "multipart/form-data" },
+                        }
+                      )
+                      .then((res) => {
+                        if (res.data.statusId == 1) {
+                          //  console.log("pincode validated");
+                          $("#price_validating_start").addClass("d-none");
+                          let product_currency = this.state.symbol;
+                          let total_price = this.state.totalCartValue;
+                          if (
+                            product_currency == "INR" ||
+                            product_currency == "" ||
+                            product_currency === undefined
                           )
-                          .then((res) => {
-                            $(".unique_class").removeAttr("disabled");
-                            //  console.log(res, "statusid");
-                            if (res.data.message == 1) {
-                              //console.log('inside if',res.data.result.min_payment_percent);
-                              this.setState({
-                                modalOpen: true,
-                                order_code: res.data.result.order_code,
-                                order_id: res.data.result.order_id,
-                                bank_details: res.data.result.bank_info,
-                                paymentType: res.data.result.paymentType,
-                                checked:
-                                  res.data.result.paymentType[0].paymentType,
-                                min_token_amount:
-                                  res.data.result.min_token_amount,
-                                token_percent:
-                                  res.data.result.min_payment_percent,
-                                token_amt:
-                                  (this.state.totalCartValue / 100) *
-                                  res.data.result.min_payment_percent,
-                                razorpay_avail:
-                                  parseInt(res.data.result.razorpay) == 1
-                                    ? true
-                                    : false,
-                              });
-                              if (
-                                this.state.totalCartValue >
-                                this.state.min_token_amount
-                              ) {
+                            total_price =
+                              parseFloat(total_price) / this.state.inr;
+                          total_price = parseFloat(total_price).toFixed(2);
+                          ReactPixel.trackCustom("Purchase", {
+                            contents: this.props.location.state.pixeldata,
+                            content_type: "product",
+                            value: total_price,
+                            currency: "USD",
+                          });
+                          axios
+                            .post(
+                              this.state.link,
+                              {
+                                //cartid: this.props.location.state.cartid,
+                                cartid: this.state.cartId,
+                                finalprice: this.state.totalCartValue,
+                                sellerid: ls.get("sellerid"),
+                                currency: this.state.symbol,
+                                fscharge_total: this.state.finalShippingCost,
+                                recipient_email: this.props.user.email,
+                                security_token: "",
+                                plateform_type: "web",
+                                address1: this.state.address,
+                                landmark: this.state.landmark,
+                                state: this.state.state,
+                                pincode: this.state.pincode,
+                                city: this.state.city,
+                                country: this.state.countryName,
+                                txn_type: this.state.txn_type,
+                                payment_type: 1,
+                                cashback_value: this.state.cashback_value,
+                                gst_in: this.state.gst_in,
+                                country_id: getCookie("countryid"),
+                              },
+                              {
+                                headers: {
+                                  "Content-Type": "multipart/form-data",
+                                },
+                              }
+                            )
+                            .then((res) => {
+                              $(".unique_class").removeAttr("disabled");
+                              //  console.log(res, "statusid");
+                              if (res.data.message == 1) {
+                                //console.log('inside if',res.data.result.min_payment_percent);
+                                this.setState({
+                                  modalOpen: true,
+                                  order_code: res.data.result.order_code,
+                                  order_id: res.data.result.order_id,
+                                  bank_details: res.data.result.bank_info,
+                                  paymentType: res.data.result.paymentType,
+                                  checked:
+                                    res.data.result.paymentType[0].paymentType,
+                                  min_token_amount:
+                                    res.data.result.min_token_amount,
+                                  token_percent:
+                                    res.data.result.min_payment_percent,
+                                  // token_amt:
+                                  //   (this.state.totalCartValue / 100) *
+                                  //   res.data.result.min_payment_percent,
+                                  token_amt:res.data.result.min_token_amount,
+                                  razorpay_avail:
+                                    parseInt(res.data.result.razorpay) == 1
+                                      ? true
+                                      : false,
+                                });
                                 if (
-                                  this.state.token_amt <=
+                                  this.state.totalCartValue >
                                   this.state.min_token_amount
                                 ) {
-                                  this.setState({
-                                    token_amt: this.state.min_token_amount,
-                                  });
+                                  if (
+                                    this.state.token_amt <=
+                                    this.state.min_token_amount
+                                  ) {
+                                    this.setState({
+                                      token_amt: this.state.min_token_amount,
+                                    });
+                                  } else {
+                                    this.setState({
+                                      token_amt: this.state.token_amt,
+                                    });
+                                  }
                                 } else {
                                   this.setState({
-                                    token_amt: this.state.token_amt,
+                                    token_amt: this.state.totalCartValue,
                                   });
                                 }
-                              } else {
-                                this.setState({
-                                  token_amt: this.state.totalCartValue,
-                                });
+                                $("#confirm_order_sppinner").addClass("d-none");
+                                // this.setState({order_code:res.data.result.order_code,order_id:res.data.result.order_id});
                               }
+                            })
+                            .catch((error) => {
+                              $(".unique_class").removeAttr("disabled");
+                              console.error(error);
                               $("#confirm_order_sppinner").addClass("d-none");
-                              // this.setState({order_code:res.data.result.order_code,order_id:res.data.result.order_id});
-                            }
-                          })
-                          .catch((error) => {
-                            $(".unique_class").removeAttr("disabled");
-                            console.error(error);
-                            $("#confirm_order_sppinner").addClass("d-none");
-                          });
-                      } else {
-                        // console.log('pincode invalid');
+                            });
+                        } else {
+                          // console.log('pincode invalid');
+                          $("#confirm_order_sppinner").addClass("d-none");
+                          $(".unique_class").removeAttr("disabled");
+                          $("#price_validating_start").html(
+                            '<i class="fa fa-exclamation-circle mx-1" aria-hidden="true"></i>' +
+                              res.data.message
+                          );
+                        }
+                      })
+                      .catch((error) => {
+                        console.error(error);
                         $("#confirm_order_sppinner").addClass("d-none");
-                        $(".unique_class").removeAttr("disabled");
-                        $("#price_validating_start").html(
-                          '<i class="fa fa-exclamation-circle mx-1" aria-hidden="true"></i>' +
-                            res.data.message
-                        );
-                      }
-                    })
-                    .catch((error) => {
-                      console.error(error);
-                      $("#confirm_order_sppinner").addClass("d-none");
-                    });
-                } else {
-                  $(".unique_class").attr("disabled", "false");
+                      });
+                  } else {
+                    $(".unique_class").attr("disabled", "false");
+                    $("#confirm_order_sppinner").addClass("d-none");
+                    $("#price_validating_start").addClass("d-none");
+                    $("#price_validating_end").removeClass("d-none");
+                    var inter = setInterval(() => {
+                      window.location.href = "/cart.html";
+                      clearInterval(inter);
+                    }, 5000);
+                    // console.log('error occurred: '+response.data.result[0].status);
+                  }
+                  // return
+                })
+                .catch((error) => {
+                  //  console.log(error, 192);
                   $("#confirm_order_sppinner").addClass("d-none");
-                  $("#price_validating_start").addClass("d-none");
-                  $("#price_validating_end").removeClass("d-none");
-                  var inter = setInterval(() => {
-                    window.location.href = "/cart.html";
-                    clearInterval(inter);
-                  }, 5000);
-                  // console.log('error occurred: '+response.data.result[0].status);
-                }
-                // return
-              })
-              .catch((error) => {
-                //  console.log(error, 192);
-                $("#confirm_order_sppinner").addClass("d-none");
-                const result = error.response;
-                return Promise.reject(result);
-              });
-          })
-          .catch((error) => {
-            const result = error.response;
-            $("#confirm_order_sppinner").addClass("d-none");
-            // console.log(result,149,error);
-            return Promise.reject(result);
-          });
+                  const result = error.response;
+                  return Promise.reject(result);
+                });
+            })
+            .catch((error) => {
+              const result = error.response;
+              $("#confirm_order_sppinner").addClass("d-none");
+              // console.log(result,149,error);
+              return Promise.reject(result);
+            });
+        } else {
+          $(".unique_class").removeAttr("disabled");
+          $("#confirm_order_sppinner").addClass("d-none");
+        }
       } else {
+        // $('.unique_class').attr('disabled','false');
         $(".unique_class").removeAttr("disabled");
         $("#confirm_order_sppinner").addClass("d-none");
+        // console.log('invalid');
+        this.setState({
+          addNotValid: 1,
+        });
+        $(".chkValidate").click();
+        $(".chkValidate").css({ border: "1px solid red" });
+        this.validator.showMessages();
+        // rerender to show messages for the first time
+        this.forceUpdate();
       }
-    } else {
-      // $('.unique_class').attr('disabled','false');
-      $(".unique_class").removeAttr("disabled");
-      $("#confirm_order_sppinner").addClass("d-none");
-      // console.log('invalid');
-      this.setState({
-        addNotValid: 1,
-      });
-      $(".chkValidate").click();
-      $(".chkValidate").css({ border: "1px solid red" });
-      this.validator.showMessages();
-      // rerender to show messages for the first time
-      this.forceUpdate();
-    }
-    let status;
-    if (this.state.addNotValid == 0) status = "not valid";
-    else status = "valid";
+      let status;
+      if (this.state.addNotValid == 0) status = "not valid";
+      else status = "valid";
 
-    captureEvent(
-      "start_order",
-      status,
-      complete_address,
-      "check_out",
-      ls.get("sellerid"),
-      getCookie("mhinpbnb")
-    );
+      captureEvent(
+        "start_order",
+        status,
+        complete_address,
+        "check_out",
+        ls.get("sellerid"),
+        getCookie("mhinpbnb")
+      );
+    } else {
+      this.props.history.push({
+        pathname: "/register.html",
+        state: {
+          totalCartValue: this.state.totalCartValue,
+          totalProductCost: parseFloat(this.state.totalProductCost).toFixed(2),
+          totalShippingCost: this.state.totalShippingCost,
+          finalShippingCost: this.state.finalShippingCost,
+          cartItems: this.state.cartItems,
+          countryName: this.state.shippingCountryName,
+          symbol: this.state.symbol,
+          cartId: this.state.cartid,
+          //pixeldata: pixeldata,
+          shippingCharges: this.state.shippingCharges,
+          inrValue: this.state.inrValue,
+          // link:
+          //   "/start-order/" +
+          //   Math.random()
+          //     .toString(36)
+          //     .replace(/[^a-z]+/g, "")
+          //     .substr(0, 8) +
+          //   ".html",
+          link: "/start-order.html",
+        },
+      });
+    }
   };
 
   checkProductPrice = () => {
@@ -695,7 +723,7 @@ class StartOrderTest extends Component {
             currency: getCookie("currency"),
             country_code: getCookie("country_code"),
             country_to: getCookie("countryid"),
-            txn_type: this.props.location.state.txn_type,
+            //txn_type: this.props.location.state.txn_type,
           },
           {
             headers: {
@@ -718,7 +746,7 @@ class StartOrderTest extends Component {
               totalShippingCost: parseFloat(
                 response.data.result.cartamount.finalShippingCost
               ),
-              inrValue: parseFloat(this.props.location.state.inrValue),
+              //inrValue: parseFloat(this.props.location.state.inrValue),
               symbol: this.props.currency,
               totalCartStaticValue: parseFloat(
                 response.data.result.cartamount.totalCartStaticValue
@@ -735,11 +763,10 @@ class StartOrderTest extends Component {
                 parseFloat(
                   response.data.result.cartamount.totalCartStaticValue
                 ) - parseFloat(response.data.result.cartamount.totalPrice),
-              txn_type: this.props.location.state.txn_type,
+              //txn_type: this.props.location.state.txn_type,
               cartItems: response.data.result.cart,
             });
             $(".common_class_for_spin").addClass("d-none");
-            // console.log(response.data.result,128);
           } else {
             $(".common_class_for_spin").addClass("d-none");
             //  console.log("error occured");
@@ -764,7 +791,7 @@ class StartOrderTest extends Component {
             security_token: "",
             visitor_id: getCookie("mhinpbnb"),
             symbol: getCookie("currency"),
-            txn_type: this.props.location.state.txn_type,
+            //txn_type: this.props.location.state.txn_type,
           },
           {
             headers: {
@@ -787,7 +814,7 @@ class StartOrderTest extends Component {
               totalShippingCost: parseFloat(
                 response.data.result.cartamount.finalShippingCost
               ),
-              inrValue: parseFloat(this.props.location.state.inrValue),
+              //inrValue: parseFloat(this.props.location.state.inrValue),
               symbol: this.props.currency,
               totalCartStaticValue: parseFloat(
                 response.data.result.cartamount.totalCartStaticValue
@@ -804,12 +831,13 @@ class StartOrderTest extends Component {
                 parseFloat(
                   response.data.result.cartamount.totalCartStaticValue
                 ) - parseFloat(response.data.result.cartamount.totalPrice),
-              txn_type: this.props.location.state.txn_type,
+              //txn_type: this.props.location.state.txn_type,
               cartItems: response.data.result.cart,
             });
             $(".common_class_for_spin").addClass("d-none");
             // console.log(response.data.result,170);
           } else {
+            $(".common_class_for_spin").addClass("d-none");
             //  console.log("error occured");
             await this.setState({
               cartItems: null,
@@ -820,6 +848,8 @@ class StartOrderTest extends Component {
         .catch((error) => {
           //  console.log(error);
         });
+    } else {
+      $(".common_class_for_spin").addClass("d-none");
     }
 
     // console.log(nextProps,204);
@@ -859,9 +889,11 @@ class StartOrderTest extends Component {
       txn_type = "credit";
       cashback_value = 0;
     }
+    //$(".common_class_for_spin").addClass("d-none");
   };
 
   updateCart = async () => {
+    $(".common_class_for_spin").removeClass("d-none");
     axios
       .post(
         `${ApiUrl}/common/receive_cart.php`,
@@ -872,7 +904,7 @@ class StartOrderTest extends Component {
           visitor_id: getCookie("mhinpbnb"),
           symbol: getCookie("currency"),
           country_code: getCookie("country_code"),
-          txn_type: this.props.location.state.txn_type,
+          //txn_type: this.props.location.state.txn_type,
         },
         {
           headers: {
@@ -882,6 +914,7 @@ class StartOrderTest extends Component {
       )
       .then(async (response) => {
         if (response.data.statusId == "1") {
+          console.log(response.data.result.cart.length)
           await this.setState({
             totalCartValue: parseFloat(
               response.data.result.cartamount.totalPrice
@@ -895,7 +928,7 @@ class StartOrderTest extends Component {
             totalShippingCost: parseFloat(
               response.data.result.cartamount.finalShippingCost
             ),
-            inrValue: parseFloat(this.props.location.state.inrValue),
+            //inrValue: parseFloat(this.props.location.state.inrValue),
             symbol: this.props.currency,
             totalCartStaticValue: parseFloat(
               response.data.result.cartamount.totalCartStaticValue
@@ -911,13 +944,19 @@ class StartOrderTest extends Component {
             cashback_value:
               parseFloat(response.data.result.cartamount.totalCartStaticValue) -
               parseFloat(response.data.result.cartamount.totalPrice),
-            txn_type: this.props.location.state.txn_type,
+            //txn_type: this.props.location.state.txn_type,
             cartItems: response.data.result.cart,
             delivery_address: response.data.result.address,
             cartmsg: response.data.result.cartmsg,
             checkoutmsg: response.data.result.checkoutmsg,
           });
+          $(".common_class_for_spin").addClass("d-none");
+          console.log(
+            "------------------------1-------------------------",
+            this.state.totalCartValue
+          );
           this.setDefaultAddress(response.data.result.address);
+
           // console.log(response.data.result,115);
         } else {
           // console.log("error occured");
@@ -925,6 +964,7 @@ class StartOrderTest extends Component {
             cartItems: null,
             isPageLoaded: 1,
           });
+          $(".common_class_for_spin").addClass("d-none");
         }
       })
       .catch((error) => {
@@ -1439,9 +1479,462 @@ class StartOrderTest extends Component {
     }
   };
 
+  deleteCartitem = async (item) => {
+    //  console.log('deleteCartitem',item,387,this.state.cartItems.length);
+    if (window.confirm("Do you want to delete this item from your cart?")) {
+      showToast("Product Removed from Cart", "1");
+      // if (this.state.cartItems.length == 1) {
+      axios
+        .post(
+          `https://api.beldara.com/common/delete_cart_item_test.php`,
+          {
+            cartitemid: item.cartitemid,
+            sellerid: ls.get("log_id"),
+            plateform_type: "web",
+            security_token: "",
+            visitor_id: getCookie("mhinpbnb"),
+            symbol: getCookie("currency"),
+            txn_type: this.state.txn_type,
+          },
+          {
+            headers: {
+              "content-type": "multipart/form-data",
+            },
+          }
+        )
+        .then(async (response) => {
+          if (response.data.statusId == "1") {
+            store.dispatch(
+              getCartLength(ls.get("log_id"), getCookie("mhinpbnb"))
+            );
+            var shippingArray = await response.data.result.shippingcost;
+            shippingArray.forEach((element) => {
+              var country_name = element.country;
+              countryOfSeller[country_name.toLowerCase()] = {
+                country: country_name.toLowerCase(),
+                shippingCost: element.shipping_charge,
+                express: element.shipping_type,
+                countryid: element.countryid,
+              };
+            });
+            // console.log(countryOfSeller,shippingArray,411);
+            await this.setState({
+              cartItems: response.data.result.cart,
+              isPageLoaded: 1,
+              symbol: getCookie("currency"),
+              totalProductCost: response.data.result.cartamount.basePrice,
+              totalCartStaticValue:
+                response.data.result.cartamount.totalCartStaticValue,
+              totalCartValue: response.data.result.cartamount.totalPrice,
+              shippingDetails: response.data.result.shippingcost,
+              isShippingCountry: response.data.statusId,
+              shippingCharges: countryOfSeller,
+              shippingArray: shippingArray,
+              totalShippingCost:
+                response.data.result.cartamount.finalShippingCost,
+              shippingCountry: getCookie("countryid"),
+              shippingCountryName: getCookie("country_name"),
+              finalShippingCost:
+                response.data.result.shippingcost[0].shipping_charge,
+            });
+            this.check_product_available(response.data.result.cart);
+            // console.log(response.data.result,426);
+          } else {
+            console.log("error occured");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      // }
+
+      captureEvent(
+        "cart",
+        "delete_cart_item",
+        item.productid,
+        this.state.cartItems.length - 1,
+        ls.get("sellerid"),
+        getCookie("mhinpbnb")
+      );
+    }
+  };
+
+  decreaseOneQty = async (
+    pid,
+    cid,
+    qty,
+    quantity,
+    symbol,
+    inr,
+    usd,
+    eachprice,
+    offer_price,
+    offer_from_date,
+    offer_to_date,
+    offer_min_qty,
+    offer_mrp_price,
+    offer_currency,
+    offer_unit,
+    offer_stock
+  ) => {
+    $(".common_class_for_spin").removeClass("d-none");
+    //$('.common_class_for_spin').removeClass('d-none');
+    if (offer_stock == 0) return false;
+
+    $(".common_validate_class").addClass("d-none");
+    var checkForOffer = await this.checkForDecreaseQty(
+      qty,
+      offer_from_date,
+      offer_to_date,
+      offer_min_qty,
+      offer_stock,
+      cid
+    );
+    if (checkForOffer) {
+      if (qty > 1 && qty > quantity) {
+        //$(".qtySppinner").addClass("d-none");
+        --qty;
+        captureEvent(
+          "cart",
+          "decrease_qty",
+          '{"productid":"' +
+            pid +
+            '", "qty":"' +
+            qty +
+            '", "min_qty":"' +
+            quantity +
+            '", "symbol":"' +
+            symbol +
+            '"}',
+          pid,
+          ls.get("sellerid"),
+          getCookie("mhinpbnb")
+        );
+        // this.props.changeQty(pid, cid, qty, symbol, inr, usd);
+        axios
+          .post(
+            `https://api.beldara.com/common/update_cart_test.php`,
+            {
+              security_token: "",
+              plateform_type: "",
+              cartitemid: cid,
+              qty: qty,
+              productid: pid,
+              currency: getCookie("currency"),
+              country_to: getCookie("countryid"),
+              method: "air",
+              country_code: getCookie("country_code"),
+              visitor_id: getCookie("mhinpbnb"),
+              sellerid: ls.get("log_id"),
+              txn_type: this.state.txn_type,
+            },
+            { headers: { "Content-Type": "multipart/form-data" } }
+          )
+          .then(async (response) => {
+            if (response.data.statusId == "1") {
+              $(".common_class_for_spin").addClass("d-none");
+              //$('.common_class_for_spin').addClass('d-none');
+              var shippingArray = await response.data.result.shippingcost;
+              shippingArray.forEach((element) => {
+                var country_name = element.country;
+                countryOfSeller[country_name.toLowerCase()] = {
+                  country: country_name.toLowerCase(),
+                  shippingCost: element.shipping_charge,
+                  express: element.shipping_type,
+                  countryid: element.countryid,
+                };
+              });
+              // console.log(countryOfSeller,shippingArray,286);
+              await this.setState({
+                cartItems: response.data.result.cart,
+                isPageLoaded: 1,
+                symbol: getCookie("currency"),
+                totalProductCost: response.data.result.cartamount.basePrice,
+                totalCartStaticValue:
+                  response.data.result.cartamount.totalCartStaticValue,
+                totalCartValue: response.data.result.cartamount.totalPrice,
+                shippingDetails: response.data.result.shippingcost,
+                finalShippingCost:
+                  response.data.result.shippingcost[0].shipping_charge,
+                isShippingCountry: response.data.statusId,
+                shippingCharges: countryOfSeller,
+                shippingArray: shippingArray,
+                totalShippingCost:
+                  response.data.result.cartamount.finalShippingCost,
+                cartSmallDetails: response.data.result.cartamount,
+                shippingCountryName: getCookie("country_name"),
+              });
+              this.removeSpinner(cid);
+              // console.log(response.data.result,300);
+            } else {
+              console.log("error occured", 302);
+              $(".common_class_for_spin").addClass("d-none");
+              $(".common_validate_class").addClass("d-none");
+            }
+          })
+          .catch((error) => {
+            const result = error.response;
+            return Promise.reject(result);
+          });
+        this.setState({
+          shouldUpdate: 1,
+          //  totalCartStaticValue:new_static_value
+        });
+      } else {
+        captureEvent(
+          "cart",
+          "decrease_qty",
+          '{"productid":"' +
+            pid +
+            '", "qty":"' +
+            qty +
+            '", "min_qty":"' +
+            quantity +
+            '", "symbol":"' +
+            symbol +
+            '"}',
+          pid,
+          ls.get("sellerid"),
+          getCookie("mhinpbnb")
+        );
+        $(".common_class_for_spin").addClass("d-none");
+        //$(".qtySppinner").removeClass("d-none");
+        //console.log("------------------1--------------", qty);
+      }
+    }
+  };
+
+  increaseOneQty = async (
+    pid,
+    cid,
+    qty,
+    symbol,
+    inr,
+    usd,
+    eachprice,
+    offer_price,
+    offer_from_date,
+    offer_to_date,
+    offer_min_qty,
+    offer_mrp_price,
+    offer_currency,
+    offer_unit,
+    offer_stock,
+    items
+  ) => {
+    $(".common_class_for_spin").removeClass("d-none");
+    //$(".common_class_for_spin").removeClass('d-none');
+    if (offer_stock == 0) return false;
+    var checkForIncreaseQty = await this.checkForQty(
+      qty,
+      offer_from_date,
+      offer_to_date,
+      offer_min_qty,
+      offer_stock,
+      cid
+    );
+    if (checkForIncreaseQty) {
+      ++qty;
+      captureEvent(
+        "cart",
+        "increase_qty",
+        '{"productid":"' +
+          pid +
+          '", "qty":"' +
+          qty +
+          '", "symbol":"' +
+          symbol +
+          '"}',
+        pid,
+        ls.get("sellerid"),
+        getCookie("mhinpbnb")
+      );
+      //productid, cartitemid, qty, symbol, inrValue, usdValue)
+      axios
+        .post(
+          `https://api.beldara.com/common/update_cart_test.php`,
+          {
+            security_token: "",
+            plateform_type: "",
+            cartitemid: cid,
+            qty: qty,
+            productid: pid,
+            currency: getCookie("currency"),
+            country_to: getCookie("countryid"),
+            method: "air",
+            country_code: getCookie("country_code"),
+            visitor_id: getCookie("mhinpbnb"),
+            sellerid: ls.get("log_id"),
+            txn_type: this.state.txn_type,
+          },
+          { headers: { "Content-Type": "multipart/form-data" } }
+        )
+        .then(async (response) => {
+          if (response.data.statusId == "1") {
+            $(".common_class_for_spin").addClass("d-none");
+            $(".common_validate_class").addClass("d-none");
+            var shippingArray = await response.data.result.shippingcost;
+            shippingArray.forEach((element) => {
+              var country_name = element.country;
+              countryOfSeller[country_name.toLowerCase()] = {
+                country: country_name.toLowerCase(),
+                shippingCost: element.shipping_charge,
+                express: element.shipping_type,
+                countryid: element.countryid,
+              };
+            });
+            // console.log(countryOfSeller,shippingArray,286);
+            await this.setState({
+              cartItems: response.data.result.cart,
+              isPageLoaded: 1,
+              symbol: getCookie("currency"),
+              totalProductCost: response.data.result.cartamount.basePrice,
+              totalCartStaticValue:
+                response.data.result.cartamount.totalCartStaticValue,
+              totalCartValue: response.data.result.cartamount.totalPrice,
+              shippingDetails: response.data.result.shippingcost,
+              isShippingCountry: response.data.statusId,
+              shippingCharges: countryOfSeller,
+              shippingArray: shippingArray,
+              totalShippingCost:
+                response.data.result.cartamount.finalShippingCost,
+              cartSmallDetails: response.data.result.cartamount,
+              shippingCountryName: getCookie("country_name"),
+              finalShippingCost:
+                response.data.result.shippingcost[0].shipping_charge,
+            });
+            // console.log(response.data.result,300);
+            this.removeSpinner(cid);
+          } else {
+            console.log("error occured", 302);
+            $(".common_class_for_spin").addClass("d-none");
+            $(".common_validate_class").addClass("d-none");
+          }
+        })
+        .catch((error) => {
+          const result = error.response;
+          return Promise.reject(result);
+        });
+      // this.props.changeQty(pid, cid, qty, symbol, inr, usd);
+      this.setState({
+        shouldUpdate: 1,
+        //  totalCartStaticValue:new_static_value
+      });
+    }
+  };
+
+  checkForDecreaseQty = async (
+    qty,
+    offer_from_date,
+    offer_to_date,
+    offer_min_qty,
+    offer_stock,
+    cid
+  ) => {
+    // console.log(qty,offer_from_date,offer_to_date,offer_min_qty,offer_stock,'checkForDecreaseQty');
+    if (
+      this.offerExist(offer_from_date, offer_to_date) &&
+      parseInt(qty) - 1 < offer_min_qty
+    ) {
+      $("#validate_" + cid).removeClass("d-none");
+      this.setState({
+        validation: true,
+        validation_text: "Minimum Qty should be " + offer_min_qty,
+      });
+      // console.log('if','checkForDecreaseQty',this.state.validation_text,this.state.validation)
+      return false;
+    } else {
+      // console.log('else','checkForDecreaseQty',this.state.validation_text,this.state.validation)
+      this.setState({
+        validation: false,
+      });
+      return true;
+    }
+  };
+
+  checkForQty = async (
+    qty,
+    offer_from_date,
+    offer_to_date,
+    offer_min_qty,
+    offer_stock,
+    cid
+  ) => {
+    // console.log(qty,offer_stock,offer_from_date,offer_to_date,offer_min_qty,offer_stock,'checkForQty');
+    if (
+      this.offerExist(offer_from_date, offer_to_date) &&
+      parseInt(qty) + 1 > offer_stock
+    ) {
+      $("#validate_" + cid)
+        .removeClass("d-none")
+        .html("Only " + offer_stock + " stock left !");
+      this.setState({
+        validation: true,
+        // validation_text: 'Only '+ offer_stock +' stock left !'
+      });
+      // console.log('if','checkForQty',this.state.validation_text,this.state.validation)
+      return false;
+    } else {
+      // console.log('else','checkForQty',this.state.validation_text,this.state.validation)
+      this.setState({
+        validation: false,
+      });
+      return true;
+    }
+  };
+
+  offerExist = (from_date, to_date) => {
+    if (
+      from_date !== undefined &&
+      from_date !== null &&
+      from_date !== "" &&
+      to_date !== undefined &&
+      to_date !== null &&
+      to_date !== ""
+    ) {
+      let dateObj = new Date();
+      let month = dateObj.getMonth() + 1;
+      let day = dateObj.getDate();
+      let year = dateObj.getFullYear();
+      let todayDate = year + "-" + month + "-" + day;
+      // let todayDate = '2021-5-8';
+
+      //Generate an array where the first element is the year, second is month and third is day
+      var splitFrom = from_date.split("-");
+      var splitTo = to_date.split("-");
+      var splitToday = todayDate.split("-");
+
+      //Create a date object from the arrays
+      var newFrom = splitFrom[1] + "," + splitFrom[2] + "," + splitFrom[0];
+      var newTo = splitTo[1] + "," + splitTo[2] + "," + splitTo[0];
+      var newToday = splitToday[1] + "," + splitToday[2] + "," + splitToday[0];
+
+      newFrom = newFrom.toString();
+      newTo = newTo.toString();
+      newToday = newToday.toString();
+
+      var fromDate = Date.parse(newFrom);
+      var toDate = Date.parse(newTo);
+      var todayDates = Date.parse(newToday);
+
+      // console.log(splitFrom,splitTo,splitToday,'array',fromDate,toDate,todayDates,'days',newFrom,newTo,newToday);
+      if (todayDates >= fromDate) {
+        if (toDate >= todayDates) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  };
+
   render() {
     // console.log('render',this.state.checked);
-    const { cartItems, cartid } = this.props.location.state;
+    // const { cartItems, cartid } = this.props.location.state;
     const {
       totalCartValue,
       token_amt,
@@ -1503,7 +1996,6 @@ class StartOrderTest extends Component {
                   >
                     <div className="d-flex justify-content-center">
                       <strong>
-                        <i className="fa fa-dolly" />
                         Shipping Details <i class="fa fa-caret-down ml-3"></i>
                       </strong>
                     </div>
@@ -1986,7 +2478,8 @@ class StartOrderTest extends Component {
                 </div>
                 <div className="text-right">
                   {this.state.toggled ? (
-                    <span onClick={this.toggleDiv} className="mouse_pointer">
+                    // <span onClick={this.toggleDiv} className="mouse_pointer">
+                    <span className="mouse_pointer">
                       DETAILS
                       <i className={`fa fa-caret-down ml-3 adjustFontIcon`}></i>
                     </span>
@@ -2002,7 +2495,7 @@ class StartOrderTest extends Component {
                 </div>
               </div>
               <div
-                id="cart_item_div"
+                id="cart_item_div show"
                 className={`row mx-0 border px-2 ${
                   this.state.cartItems.length >= 2 ? "overflowCartTwoItems" : ""
                 }`}
@@ -2010,41 +2503,153 @@ class StartOrderTest extends Component {
                 {this.state.cartItems.length > 0 ? (
                   <React.Fragment>
                     {this.state.cartItems.map((val, index) => (
-                      <div className="col-md-12 row mx-0 my-2 border bg-cart-color">
-                        <div className="col-md-3 mx-2 my-2">
-                          <img
-                            className="w-100 h-100"
-                            src={`https://img.beldara.com/product_images_thumb/${val.img}`}
-                          />
-                        </div>
-                        <div className="col-md-8 my-2 align-items-center">
-                          <div className="text-truncate">{val.name}</div>
-                          <div className="text-truncate">{val.company}</div>
-                          <hr />
-                          <div className="d-flex justify-content-around">
-                            <p className="text-left">
-                              {val.qty} {val.unit}
-                            </p>
-                            <p className="text-right">
-                              <span className="count">
+                      <>
+                        <div className="col-md-12 row mx-0 my-2 border bg-cart-color">
+                          <div className="col-md-3 mx-2 my-2">
+                            <a href={`/product/${val.url}.html`} target="_blank">
+                              <img
+                                className="w-100 h-100"
+                                src={`https://img.beldara.com/product_images_thumb/${val.img}`}
+                              />
+                            </a>
+                          </div>
+                          <div className="col-md-8 my-2 align-items-center">
+                            <div className="text-truncate">{val.name}</div>
+                            <a href={`/store/${val.surl}.html`} target="_blank"><div className="text-truncate">{val.company}</div></a>
+                            <hr />
+                            <div className="d-flex justify-content-around">
+                              <p className="text-left">
+                                {val.qty} {val.unit}
+                              </p>
+                              <p className="text-right">
                                 <div
-                                  class="spinner-border spinner-border-sm common_class_for_spin mr-1 d-none"
+                                  class="spinner-border text-dark qtySpinner d-none"
                                   role="status"
-                                  style={{ color: "#f1aa61" }}
-                                >
-                                  <span class="sr-only">Loading...</span>
-                                </div>
+                                  style={{ width: "1rem", height: "1rem" }}
+                                ></div>
+                                &nbsp;
+                                <span className="count">
+                                  <div
+                                    class="spinner-border spinner-border-sm common_class_for_spin mr-1 d-none"
+                                    role="status"
+                                    style={{ color: "#f1aa61" }}
+                                  >
+                                    <span class="sr-only">Loading...</span>
+                                  </div>
+                                </span>
+                                <i
+                                  className={
+                                    currency == "INR"
+                                      ? "fa fa-inr"
+                                      : "fa fa-usd"
+                                  }
+                                ></i>{" "}
+                                {new Intl.NumberFormat().format(val.totalprice)}
+                              </p>
+                            </div>
+                          </div>
+                          {isMobile ? (
+                            <div
+                              class="col-md-12 my-2 align-items-end"
+                              style={{
+                                marginLeft: "195px",
+                                //marginTop: "-315px",
+                              }}
+                            >
+                              <span
+                                class="mouse_pointer"
+                                onClick={this.deleteCartitem.bind(this, val)}
+                              >
+                                <i class="fa fa-trash text-danger"></i>
                               </span>
-                              <i
-                                className={
-                                  currency == "INR" ? "fa fa-inr" : "fa fa-usd"
-                                }
-                              ></i>{" "}
-                              {new Intl.NumberFormat().format(val.totalprice)}
-                            </p>
+                            </div>
+                          ) : (
+                            <div>
+                              <span
+                                class="mouse_pointer"
+                                onClick={this.deleteCartitem.bind(this, val)}
+                              >
+                                <i class="fa fa-trash text-danger"></i>
+                              </span>
+                            </div>
+                          )}
+
+                          <div class="col-lg-12 my-2 align-items-center">
+                            <div class="qty-box align-items-center">
+                              <div class="input-group">
+                                <span class="input-group-prepend">
+                                  <button
+                                    type="button"
+                                    class="btn quantity-left-minus"
+                                    onClick={this.decreaseOneQty.bind(
+                                      this,
+                                      val.productid,
+                                      val.cartitemid,
+                                      val.qty,
+                                      val.quantity,
+                                      getCookie("currency"),
+                                      this.state.inrValue,
+                                      this.state.usdValue,
+                                      val.eachprice,
+                                      val.offer_price,
+                                      val.offer_from_date,
+                                      val.offer_to_date,
+                                      val.offer_min_qty,
+                                      val.offer_mrp_price,
+                                      val.offer_currency,
+                                      val.offer_unit,
+                                      val.offer_stock
+                                    )}
+                                    data-type="minus"
+                                    data-field=""
+                                  >
+                                    <i class="fa fa-minus"></i>
+                                  </button>
+                                </span>
+                                <input
+                                  type="text"
+                                  name="quantity"
+                                  readonly=""
+                                  class="form-control input-number"
+                                  value={val.qty}
+                                ></input>
+                                <span class="input-group-prepend">
+                                  <button
+                                    class="btn quantity-right-plus"
+                                    onClick={this.increaseOneQty.bind(
+                                      this,
+                                      val.productid,
+                                      val.cartitemid,
+                                      val.qty,
+                                      getCookie("currency"),
+                                      this.state.inrValue,
+                                      this.state.usdValue,
+                                      val.eachprice,
+                                      val.offer_price,
+                                      val.offer_from_date,
+                                      val.offer_to_date,
+                                      val.offer_min_qty,
+                                      val.offer_mrp_price,
+                                      val.offer_currency,
+                                      val.offer_unit,
+                                      val.offer_stock
+                                    )}
+                                    data-type="plus"
+                                  >
+                                    <i class="fa fa-plus"></i>
+                                  </button>
+                                </span>
+                              </div>
+                              <div class="px-1 mt-1">
+                                <div class="alert alert-danger qtySppinner d-none">
+                                  <i class="fa fa-info-circle mr-1"></i> Order
+                                  must be greater than MOQ {val.qty} {val.unit}
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </>
                     ))}
                   </React.Fragment>
                 ) : (
@@ -2224,6 +2829,9 @@ class StartOrderTest extends Component {
                   </div>
                 </div>
               </div> */}
+              <div>
+                <div>{this.state.checkoutmsg}</div>
+              </div>
               <div className="card-text text-right">
                 {this.state.addNotValid ? (
                   <div className="alert col-sm-12 col-md-7 ml-auto text-center alert-danger">
@@ -2548,7 +3156,7 @@ class StartOrderTest extends Component {
                   isToken={this.state.payAmtType1}
               />
                 :''} */}
-                <div className="mr-1 ml-3">{this.state.checkoutmsg}</div>
+                {/* <div className="mr-1 ml-3">{this.state.checkoutmsg}</div> */}
                 <PayOnDelivery
                   totalCost={totalCartValue}
                   name={name}

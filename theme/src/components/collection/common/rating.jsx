@@ -86,7 +86,6 @@ class StarReview extends Component {
   render() {
     return (
         <React.Fragment>
-
           {this.state.readonly ?
             <div className="text-warning userRating" onClick={this.getRating}>
                 <Rating 
