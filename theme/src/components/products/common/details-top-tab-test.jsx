@@ -309,7 +309,7 @@ class DetailsTopTabs extends Component {
             ""
           )}
         </div>
-        {item.desc1 ? (
+        {item.description ? (
           <div className="my-3">
             <div>
               <h4 style={{ fontSize: "20px" }}>

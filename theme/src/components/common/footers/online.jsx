@@ -57,7 +57,7 @@ class Online extends Component {
       if (type) {
         axios
           .post(
-            "https://api.beldara.com/common/call_back_request.php",
+            "https://api.indiabigshop.com/common/call_back_request.php",
             {
               security_token: "",
               plateform_type: "",

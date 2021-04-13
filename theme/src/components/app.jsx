@@ -50,12 +50,12 @@ class App extends Component {
         return (
             <div>
 
-                {HeaderThree?<HeaderThree logoName={'logo/beldara_logo.png'} />:''}
+                {HeaderThree?<HeaderThree logoName={'logo/ibs.png'} />:''}
                 <Suspense fallback={<LoadingComponent />}>
                   {this.props.children}
                 </Suspense>
                 <Suspense fallback={''}>
-                <FooterOne logoName={'logo/beldara_logo.png'}/>
+                <FooterOne logoName={'logo/ibs.png'}/>
                 </Suspense>
             </div>
         );

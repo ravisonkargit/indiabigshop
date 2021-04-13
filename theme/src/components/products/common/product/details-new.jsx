@@ -25,7 +25,7 @@ import {
   getAllCurrencyValue,
   getChatWithSupplier,
   getCartLength,
-  getUpdateUser
+  getUpdateUser,
 } from "../../../../actions";
 import ReactPixel from "react-facebook-pixel";
 import $, { get } from "jquery";
@@ -42,6 +42,7 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import { isMobile } from "react-device-detect";
 import ReactTooltip from "react-tooltip";
+import { showToast } from "../../../../functions";
 
 const ChatBox = lazy(() => import("../../../live-chat/chatbox"));
 
@@ -97,10 +98,14 @@ function priceCond(item, ele, deliverable, pincode) {
                         <i class="fa fa-shopping-cart pr-2"></i>Add to cart
                       </button>
                       <button
-                        className="btn w-50 text-center"
+                        className="btn w-50 text-center "
                         onClick={ele.validate}
                         id="expressCheckOut"
-                        style={{ backgroundColor: "#00adee", color: "white" }}
+                        style={{
+                          backgroundColor: "#00adee",
+                          color: "white",
+                          height: "60px",
+                        }}
                       >
                         Buy Now
                       </button>
@@ -108,13 +113,12 @@ function priceCond(item, ele, deliverable, pincode) {
                   </div>
                 </div>
               </div>
-              <div>
+              <div className="d-none d-sm-block">
                 <button
                   className="btn btn-solid mr-2"
                   onClick={ele.validate}
                   id="addToCart"
                 >
-                  <i class="fa fa-shopping-cart pr-2"></i>
                   Add to cart
                 </button>
                 <button
@@ -150,7 +154,7 @@ function priceCond(item, ele, deliverable, pincode) {
                           id="addToCart"
                         >
                           {" "}
-                          <i class="fa fa-shopping-cart pr-2"></i>Add to cart
+                          Add to cart
                         </button>
                         <OverlayTrigger
                           // key="top"
@@ -180,39 +184,40 @@ function priceCond(item, ele, deliverable, pincode) {
                     </div>
                   </div>
                 </div>
-                <button
-                  className="btn btn-solid mr-3"
-                  onClick={ele.validate}
-                  id="addToCart"
-                >
-                  <i class="fa fa-shopping-cart pr-2"></i>
-                  Add to cart
-                </button>
-                <OverlayTrigger
-                  // key="top"
-                  placement="top"
-                  overlay={
-                    <Tooltip id={`buy_now`}>
-                      <i
-                        class="fa fa-exclamation-circle mr-2"
-                        aria-hidden="true"
-                      ></i>
-                      {pincode != "" && pincode !== undefined
-                        ? "Information not found for entered pincode"
-                        : " Please enter pincode"}
-                    </Tooltip>
-                  }
-                >
+                <div className="d-none d-sm-block">
                   <button
-                    className="btn btn-solid my-2"
+                    className="btn btn-solid mr-3"
                     onClick={ele.validate}
-                    id="expressCheckOut"
-                    clickevent="Express_checkout"
+                    id="addToCart"
                   >
-                    {" "}
-                    Buy Now{" "}
+                    Add to cart
                   </button>
-                </OverlayTrigger>
+                  <OverlayTrigger
+                    // key="top"
+                    placement="top"
+                    overlay={
+                      <Tooltip id={`buy_now`}>
+                        <i
+                          class="fa fa-exclamation-circle mr-2"
+                          aria-hidden="true"
+                        ></i>
+                        {pincode != "" && pincode !== undefined
+                          ? "Information not found for entered pincode"
+                          : " Please enter pincode"}
+                      </Tooltip>
+                    }
+                  >
+                    <button
+                      className="btn btn-solid my-2"
+                      onClick={ele.validate}
+                      id="expressCheckOut"
+                      clickevent="Express_checkout"
+                    >
+                      {" "}
+                      Buy Now{" "}
+                    </button>
+                  </OverlayTrigger>
+                </div>
               </div>
             </div>
           ) : (
@@ -250,23 +255,25 @@ function priceCond(item, ele, deliverable, pincode) {
                   </div>
                 </div>
               </div>
-              <button
-                className="btn btn-solid"
-                onClick={ele.validate}
-                id="addToCart"
-                clickevent="Express_checkout"
-              >
-                <i class="fas fa-shopping-cart pr-2"></i> Add to cart{" "}
-              </button>
-              <button
-                className="btn btn-solid "
-                onClick={ele.validate}
-                id="expressCheckOut"
-                clickevent="Express_checkout"
-              >
-                {" "}
-                Buy Now{" "}
-              </button>
+              <div className="d-none d-sm-block">
+                <button
+                  className="btn btn-solid"
+                  onClick={ele.validate}
+                  id="addToCart"
+                  clickevent="Express_checkout"
+                >
+                  Add to cart{" "}
+                </button>
+                <button
+                  className="btn btn-solid "
+                  onClick={ele.validate}
+                  id="expressCheckOut"
+                  clickevent="Express_checkout"
+                >
+                  {" "}
+                  Buy Now{" "}
+                </button>
+              </div>
             </div>
           )}
           {/* <button
@@ -311,15 +318,18 @@ function priceCond(item, ele, deliverable, pincode) {
     if (dataCond == 0) {
       return (
         <React.Fragment>
-          <Link
-            onClick={() => ele.event_ask_for_price("ask_for_price")}
-            id="ask_for_price"
-            className="btn btn-solid my-2"
-            clickevent="Ask_for_price"
-            to={{ pathname: "/post-requirement.html", state: item }}
-          >
-            Contact Supplier
-          </Link>
+          <div>
+            <Link
+              onClick={() => ele.event_ask_for_price("ask_for_price")}
+              id="ask_for_price"
+              className="btn btn-solid my-2"
+              clickevent="Ask_for_price"
+
+              to={{ pathname: "/post-requirement.html", state: item }}
+            >
+              Contact Supplier
+            </Link>
+          </div>
           <div>
             {/* <button className="btn btn-solid my-2" onClick={ele.validate} id="buyBtn" clickevent="Buy_Now"> Add To Cart </button>  */}
             {/* {item.sellerid != ls.get("log_id") ? (
@@ -345,7 +355,7 @@ function priceCond(item, ele, deliverable, pincode) {
             className="d-flex justify-content-between mb-3"
             style={{ marginLeft: "10px" }}
           >
-            <div className="p-0 mr-1 productBorder">
+            <div className="p-0 mr-1 productBorder d-none d-sm-block">
               <h5 className="p-text-color px-1" style={{ marginTop: "5px" }}>
                 Out Of Stock
               </h5>
@@ -356,7 +366,7 @@ function priceCond(item, ele, deliverable, pincode) {
             </h5>
           </div> */}
 
-            <div className="mr-1">
+            <div className="mr-1 d-none d-sm-block">
               <button
                 className="btn btn-solid mr-1"
                 onClick={ele.NotifyMe}
@@ -380,11 +390,16 @@ function priceCond(item, ele, deliverable, pincode) {
           >
             <div className="col-xs-12">
               <div className="d-flex">
-                  <button
-                    className="productBorder btn btn-solid w-50"
-                  >
-                    Out Of Stock
-                  </button>
+                <button
+                  className="productBorder btn w-50 p-text-color"
+                  style={{
+                    height: "60px",
+                    backgroundColor: "white",
+                    color: "#00adee",
+                  }}
+                >
+                  Out Of Stock
+                </button>
                 <button
                   className="btn btn-solid w-50"
                   onClick={ele.NotifyMe}
@@ -464,65 +479,92 @@ class Details extends Component {
   minusQty = async () => {
     if (this.props.item.offer_stock != 0) {
       if (
-        this.offerExist(
-          this.props.item.offer_from_date,
-          this.props.item.offer_to_date
-        ) &&
-        parseInt(this.state.quantity - 1) <
-          parseInt(this.props.item.offer_min_qty)
+        this.state.quantity <= this.props.item.available_stock &&
+        this.state.quantity !== 1
       ) {
-        // await this.setState({
-        //   qtyerror:true
-        // })
-      } else {
-        if (
-          this.state.quantity > 0 &&
-          this.state.quantity > this.state.min_qty
-        ) {
-          // this.setState({stock: 'InStock'})
-          await this.setState({
-            quantity: this.state.quantity - 1,
-            qtyerror: false,
-          });
-          this.CartCalc();
-          this.getProdDetails(
-            this.state.currencySymbol,
-            this.state.country_code
-          );
-        } else {
-          await this.setState({
-            moqErr: true,
-          });
-        }
+        await this.setState({
+          quantity: this.state.quantity - 1,
+          qtyerror: false,
+        });
+        this.getProdDetails(
+                  this.state.currencySymbol,
+                  this.state.country_code
+                );
       }
+      
     }
+
+    //   if (
+    //     this.offerExist(
+    //       this.props.item.offer_from_date,
+    //       this.props.item.offer_to_date
+    //     ) &&
+    //     parseInt(this.state.quantity - 1) <
+    //       parseInt(this.props.item.offer_min_qty)
+    //   ) {
+    //     // await this.setState({
+    //     //   qtyerror:true
+    //     // })
+    //   } else {
+    //     if (
+    //       this.state.quantity > 0 &&
+    //       this.state.quantity > this.state.min_qty
+    //     ) {
+    //       // this.setState({stock: 'InStock'})
+    //       await this.setState({
+    //         quantity: this.state.quantity - 1,
+    //         qtyerror: false,
+    //       });
+    //       this.CartCalc();
+    //       this.getProdDetails(
+    //         this.state.currencySymbol,
+    //         this.state.country_code
+    //       );
+    //     } else {
+    //       await this.setState({
+    //         moqErr: true,
+    //       });
+    //     }
+    //   }
+    // }
   };
 
   plusQty = async () => {
     if (this.props.item.offer_stock != 0) {
-      if (
-        this.offerExist(
-          this.props.item.offer_from_date,
-          this.props.item.offer_to_date
-        ) &&
-        parseInt(this.state.quantity + 1) >
-          parseInt(this.props.item.offer_stock)
-      ) {
+      if (this.state.quantity < this.props.item.available_stock) {
         await this.setState({
-          qtyerror: true,
+          quantity: this.state.quantity + 1,
+          qtyerror: false,
         });
-      } else {
-        await this.setState({ quantity: this.state.quantity + 1 });
-        if (this.state.quantity >= this.props.item.qty) {
-          await this.setState({
-            moqErr: false,
-            qtyerror: false,
-          });
-        }
-        this.CartCalc();
         this.getProdDetails(this.state.currencySymbol, this.state.country_code);
       }
+  
     }
+
+    // if (this.props.item.offer_stock != 0) {
+    //   if (
+    //     this.offerExist(
+    //       this.props.item.offer_from_date,
+    //       this.props.item.offer_to_date
+    //     ) &&
+    //     parseInt(this.state.quantity + 1) >
+    //       parseInt(this.props.item.offer_stock)
+    //   ) {
+    //     await this.setState({
+    //       qtyerror: true,
+    //     });
+    //   } else {
+    //     await this.setState({ quantity: this.state.quantity + 1 });
+    //     if (this.state.quantity >= this.props.item.qty) {
+    //       await this.setState({
+    //         moqErr: false,
+    //         qtyerror: false,
+    //       });
+    //     }
+    //     this.CartCalc();
+    //     this.getProdDetails(this.state.currencySymbol, this.state.country_code);
+    //   }
+    // }
     // if(this.props.item.stock >= this.state.quantity) {
 
     // }else{
@@ -712,6 +754,11 @@ class Details extends Component {
       console.log("kj");
       this.checkZipCode(pincode);
     }
+    if (this.props.item.qty == null) {
+      this.setState({
+        quantity: 1,
+      });
+    }
   };
 
   callAuction = async () => {
@@ -755,12 +802,12 @@ class Details extends Component {
         }
       }
     }
-    if (
-      this.state.currencySymbol != nextProps.symbol ||
-      this.state.country_code != getCookie("country_code")
-    ) {
-      this.getProdDetails(getCookie("currency"), getCookie("country_code"));
-    }
+    // if (
+    //   this.state.currencySymbol != nextProps.symbol ||
+    //   this.state.country_code != getCookie("country_code")
+    // ) {
+    //   this.getProdDetails(getCookie("currency"), getCookie("country_code"));
+    // }
 
     const { buyer_country, buyer_country_id, buyer_country_code } = this.state;
     try {
@@ -826,11 +873,12 @@ class Details extends Component {
 
   //Check Login
   validate = async (e) => {
+    if (ls.get("sellerid")){
+      
     let id = e.target.id;
     if (
       this.state.quantity >= this.props.item.qty &&
-      this.state.quantity > 0 &&
-      this.state.pincodeDeliverable
+      this.state.quantity > 0
     ) {
       await this.setState({
         moqErr: false,
@@ -846,11 +894,6 @@ class Details extends Component {
       );
       //console.log('validate', ls.get("sellerid"))
       this.createCart(id);
-    } else if (
-      this.state.quantity >= this.props.item.qty &&
-      this.state.quantity > 0
-    ) {
-      this.createCart(id);
     } else {
       // await this.setState({
       //   moqErr: true,
@@ -865,6 +908,36 @@ class Details extends Component {
       );
       //this.captureEvent(id)
     }
+    }
+    else{
+      this.props.history.push({
+        pathname: "/register.html",
+        state: {
+          totalCartValue: this.state.totalCartValue,
+          totalProductCost: parseFloat(this.state.totalProductCost).toFixed(2),
+          totalShippingCost: this.state.totalShippingCost,
+          finalShippingCost: this.state.finalShippingCost,
+          cartItems: this.state.cartItems,
+          countryName: this.state.shippingCountryName,
+          symbol: this.state.symbol,
+          cartId: this.state.cartid,
+          //pixeldata: pixeldata,
+          shippingCharges: this.state.shippingCharges,
+          inrValue: this.state.inrValue,
+          // link:
+          //   "/start-order/" +
+          //   Math.random()
+          //     .toString(36)
+          //     .replace(/[^a-z]+/g, "")
+          //     .substr(0, 8) +
+          //   ".html",
+          link: "/start-order.html",
+        },
+      });
+    }
+
+
+
   };
 
   event_ask_for_price = (id) => {
@@ -879,9 +952,15 @@ class Details extends Component {
   };
 
   createCart = (id) => {
+    console.log(
+      this.props.item.id,
+      this.state.quantity,
+      this.state.price,
+      getCookie("mhinpbnb")
+    );
     axios
       .post(
-        "https://api.beldara.com/common/add_to_cart.php",
+        "https://api.indiabigshop.com/common/add_to_cart.php",
         {
           security_token: "",
           plateform_type: "",
@@ -897,8 +976,12 @@ class Details extends Component {
         { headers: { "Content-Type": "multipart/form-data" } }
       )
       .then((response) => {
-        if (id == "addToCart") {  
-          store.dispatch(getCartLength(ls.get("log_id"),getCookie("mhinpbnb")));
+        console.log(response);
+        if (id == "addToCart") {
+          store.dispatch(
+            getCartLength(ls.get("log_id"), getCookie("mhinpbnb"))
+          );
+          showToast("Product added to cart", "1");
         }
         // if (!this.state.moqErr) {
         //   console.log("newwwwwwwww");
@@ -909,12 +992,13 @@ class Details extends Component {
         //     : this.goToLogin(id);
         // }
         if (!this.state.moqErr) {
-          if(id=="expressCheckOut"){
-          id == "expressCheckOut"
-            ? this.goToStartOrder()
-            : // this.goToExpressCheckout()
-              this.goToStartOrder();
-        }}
+          if (id == "expressCheckOut") {
+            id == "expressCheckOut"
+              ? this.goToStartOrder()
+              : // this.goToExpressCheckout()
+                this.goToStartOrder();
+          }
+        }
       })
       .catch((error) => {
         const result = error.response;
@@ -1001,12 +1085,10 @@ class Details extends Component {
       value: each_product_price,
       currency: "USD",
     });
-    store.dispatch(
-      getCartLength(ls.get("log_id"), getCookie("mhinpbnb"))
-    );
+    store.dispatch(getCartLength(ls.get("log_id"), getCookie("mhinpbnb")));
     this.props.history.push({
       pathname: "/cart.html",
-       pathname: "/start-order.html",
+      pathname: "/start-order.html",
 
       state: {
         totalCartValue: this.state.totalCartValue,
@@ -1031,7 +1113,7 @@ class Details extends Component {
   create_wishlist = (e) => {
     axios
       .post(
-        "https://api.beldara.com/common/create_wishlist.php",
+        "https://api.indiabigshop.com/common/create_wishlist.php",
         {
           security_token: "",
           plateform_type: "",
@@ -1229,6 +1311,7 @@ class Details extends Component {
     qty = null,
     productid = null
   ) => {
+    console.log("jshbcsdjhcbsdjhdbcdjbdcdchsbcdshgcbvdh")
     if (country_code != "in") {
       $("#pincodemodule").addClass("d-none");
     } else {
@@ -1254,6 +1337,7 @@ class Details extends Component {
       )
       .then(async (response) => {
         // console.log(response.data,700);
+        console.log(response);
         if (response.data.statusId == "1") {
           // console.log('inside if',response.data.result[0].variation,700);
           await this.setState({
@@ -1325,7 +1409,7 @@ class Details extends Component {
       // console.log(this.props.item.id,877);
       axios
         .post(
-          `${imgUrl}/beta_api/validate-pincode-deliverable.php`,
+          `https://img.beldara.com/beta_api/validate-pincode-deliverable.php`,
           {
             pincode: pincode,
             productid: this.props.item.id,
@@ -1392,7 +1476,7 @@ class Details extends Component {
         }}
       />
     );
-    console.log(this.props.item)
+    console.log(this.props.item);
     return (
       <>
         <div className="col-lg-5 border-right">
@@ -1410,10 +1494,7 @@ class Details extends Component {
           {/* new */}
           <div>
             <div className="d-none d-sm-block">
-              <div
-                className="sticky-top bg-white"
-                style={{ zIndex: "0" }}
-              >
+              <div className="sticky-top bg-white" style={{ zIndex: "0" }}>
                 <h5 className="text-dark">
                   <strong>{this.props.item.name}</strong>
                 </h5>
@@ -1428,9 +1509,9 @@ class Details extends Component {
                         style={{
                           fontSize: "16px",
                           letterSpacing: "0px",
-                          color: "#40c2f2",
+                          color: "black",
                           fontWeight: "600",
-                          marginRight:"5px"
+                          marginRight: "5px",
                         }}
                       >
                         Brand:{" "}
@@ -1447,14 +1528,17 @@ class Details extends Component {
                               fontWeight: "500",
                             }}
                           >
-                            {item.company}
+                            {item.brand}
                             {item.country !== null && item.country !== undefined
                               ? "/" + item.country
                               : ""}
                           </a>
                         ) : (
-                          <span className="h6" fontSize={{fontWeigh:"500px"}}>
-                            {item.company}
+                          <span
+                            className="h6"
+                            fontSize={{ fontWeigh: "500px" }}
+                          >
+                            {item.brand}
                             {item.country !== null && item.country !== undefined
                               ? "/" + item.country
                               : ""}
@@ -1494,8 +1578,6 @@ class Details extends Component {
                   )}
                 </div>
 
-
-    
                 {/* old */}
                 {/* <a
               onClick={this.ScrollTospec}
@@ -1505,7 +1587,57 @@ class Details extends Component {
             </a> */}
               </div>
             </div>
-            <React.Fragment>
+            <div
+                className="row d-flex justify-content-start mt-1 mb-1"
+              >
+                {/* <div>
+              Shipping Charges:{` `}
+              {this.state.currency} {this.state.shipping_cost}
+            </div> */}
+                
+                  <div
+                    id="prices_cards"
+                    className="bg-grey float-left col-sm-12"
+                    style={{ padding: "10px" }}
+                  >
+                    <table class="table table-sm table-borderless mb-0">
+                      <tr>
+                        <th>Weight  {this.props.item.weight} {""}{" "}
+                       {this.props.item.available_stock_unit}</th>
+                        <td className="text-right">
+                        {this.props.item.weight_desc} {""}{" "}
+                    
+                        </td>
+                        {/* </tr>
+                      <tr>
+                        <th>Tax @ {this.state.gst_val}%</th>
+                        <td>-</td>
+                        <td className="text-right">
+                          {this.state.currency}{" "}
+                          {new Intl.NumberFormat().format(
+                            parseFloat(this.state.gst_cal).toFixed(2)
+                          )}
+                        </td>
+                      </tr>
+                      <tr style={{ borderTop: "2px solid" }}>
+                        <th>Final Price</th>
+                        <td>-</td>
+                        <td className="text-right">
+                          {/* {parseFloat(
+                      parseFloat(this.state.price) -
+                        parseFloat(this.state.gst_cal)
+                    ).toFixed(2)} */}
+                        {/* </tr>{this.state.currency}{" "} */}
+                        {/* </table> {new Intl.NumberFormat().format( */}
+                        {/* parseFloat(this.state.price).toFixed(2) */}
+                        {/* /)} */}
+                        {/* </td> */}
+                      </tr>
+                    </table>
+                  </div>
+              </div>
+
+            {/* <React.Fragment>
               <div
                 className="d-flex mt-1 d-none d-sm-block"
                 style={{
@@ -1518,99 +1650,17 @@ class Details extends Component {
                   Product Rating: ({this.props.reviewCount})
                 </span>
                 <span className="d-none d-sm-inline-block">
-                <StarReview
-                  dataFromRating={this.props.dataFromRating}
-                  page={`${process.env.PUBLIC_URL}/rating/${item.url}.html`}
-                  avgRating={this.props.avgRating}
-                  item={item}
-                  average={true}
-                  readonly={true}
-                />
+                  <StarReview
+                    dataFromRating={this.props.dataFromRating}
+                    page={`${process.env.PUBLIC_URL}/rating/${item.url}.html`}
+                    avgRating={this.props.avgRating}
+                    item={item}
+                    average={true}
+                    readonly={true}
+                  />
                 </span>
               </div>
-            </React.Fragment>
-            <div className="mt-3 mb-3 border-product bg-white border-bottom border-top py-1 text-center">
-              <div>
-                {item.price.length > 0 ? (
-                  <div className="timer d-inline pl-0">
-                    <div id="demo" className=" py-2 ">
-                      {item.offer_price !== null &&
-                      item.offer_mrp_price !== null &&
-                      item.offer_from_date !== null &&
-                      item.offer_to_date !== null &&
-                      this.offerExist(
-                        item.offer_from_date,
-                        item.offer_to_date
-                      ) ? (
-                        <div>
-                          <div className="time-cal m-auto">
-                            <del className="d-flex justify-content-center">
-                              MRP:<div>&nbsp;</div>
-                              {this.state.mrp_price > 0
-                                ? `${this.state.currency} ${this.state.mrp_price} ${item.offer_unit}`
-                                : ""}
-                            </del>
-                            <div className="d-flex justify-content-center">
-                              Offer:<div>&nbsp;</div>
-                              {this.state.offer_price > 0
-                                ? `${this.state.currency} ${this.state.offer_price} ${item.offer_unit}`
-                                : "Ask for price"}
-                            </div>
-                          </div>
-                          <div className="time-cal">
-                            {item.offer_stock > 0 ? (
-                              `Instock: ${item.offer_stock} ${item.offer_unit}`
-                            ) : (
-                              <div className="d-flex justify-content-center text-danger">
-                                OUT OF STOCK
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      ) : this.state.price_array != undefined ? (
-                        this.state.price_array.map((vari, index) => (
-                          <React.Fragment key={index}>
-                            <span>
-                              <div
-                                style={{ color: "#7d7d7d" }}
-                              >{`${vari.rangestart}-${vari.rangeend} ${this.state.unit}`}</div>
-                              <div>
-                                <div>
-                                  <div
-                                    class={`font-weight-bold ${vari.eachunit}`}
-                                    style={{
-                                      fontSize: "16px",
-                                      letterSpacing: "0px",
-                                      color: "black",
-                                      fontWeight: "300",
-                                    }}
-                                  >
-                                    {vari.eachunit > 0
-                                      ? `${
-                                          vari.currency
-                                        }-${new Intl.NumberFormat().format(
-                                          vari.eachunit
-                                        )}`
-                                      : "Ask for price"}
-                                    {}
-                                  </div>
-                                </div>
-                              </div>
-                            </span>
-                            {/* </div> */}
-                            {/* </span> */}
-                          </React.Fragment>
-                        ))
-                      ) : (
-                        ""
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  ""
-                )}
-              </div>
-            </div>
+            </React.Fragment> */}
             <div className="row mt-2 align-items-center mx-3 mb-3 d-block d-sm-none">
               <div>
                 {/* {(item.price.length > 0 && (item.beldara_prime == 1 || ((this.state.buyer_country.toLowerCase() != 'us' && this.state.buyer_country_id != '1' && this.state.buyer_country.toLowerCase() != 'in' && this.state.buyer_country_id != '91') || ( (this.state.buyer_country_id.toLowerCase() == '' || this.state.buyer_country_id.toLowerCase() === undefined || this.state.buyer_country_id.toLowerCase() === null) && getCookie('country_code').toLowerCase()!='in' && getCookie('country_code').toLowerCase()!='us' )) ) )? ( */}
@@ -1620,7 +1670,7 @@ class Details extends Component {
                       <tbody>
                         <tr>
                           <td>{translate("Quantity")}:</td>
-                          <td className="rounded">  
+                          <td className="rounded">
                             <div style={{ borderRadius: "5px" }}>
                               <div className="qty-box ml-1">
                                 <div className="input-group">
@@ -1666,7 +1716,7 @@ class Details extends Component {
                                         borderTopRightRadius: "12px",
                                         borderBottomRightRadius: "12px",
                                         border: "1px solid #ef7b00",
-                                        zIndex:0
+                                        zIndex: 0,
                                       }}
                                     >
                                       <i className="fa fa-plus" />
@@ -1774,81 +1824,108 @@ class Details extends Component {
               /> */}
               </div>
             </div>
-            <div className="mb-3 d-flex mx-1">
-              {this.state.product_mrp !== null &&
-              this.state.selling_price !== null ? (
-                <>
-                  <div className="d-flex col-sm-12 justify-content-between">
-                    <span
-                      className="font-weight-bold"
-                      style={{ fontSize: "13px" }}
-                    >
-                      {this.state.currency}{" "}
-                      {new Intl.NumberFormat().format(this.state.eachunit)} /{" "}
-                      {item.unit}
-                    </span>
-                    <div className="font-weight-bold d-flex justify-content-between">
-                      {item.beldara_first_web !== "" ? (
-                        <Link to="/beldara-first.html">
-                          <img
-                            src={item.beldara_first_web}
-                            alt="Beldara first on beldara.com"
-                            className="imgBeldaraFirst"
-                          ></img>
-                        </Link>
-                      ) : (
-                        ""
-                      )}
-                      {this.state.shipping_charge == "0" ? (
-                        <>
-                          <span
-                            data-tip
-                            data-for="ToolTip"
-                            className="mouse_pointer shippingBeldaraFirst mr-0"
-                          >
-                            Free&nbsp;Shipping
-                          </span>
-                          <div>
-                            <ReactTooltip
-                              id="ToolTip"
-                              type="warning"
-                              effect="solid"
-                            >
-                              <span style={{zIndex:99}}>{item.shipping_content}</span>
-                            </ReactTooltip>
-                          </div>
-                        </>
-                      ) : (
-                        // shippingBeldaraFirst
-                        <span
-                        data-tip
-                        data-for="ToolTip"
-                        className="mouse_pointer shippingBeldaraFirst mr-1"
-                        style={{ fontSize: "13px" }}
-                      >
-                        Shipping&nbsp;{this.state.currency}
-                        &nbsp;{this.state.shipping_charge}&nbsp;For&nbsp;
-                        {this.state.quantity}&nbsp;/&nbsp;{item.unit}
-                      </span>
-                      )}
-                    </div>
+            <div>
+              <div
+                className="row d-flex justify-content-start mt-1 mb-1"
+                style={{ marginLeft: "1px", marginRight: "1px" }}
+              >
+                {/* <div>
+              Shipping Charges:{` `}
+              {this.state.currency} {this.state.shipping_cost}
+            </div> */}
+                {this.state.gst_val != null ? (
+                  <div
+                    id="prices_cards"
+                    className="bg-grey float-left col-sm-12  productBorder"
+                    style={{ padding: "10px" }}
+                  >
+                    <table class="table table-sm table-borderless mb-0">
+                      <tr>
+                        <th>Price of items</th>
+                        <td className="text-right">
+                        {this.state.price}
+                        </td>
+                        {/* </tr>
+                      <tr>
+                        <th>Tax @ {this.state.gst_val}%</th>
+                        <td>-</td>
+                        <td className="text-right">
+                          {this.state.currency}{" "}
+                          {new Intl.NumberFormat().format(
+                            parseFloat(this.state.gst_cal).toFixed(2)
+                          )}
+                        </td>
+                      </tr>
+                      <tr style={{ borderTop: "2px solid" }}>
+                        <th>Final Price</th>
+                        <td>-</td>
+                        <td className="text-right">
+                          {/* {parseFloat(
+                      parseFloat(this.state.price) -
+                        parseFloat(this.state.gst_cal)
+                    ).toFixed(2)} */}
+                        {/* </tr>{this.state.currency}{" "} */}
+                        {/* </table> {new Intl.NumberFormat().format( */}
+                        {/* parseFloat(this.state.price).toFixed(2) */}
+                        {/* /)} */}
+                        {/* </td> */}
+                      </tr>
+                    </table>
                   </div>
-                  <div className="row d-flex justify-content-between">
-                    {/* <div className="col">
-                        {item.beldara_first_web !== "" ? (
-                          <img
-                            src={item.beldara_first_web}
-                            alt="Beldara first on beldara.com"
-                          ></img>
-                        ) : (
-                          ""
-                        )}
-                      </div> */}
-
-                    {/* <div className="col font-weight-bold">
-                        {item.free_shipping == "1" ? (
+                ) : (
+                  ""
+                )}
+              </div>
+              <div>
+                {this.state.product_mrp !== null &&
+                this.state.selling_price !== null ? (
+                  <>
+                    <div
+                      id="prices_cards"
+                      className="bg-grey  text-center productBorder"
+                      style={{ padding: "16px" }}
+                    >
+                      <div className="row justify-content-between mx-1 mb-2">
+                        <div>
+                          <th>Available in stock</th>
+                        </div>
+                        <div className="float-right">
+                          {this.props.item.available_stock}
+                        </div>
+                      </div>
+                      {/* 
+                      <HRLine color="#0e0e0e" />
+                      <div className="row justify-content-between mx-1 mt-1">
+                        <div>
+                          <th>Retail Margin</th>
+                        </div>
+                        {/* {parseFloat(
+                            (parseFloat(this.state.product_mrp) -
+                            parseFloat(this.state.selling_price)) /
+                            (parseFloat(this.state.product_mrp) * 0.01).toFixed(2)
+                            ).toFixed(2)} */}
+                      {/* <div style={{ marginRight: "51px" }}>-</div> */}
+                      {/* <div className="float-right"> */}
+                      {/* {" "} */}
+                      {/* {parseFloat( */}
+                      {/* ((parseFloat(this.state.product_mrp) - */}
+                      {/* parseFloat(this.state.selling_price)) / */}
+                      {/* parseFloat(this.state.product_mrp)) * */}
+                      {/* 100 */}
+                      {/* ).toFixed(2)} */}
+                      {/* % */}
+                      {/* </div> */}
+                      {/* </div> */}
+                    </div>
+                    <div className="mt-3 pl-3 d-none ">
+                      {this.state.variation ? (
+                        this.state.shipping_charge == "0" ? (
                           <>
-                            <span data-tip data-for="ToolTip" className="mouse_pointer" style={{color: "#24adee"}}>
+                            <span
+                              data-tip
+                              data-for="ToolTip"
+                              className="mouse_pointer shippingBeldaraFirst"
+                            >
                               Free&nbsp;Shipping
                             </span>
                             <div>
@@ -1857,320 +1934,33 @@ class Details extends Component {
                                 type="warning"
                                 effect="solid"
                               >
-                                <span>{item.free_shipping_text}</span>
+                                <span>{item.shipping_content}</span>
                               </ReactTooltip>
                             </div>
                           </>
                         ) : (
-                          ""
-                        )}
-                      </div> */}
-                  </div>
-                </>
-              ) : (
-                ""
-              )}
+                          <span
+                            data-tip
+                            data-for="ToolTip"
+                            className="mouse_pointer shippingBeldaraFirst mt-3"
+                            style={{ fontSize: "13px" }}
+                          >
+                            Shipping&nbsp;{this.state.currency}
+                            &nbsp;{this.state.shipping_charge}&nbsp;For&nbsp;
+                            {this.state.quantity}&nbsp;/&nbsp;{item.unit}
+                          </span>
+                        )
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  ""
+                )}
+              </div>
             </div>
-            {isMobile ? (
-              <div>
-                <div
-                  className="row d-flex justify-content-start align-items-center mt-1"
-                  style={{ marginLeft: "10px", marginRight: "10px" }}
-                >
-                  {/* <div>
-              Shipping Charges:{` `}
-              {this.state.currency} {this.state.shipping_cost}
-             </div> */}
-                  {this.state.gst_val != null ? (
-                    <div
-                      id="prices_cards"
-                      className="bg-grey float-left text-center productBorder"
-                    >
-                      <div className="row justify-content-between mx-2">
-                        <div className="float-left">Price of items</div>
-                        <div className="float-right">
-                          {/* {parseFloat(
-                      parseFloat(this.state.price) -
-                        parseFloat(this.state.gst_cal)
-                    ).toFixed(2)} */}
-                          {new Intl.NumberFormat().format(
-                            parseFloat(
-                              parseFloat(this.state.price) -
-                                parseFloat(this.state.gst_cal)
-                            ).toFixed(2)
-                          )}
-                        </div>
-                      </div>
-                      <div className="row justify-content-between mx-1">
-                        <div className="float-left">
-                          Tax @ {this.state.gst_val}%
-                        </div>
-                        <div className="float-right">
-                          {this.state.currency}{" "}
-                          {new Intl.NumberFormat().format(
-                            parseFloat(this.state.gst_cal).toFixed(2)
-                          )}
-                        </div>
-                      </div>
-                      <HRLine color="#0e0e0e" />
-                      <div className="row justify-content-between mx-1">
-                        <div className="float-left">Final Price</div>
-                        <div className="float-right">
-                          {this.state.currency}{" "}
-                          {new Intl.NumberFormat().format(
-                            parseFloat(this.state.price).toFixed(2)
-                          )}
-                          {/* {parseFloat(this.state.price).toFixed(2)} */}
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
-                <div className="float-right  mt-2"></div>
-                <div>
-                  {this.state.product_mrp !== null &&
-                  this.state.selling_price !== null ? (
-                    <div
-                      id="prices_cards"
-                      className="bg-grey float-left col-sm-5 text-center productBorder"
-                    >
-                      <div className="row justify-content-between mx-2">
-                        <div className="row">
-                          <div className="col">
-                            MRP {this.state.currency}{" "}
-                            {new Intl.NumberFormat().format(
-                              this.state.product_mrp
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <HRLine color="#0e0e0e" />
-                      <div className="row justify-content-between mx-1">
-                        <div className="row">
-                          <div className="col">
-                            Retail Margin:{" "}
-                            {/* {parseFloat(
-                    (parseFloat(this.state.product_mrp) -
-                      parseFloat(this.state.selling_price)) /
-                      (parseFloat(this.state.product_mrp) * 0.01).toFixed(2)
-                  ).toFixed(2)} */}
-                            {parseFloat(
-                              ((parseFloat(this.state.product_mrp) -
-                                parseFloat(this.state.selling_price)) /
-                                parseFloat(this.state.product_mrp)) *
-                                100
-                            ).toFixed(2)}
-                            %
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div>
-                <div
-                  className="row d-flex justify-content-start mt-1 mb-1"
-                  style={{ marginLeft: "1px", marginRight: "1px" }}
-                >
-                  {/* <div>
-              Shipping Charges:{` `}
-              {this.state.currency} {this.state.shipping_cost}
-            </div> */}
-                  {this.state.gst_val != null ? (
-                    <div
-                      id="prices_cards"
-                      className="bg-grey float-left col-sm-12  productBorder"
-                      style={{ padding: "10px" }}
-                    >
-                      <table class="table table-sm table-borderless mb-0">
-                        <tr>
-                          <th>Total price</th>
-                          <td>-</td>
-                          <td className="text-right">
-                            {" "}
-                            {this.state.currency}
-                            {/* {parseFloat(
-                      parseFloat(this.state.price) -
-                        parseFloat(this.state.gst_cal)
-                    ).toFixed(2)} */}{" "}
-                            {new Intl.NumberFormat().format(
-                          parseFloat(this.state.price).toFixed(2))}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>Tax @ {this.state.gst_val}%</th>
-                          <td>-</td>
-                          <td className="text-right">
-                            {this.state.currency}{" "}
-                            {new Intl.NumberFormat().format(
-                              parseFloat(this.state.gst_cal).toFixed(2)
-                            )}
-                          </td>
-                        </tr>
-                        <tr style={{ borderTop: "2px solid" }}>
-                          <th>Final Price</th>
-                          <td>-</td>
-                          <td className="text-right">
-                            {this.state.currency}
-                            {/* {parseFloat(
-                      parseFloat(this.state.price) -
-                        parseFloat(this.state.gst_cal)
-                    ).toFixed(2)} */}
-                           {new Intl.NumberFormat().format(
-                          parseFloat(this.state.price).toFixed(2))}
-                          </td>
-                        </tr>
-                      </table>
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
-                <div>
-                  {this.state.product_mrp !== null &&
-                  this.state.selling_price !== null ? (
-                    <>
-                      <div
-                        id="prices_cards"
-                        className="bg-grey  text-center productBorder"
-                        style={{ padding: "16px" }}
-                      >
-                        <div className="row justify-content-between mx-1 mb-2">
-                          <div>
-                            <th>MRP</th>
-                          </div>
-                          <div className="text-center ml-3">-</div>
-                          <div className="float-right">
-                            {this.state.currency}{" "}
-                            {new Intl.NumberFormat().format(
-                              this.state.product_mrp
-                            )}
-                          </div>
-                        </div>
-
-                        <HRLine color="#0e0e0e" />
-                        <div className="row justify-content-between mx-1 mt-1">
-                          <div>
-                            <th>Retail Margin</th>
-                          </div>
-                          {/* {parseFloat(
-                            (parseFloat(this.state.product_mrp) -
-                            parseFloat(this.state.selling_price)) /
-                            (parseFloat(this.state.product_mrp) * 0.01).toFixed(2)
-                            ).toFixed(2)} */}
-                          <div style={{ marginRight: "51px" }}>-</div>
-                          <div className="float-right">
-                            {" "}
-                            {parseFloat(
-                              ((parseFloat(this.state.product_mrp) -
-                                parseFloat(this.state.selling_price)) /
-                                parseFloat(this.state.product_mrp)) *
-                                100
-                            ).toFixed(2)}
-                            %
-                          </div>
-                        </div>
-                      </div>
-                      <div className="mt-3 pl-3">
-                        {this.state.variation ? (
-                          this.state.shipping_charge == "0" ? (
-                            <>
-                              <span
-                                data-tip
-                                data-for="ToolTip"
-                                className="mouse_pointer shippingBeldaraFirst"
-                              >
-                                Free&nbsp;Shipping
-                              </span>
-                              <div>
-                                <ReactTooltip
-                                  id="ToolTip"
-                                  type="warning"
-                                  effect="solid"
-                                >
-                                  <span>{item.shipping_content}</span>
-                                </ReactTooltip>
-                              </div>
-                            </>
-                          ) : (
-                            <span
-                              data-tip
-                              data-for="ToolTip"
-                              className="mouse_pointer shippingBeldaraFirst mt-3"
-                              style={{ fontSize: "13px" }}
-                            >
-                              Shipping&nbsp;{this.state.currency}
-                              &nbsp;{this.state.shipping_charge}&nbsp;For&nbsp;
-                              {this.state.quantity}&nbsp;/&nbsp;{item.unit}
-                            </span>
-                          )
-                        ) : (
-                          ""
-                        )}
-                      </div>
-                    </>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              </div>
-            )}
-              <div
-                        className="single-product-tables border-product detail-section pb-0 my-2 p-3 mt-3 d-block d-sm-none"
-                        style={{
-                          border: "dotted 1px",
-                          borderRadius: "5px",
-                        }}
-                      >
-                        <table>
-                          <tbody>
-                            <tr>
-                              <td>{translate("Free Sample")}:</td>
-                              <td>
-                                <strong>
-                                  {this.props.item.free_sample == "0"
-                                    ? "On Demand"
-                                    : "Yes"}
-                                </strong>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>{translate("Avalibility")}:</td>
-                              <td>
-                                <strong>
-                                  {" "}
-                                  {this.props.item.available_stock !== "0" &&
-                                  this.props.item.available_stock > 0
-                                    ? "InStock"
-                                    : "Out Of Stock"}
-                                </strong>
-                              </td>
-                            </tr>
-                            {parseFloat(this.props.item.weight) >
-                            parseFloat(0) ? (
-                              <tr>
-                                <td>{translate("Weight")}:</td>
-                                <td>
-                                  <strong>
-                                    {" "}
-                                    {this.props.item.weight}{" "}
-                                    {this.props.item.available_stock_unit}
-                                  </strong>
-                                </td>
-                              </tr>
-                            ) : (
-                              ""
-                            )}
-                          </tbody>
-                        </table>
-                      </div> 
-            <React.Fragment>
+            {/* <React.Fragment>
               <div
                 className="d-flex mt-2 d-block d-sm-none"
                 style={{
@@ -2191,8 +1981,56 @@ class Details extends Component {
                   readonly={true}
                 />
               </div>
-            </React.Fragment>
-            <ProductVariation
+            </React.Fragment> */}
+            <div
+              className="single-product-tables border-product detail-section pb-0 my-2 p-3 mt-3 d-block d-sm-none"
+              style={{
+                border: "dotted 1px",
+                borderRadius: "5px",
+              }}
+            >
+              <table>
+                <tbody>
+                  <tr>
+                    <td>{translate("Free Sample")}:</td>
+                    <td>
+                      <strong>
+                        {this.props.item.free_sample == "0"
+                          ? "On Demand"
+                          : "Yes"}
+                      </strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>{translate("Avalibility")}:</td>
+                    <td>
+                      <strong>
+                        {" "}
+                        {this.props.item.available_stock !== "0" &&
+                        this.props.item.available_stock > 0
+                          ? "InStock"
+                          : "Out Of Stock"}
+                      </strong>
+                    </td>
+                  </tr>
+                  {parseFloat(this.props.item.weight) > parseFloat(0) ? (
+                    <tr>
+                      <td>{translate("Weight")}:</td>
+                      <td>
+                        <strong>
+                          {" "}
+                          {this.props.item.weight}{" "}
+                          {this.props.item.available_stock_unit}
+                        </strong>
+                      </td>
+                    </tr>
+                  ) : (
+                    ""
+                  )}
+                </tbody>
+              </table>
+            </div>
+            {/* <ProductVariation
               getProdDetl={this.getProdDetails}
               prodId={item.id}
               variation={this.state.variation}
@@ -2202,7 +2040,7 @@ class Details extends Component {
               product_mrp={this.state.product_mrp}
               selling_price={this.state.selling_price}
               prodData={item}
-            />
+            /> */}
             {/* <div>
               <div className="mt-2 row mb-3 col-sm-12 d-none" >
                 <div>
@@ -2298,7 +2136,7 @@ class Details extends Component {
           </Suspense>
         </div>
         <div className="col-lg-3">
-          <div className="border-product mb-2">
+          <div className="mb-2 d-none">
             <div className="row">
               <h5 className="product-title mx-3 mt-1">
                 <strong>Share with:</strong>
@@ -2372,7 +2210,6 @@ class Details extends Component {
               </div>
             </div>
           </div>
-          <div className="border mb-3"></div>
           <div className="row mt-2 align-items-center mx-1 mb-3 d-sm-block d-none">
             <div>
               {/* {(item.price.length > 0 && (item.beldara_prime == 1 || ((this.state.buyer_country.toLowerCase() != 'us' && this.state.buyer_country_id != '1' && this.state.buyer_country.toLowerCase() != 'in' && this.state.buyer_country_id != '91') || ( (this.state.buyer_country_id.toLowerCase() == '' || this.state.buyer_country_id.toLowerCase() === undefined || this.state.buyer_country_id.toLowerCase() === null) && getCookie('country_code').toLowerCase()!='in' && getCookie('country_code').toLowerCase()!='us' )) ) )? ( */}
@@ -2571,18 +2408,22 @@ class Details extends Component {
                 </div>
                 <div
                   className="d-sm-none p-0"
-                  style={{  
+                  style={{
                     position: "fixed",
                     bottom: "0px",
                     left: "0px",
                     right: "0",
                     zIndex: "9999",
                   }}
-                > <button
-                className="btn btn-solid px-1 w-100" style={{backgroundSize:"781"}}
-              >
-                Product Unavailable
-              </button></div>
+                >
+                  {" "}
+                  <button
+                    className="btn btn-solid px-1 w-100"
+                    style={{ backgroundSize: "781" }}
+                  >
+                    Product Unavailable
+                  </button>
+                </div>
               </>
             )}
 
@@ -2747,7 +2588,7 @@ class Details extends Component {
                     id="pincode"
                     name="pincode"
                     placeholder="pincode"
-                    className="form-control input-number rounded"
+                    className={`banner form-control input-number rounded`}
                     value={this.state.pincode}
                     onChange={this.ChangePincode.bind(this)}
                     onKeyPress={this.allowPincode.bind(this)}
@@ -2761,45 +2602,25 @@ class Details extends Component {
                     `required|numeric`
                   )}
                 </div>
-
-                {!isMobile ? (
-                  <div>
-                    {!this.state.pincodeValidate ? (
-                      <span
-                        className="mouse_pointer btn btn-solid"
-                        onClick={this.checkZipCode.bind(this, null)}
-                      >
-                        CHECK
-                      </span>
-                    ) : (
-                      <div className="col-md-1 col-sm-1 col-sm-1">
-                        <span
-                          className="change-pincode-button p-1 mouse_pointer btn btn-solid"
-                          onClick={this.checkPincodeAgain}
-                        >
-                          CHANGE
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div>
+                <div>
+                  {!this.state.pincodeValidate ? (
                     <span
-                      className="p-text-color change-pincode-button p-1 mouse_pointer"
+                      className="mouse_pointer btn btn-solid"
                       onClick={this.checkZipCode.bind(this, null)}
                     >
                       CHECK
                     </span>
+                  ) : (
                     <div className="col-md-1 col-sm-1 col-sm-1">
                       <span
-                        className=" change-pincode-button p-1 mouse_pointer"
+                        className="change-pincode-button p-1 mouse_pointer btn btn-solid"
                         onClick={this.checkPincodeAgain}
                       >
                         CHANGE
                       </span>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </form>
               <p id="error_pincode" className="text-danger d-none">
                 Please enter valid pincode
@@ -2933,7 +2754,7 @@ class Details extends Component {
                                 </div>
                               </div>
                             </div> */}
-                <div className="py-0  shadow-none mt-3">
+                {/* <div className="py-0  shadow-none mt-3">
                   <div className="py-0" id="headingThree">
                     <h2 className="mb-0">
                       <button
@@ -3010,7 +2831,7 @@ class Details extends Component {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </React.Fragment>
             ) : (
               <React.Fragment>
@@ -3096,11 +2917,11 @@ class Details extends Component {
                         aria-controls="collapseThree"
                       >
                         <i
-                          style={{ fontSize: "30px" }}
+                          style={{ fontSize: "20px" }}
                           className="fa fa-truck mr-3"
                           aria-hidden="true"
                         ></i>
-                        Delivery within 7 days
+                        Delivery in 6 hours
                       </button>
                     </h2>
                   </div>
@@ -3111,8 +2932,9 @@ class Details extends Component {
                     data-parent="#accordionExample"
                   >
                     <div className="card-body">
-                      <div> - Delivery within 7 days</div>
-                      <div> - Complete logistics support</div>
+                      <div> - Delivery in 6 business hours</div>
+                      <div> - Easy return and refund</div>
+                      <div> - 24 X 7 Support</div>
                     </div>
                   </div>
                 </div>
@@ -3143,10 +2965,10 @@ class Details extends Component {
                     data-parent="#accordionExample"
                   >
                     <div className="card-body">
-                      <div> - Return with in 10 days of delivery</div>
+                      <div> - Return with in 1 days of delivery</div>
                       <div>
                         {" "}
-                        - Return pickup time with in 72 hours hours return
+                        - Return pickup time with in 48 hours hours return
                         booking
                       </div>
                       <div>
@@ -3212,6 +3034,10 @@ const mapStateToProps = (state) => ({
 });
 export default withRouter(
   withTranslate(
-    connect(mapStateToProps, { getAllCurrencyValue, getCartLength,getUpdateUser })(Details)
+    connect(mapStateToProps, {
+      getAllCurrencyValue,
+      getCartLength,
+      getUpdateUser,
+    })(Details)
   )
 );

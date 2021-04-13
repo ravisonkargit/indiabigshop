@@ -149,7 +149,7 @@ router.post("/", (request, res) => {
                       var post_data = JSON.stringify(parameters_to_send);
                       console.log(parameters_to_send, 274);
                       var options = {
-                        hostname: "api.beldara.com",
+                        hostname: "api.indiabigshop.com",
                         port: 443,
                         path: `/common/send_invoice_test1.php`,
                         method: "POST",

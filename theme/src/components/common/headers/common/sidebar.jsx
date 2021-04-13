@@ -181,43 +181,12 @@ class SideBar extends Component {
                               <a
                                 href={`${
                                   process.env.PUBLIC_URL
-                                }/cat/${value.url.toLowerCase()}.html`}
+                                }/cat/${value.url}.html`}
                                 target="_blank"
                               >
                                 {key}
                               </a>
                             )}
-
-                            <ul className="mega-menu clothing-menu">
-                              <li>
-                                <div className="row m-0">
-                                  <div className="col-xl-4">
-                                    <div className="link-section">
-                                      <h5>
-                                        <Link
-                                          to={`${
-                                            process.env.PUBLIC_URL
-                                          }/cat/${value.url.toLowerCase()}.html`}
-                                          target="_blank"
-                                        >
-                                          {key}
-                                        </Link>
-                                      </h5>
-                                      {Object.keys(value.name) != "" ? (
-                                        <li
-                                          className={!isMobile ? "d-flex" : ""}
-                                        >
-                                          <Categoryli categories={value} />
-                                          <Categoryli1 categories={value} />
-                                        </li>
-                                      ) : (
-                                        ""
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-                              </li>
-                            </ul>
                           </li>
                           {index == "5" ? (
                             <>
@@ -238,7 +207,7 @@ class SideBar extends Component {
                 {/* </ul> */}
                 <ColoredLine color="#f1aa61" />
               </li>
-              <li>
+              {/* <li>
                 <a href={`${process.env.PUBLIC_URL}/post-requirement.html`}>
                   <img
                     src="https://img.beldara.com/assets/images/paper_plan1.png"
@@ -247,7 +216,7 @@ class SideBar extends Component {
                   Post Requirement
                 </a>
                 <ColoredLine color="#f1aa61" />
-              </li>
+              </li> */}
               <li>
                 <a href={`${process.env.PUBLIC_URL}/auction.html`}>
                   <img
@@ -256,31 +225,6 @@ class SideBar extends Component {
                   />{" "}
                   AUCTION
                 </a>
-                <ColoredLine color="#f1aa61" />
-              </li>
-              <li>
-                {ls.get("log_id") === null ||
-                ls.get("log_id") == "" ||
-                ls.get("log_id") == "null" ? (
-                  <a
-                    href={`${SellerUrl}/login.html?url=https://msg.beldara.com`}
-                    data-lng="en"
-                  >
-                    <img
-                      src="https://img.beldara.com/assets/images/chat_icon1.png"
-                      alt="chat on beldara"
-                    />{" "}
-                    Chat Now
-                  </a>
-                ) : (
-                  <a href={`${MsgUrl}`} data-lng="en">
-                    <img
-                      src="https://img.beldara.com/assets/images/chat_icon1.png"
-                      alt="chat on beldara"
-                    />{" "}
-                    Chat Now
-                  </a>
-                )}
                 <ColoredLine color="#f1aa61" />
               </li>
               <li>
@@ -303,7 +247,7 @@ class SideBar extends Component {
                 </a>
                 <ColoredLine color="#f1aa61" />
               </li>
-              <li>
+              {/* <li>
                 <a href={`${process.env.PUBLIC_URL}/bpp.html`}>
                   <img
                     src="https://img.beldara.com/assets/images/brand_icon1.png"
@@ -332,7 +276,7 @@ class SideBar extends Component {
                   MEMBERSHIP
                 </a>
                 <ColoredLine color="#f1aa61" />
-              </li>
+              </li> */}
               {isMobile ? (
                 isAndroid ? (
                   <li>
@@ -375,14 +319,14 @@ class SideBar extends Component {
                     this.props.changeCountry != "null" &&
                     this.props.changeCountry !== null ? (
                     this.props.changeCountry == "in" ? (
-                      " +91-9555788833"
+                      " +91-9372245294"
                     ) : (
-                      " +1-913-289-0433"
+                      " +1-9372245294"
                     )
                   ) : getCookie("country_code") == "in" ? (
-                    "+91-9555788833"
+                    "+91-9372245294"
                   ) : (
-                    "+1-913-289-0433"
+                    "+91-9372245294"
                   )}
                 </a>
                 <ColoredLine color="#f1aa61" />

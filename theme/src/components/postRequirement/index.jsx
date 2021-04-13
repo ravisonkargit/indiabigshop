@@ -311,7 +311,7 @@ class index extends Component {
         userData = JSON.stringify(userData)
         let formData = new FormData()
         formData.append('data', userData)
-        axios.post("https://api.beldara.com/common/search_universal.php", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        axios.post("https://api.indiabigshop.com/common/search_universal.php", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
             .then(response => {
                 // console.log('productid axios: '+this.state.productid);
                 let data = response.data.result.map(result => {

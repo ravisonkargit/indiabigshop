@@ -84,7 +84,7 @@ router.post('/getLpProduct',(req,res) => {
         if(err) res.status(400).send(err)
         if (!obj[0]){
 
-            axios.post("https://api.beldara.com/common/get_prod_by_lp.php",
+            axios.post("https://api.indiabigshop.com/common/get_prod_by_lp.php",
             { security_token: "", plateform_type: "", cat_id: cat_id },
             { headers: { "Content-Type": "application/json" } }
             )

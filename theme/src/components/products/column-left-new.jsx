@@ -256,6 +256,8 @@ class ColumnLeft extends Component {
     // console.log('componentDidMoun called');
     // console.log(this.props.item,nextProps)
     // this.props.mixpanel.track('product_detail');
+
+    console.log("bdbbhjbjhbhjbhj")
     import("../common/related-product").then((module) => {
       this.setState({
         RelatedProduct: module.default,
@@ -350,7 +352,7 @@ class ColumnLeft extends Component {
     } = this.props;
     // console.log(this.props,261,'column-left','render');
 
-    const { RelatedProduct } = this.state;
+    const { RelatedProduct } = this.state
     var products = {
       slidesToShow: 1,
       slidesToScroll: 1,
@@ -540,7 +542,7 @@ class ColumnLeft extends Component {
                                 style={{
                                   fontSize: "16px",
                                   letterSpacing: "0px",
-                                  color: "#40c2f2",
+                                  color: "black",
                                   fontWeight: "600",
                                   marginTop:"10px",
                                   marginRight:"5px"
@@ -608,7 +610,7 @@ class ColumnLeft extends Component {
                           )}
                         </div>
                       </div>
-                      {this.props.item.img ? (
+                    
                         <Slider
                           {...products}
                           asNavFor={this.state.nav2}
@@ -617,98 +619,46 @@ class ColumnLeft extends Component {
                         >
                           {
                             <div key={this.props.item.img}>
-                              <img
-                                src={this.props.item.img}
-                                className="img-fluid image_zoom_cls-0 mouse_pointer"
-                                alt={this.props.item.img}
-                                style={{ margin: "0 auto", height: "400px" }}
-                                onClick={this.onOpenModal}
-                              />
-                            </div>
-                          }
-                          {/* {this.props.item.image
-                            .slice(1, 4)
-                            .map((vari, index) =>
-                              vari ? (
-                                <div key={index}>
-                                  <img
-                                    src={vari.img}
-                                    className="img-fluid image_zoom_cls-0 mouse_pointer"
-                                    alt={vari}
-                                    id={index}
-                                    style={{
-                                      margin: "0 auto",
-                                      height: "400px",
-                                    }}
-                                    onClick={this.onOpenModal}
-                                  />
-                                </div>
-                              ) : (
-                                ""
-                              )
-                            )} */}
-                        </Slider>
-                      ) : (
-                        <Slider
-                          {...products}
-                          asNavFor={this.state.nav2}
-                          ref={(slider) => (this.slider1 = slider)}
-                          className="product-right-slick"
-                        >
-                          {
-                            <div key={this.props.item.image[0]}>
-                              <img
-                                src={this.props.item.image[0].img}
-                                className="img-fluid image_zoom_cls-0 mouse_pointer"
-                                alt={this.props.item.img}
-                                style={{ margin: "0 auto", height: "400px" }}
-                                onClick={this.onOpenModal}
-                              />
-                            </div>
-                          }
-                          {this.props.item.image
-                            .slice(1, 4)
-                            .map((vari, index) =>
-                              vari ? (
-                                <div key={index}>
-                                  <img
-                                    src={vari.img}
-                                    className="img-fluid image_zoom_cls-0 mouse_pointer"
-                                    alt={vari}
-                                    id={index}
-                                    style={{
-                                      margin: "0 auto",
-                                      height: "400px",
-                                    }}
-                                    onClick={this.onOpenModal}
-                                  />
-                                </div>
-                              ) : (
-                                ""
-                              )
-                            )}
-                        </Slider>
-                      )}
-
-                      {this.props.item.image ? (
-                        <div>
-                          {this.state.loadSmallImage == 1 ? (
-                            <SmallImages
-                              item={this.props.item}
-                              settings={productsnav}
-                              navOne={this.slider1}
+                            <img
+                              src={imgUrl + `/product_images/` + this.props.item.img}
+                              className="img-fluid image_zoom_cls-0 mouse_pointer"
+                              alt={this.props.item.img}
+                              style={{ margin: "0 auto", height: "400px" }}
+                              onClick={this.onOpenModal}
                             />
+                          </div>
+                        }
+                        {/* {this.props.item.other_images.map((vari, index) =>
+                          vari ? (
+                            <div key={index}>
+                              <img
+                                src={imgUrl + `/product_images/` + vari}
+                                className="img-fluid image_zoom_cls-0 mouse_pointer"
+                                alt={vari}
+                                id={index}
+                                style={{ margin: "0 auto", height: "400px" }}
+                                onClick={this.onOpenModal}
+                              />
+                            </div>
                           ) : (
                             ""
-                          )}
-                        </div>
+                          )
+                        )} */}
+                      </Slider>
+                      {/* <div>
+                      {this.state.loadSmallImage == 1 ? (
+                        <SmallImages
+                          item={this.props.item}
+                          settings={productsnav}
+                          navOne={this.slider1}
+                        />
                       ) : (
                         ""
                       )}
-
+                   </div> */}
                       <>
                         <div>
-                          <Modal
+                        <Modal
                             open={this.state.open}
                             onClose={this.onCloseModal}
                             //onClose={() => ""}
@@ -722,7 +672,7 @@ class ColumnLeft extends Component {
                               <div className="modal-content min-modal-size modal-content-1">
                                 <div className="modal-header modal-header-1">
                                   <h5 className="modal-title modal-title-1">
-                                    {this.props.item.name.substring(0, 60)}...
+                                    {this.props.item.name}
                                   </h5>
                                   <button
                                     type="button"
@@ -736,38 +686,45 @@ class ColumnLeft extends Component {
                                   <div className="container-fluid p-0">
                                     {/* <div className="row mx-2 my-2"> */}
                                     <div className="d-flex justify-content-end">
-                                      {this.props.item.image?(<div>  {this.props.item.image.length > 0 ? (
-                                        this.props.item.image.map(
-                                          (vari, index) =>
-                                            vari ? (
-                                              <div key={index}>
-                                                <img
-                                                  src={vari.img}
-                                                  alt={vari}
-                                                  id={index}
-                                                  style={{
-                                                    margin: "0 auto",
-                                                    height: "40px",
-                                                    width: "54.09px",
-                                                  }}
-                                                  //className="img-thumbnail mr-1"
-                                                  className={`img-thumbnail mr-1 ${
-                                                    index ==
-                                                    this.state.activeIndex
-                                                      ? "active-1"
-                                                      : "inactive"
-                                                  }`}
-                                                  onClick={this.getImage}
-                                                />
-                                              </div>
-                                            ) : (
-                                              ""
-                                            )
+                                      {/* {this.props.item.other_images.length > 0 ? (
+                                        this.props.item.other_images.map((vari, index) =>
+                                          vari ? (
+                                            <div key={index}>
+                                              <img
+                                                src={
+                                                  imgUrl +
+                                                  `/product_images/` +
+                                                  vari
+                                                }
+                                                alt={vari}
+                                                id={index}
+                                                style={{
+                                                  margin: "0 auto",
+                                                  height: "40px",
+                                                  width: "54.09px",
+                                                }}
+                                                //className="img-thumbnail mr-1"
+                                                className={`img-thumbnail mr-1 ${
+                                                  index ==
+                                                  this.state.activeIndex
+                                                    ? "active-1"
+                                                    : "inactive"
+                                                }`}
+                                                onClick={this.getImage}
+                                              />
+                                            </div>
+                                          ) : (
+                                            ""
+                                          )
                                         )
-                                      ) : (
+                                      ) : ( */}
                                         <div key={this.props.item.img}>
                                           <img
-                                            src={this.props.item.image[0].img}
+                                            src={
+                                              imgUrl +
+                                              `/product_images/` +
+                                              this.props.item.img
+                                            }
                                             alt={this.props.item.img}
                                             id={this.props.item.img}
                                             style={{
@@ -779,57 +736,50 @@ class ColumnLeft extends Component {
                                             className="img-thumbnail mr-1 active-1"
                                           />
                                         </div>
-                                      )}</div>):(<div key={this.props.item.img}>
-                                        <img
-                                          src={this.props.item.img}
-                                          alt={this.props.item.img}
-                                          id={this.props.item.img}
-                                          style={{
-                                            margin: "0 auto",
-                                            height: "40px",
-                                            width: "54.09px",
-                                          }}
-                                          //className="img-thumbnail mr-1"
-                                          className="img-thumbnail mr-1 active-1"
-                                        />
-                                      </div>)}
-                                    
+                                      {/* )} */}
                                     </div>
                                     {/* </div>
                                     <div className="row mx-2 my-2"> */}
                                     <div className="d-flex justify-content-center">
-                                      {this.props.item.image?(<div> {this.props.item.image.length > 0 ? (
-                                        this.props.item.image.map(
-                                          (vari, index) =>
-                                            vari && index == this.state.ids ? (
-                                              <div
-                                                key={index}
-                                                className="img-wrapper"
-                                              >
-                                                <img
-                                                  src={vari.img}
-                                                  alt={vari}
-                                                  id={index}
-                                                  style={{
-                                                    margin: "0 auto",
-                                                    width: "340px",
-                                                    height: "350px",
-                                                  }}
-                                                  className="mr-2 mr-2 hover-zoom"
-                                                />
-                                              </div>
-                                            ) : (
-                                              ""
-                                            )
+                                      {/* {this.props.item.other_images.length > 0 ? (
+                                        this.props.item.other_images.map((vari, index) =>
+                                          vari && index == this.state.ids ? (
+                                            <div
+                                              key={index}
+                                              className="img-wrapper"
+                                            >
+                                              <img
+                                                src={
+                                                  imgUrl +
+                                                  `/product_images/` +
+                                                  vari
+                                                }
+                                                alt={vari}
+                                                id={index}
+                                                style={{
+                                                  margin: "0 auto",
+                                                  width: "340px",
+                                                  height: "350px",
+                                                }}
+                                                className="mr-2 mr-2 hover-zoom"
+                                              />
+                                            </div>
+                                          ) : (
+                                            ""
+                                          )
                                         )
-                                      ) : (
+                                      ) : ( */}
                                         <div
-                                          key={this.props.item.image}
+                                          key={this.props.item.img}
                                           className="img-wrapper"
                                         >
                                           <img
-                                            src={this.props.item.image[0].img}
-                                            alt={this.props.item.image[0].img}
+                                            src={
+                                              imgUrl +
+                                              `/product_images/` +
+                                              this.props.item.img
+                                            }
+                                            alt={this.props.item.img}
                                             id="0"
                                             style={{
                                               margin: "0 auto",
@@ -839,23 +789,7 @@ class ColumnLeft extends Component {
                                             className="mr-2 mr-2 hover-zoom"
                                           />
                                         </div>
-                                      )}</div>):( <div
-                                        key={this.props.item.img}
-                                        className="img-wrapper"
-                                      >
-                                        <img
-                                          src={this.props.item.img}
-                                          alt={this.props.item.img}
-                                          id="0"
-                                          style={{
-                                            margin: "0 auto",
-                                            width: "340px",
-                                            height: "350px",
-                                          }}
-                                          className="mr-2 mr-2 hover-zoom"
-                                        />
-                                      </div>)}
-                                     
+                                      {/* )} */}
                                     </div>
                                   </div>
                                 </div>
@@ -865,7 +799,7 @@ class ColumnLeft extends Component {
                           </Modal>
                         </div>
                       </>
-                       <div
+                       {/* <div
                         className="single-product-tables border-product detail-section pb-0 my-2 p-3 mt-3 d-none d-sm-block"
                         style={{
                           border: "dotted 1px",
@@ -913,7 +847,7 @@ class ColumnLeft extends Component {
                             )}
                           </tbody>
                         </table>
-                      </div> 
+                      </div>  */}
                       {/* old */}
                       {/* <div className="sticky-top">
                         <h3 className="text-dark mt-3">
@@ -1381,8 +1315,8 @@ const mapStateToProps = (state, ownProps) => {
   //  console.log(state.singleProduct,511,productId,is_variant,prod_variant_url);
   try {
     console.log(productId);
-    console.log(state.singleProduct.product.product_url);
-    if (state.singleProduct.product.product_url) {
+    console.log(state.singleProduct.product);
+    if (state.singleProduct.product) {
       return {
         item: state.singleProduct.product,
         symbol: state.data.symbol,

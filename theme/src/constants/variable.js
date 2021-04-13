@@ -1,16 +1,16 @@
 //Api Url 
-export const apiUrl = 'https://api.beldara.com/common/'
+export const apiUrl = 'https://api.indiabigshop.com/common/'
 
 //Seller Url
-export const sellerUrl = 'https://seller.beldara.com'
+export const sellerUrl = 'https://seller.indiabigshop.com'
 
 //Img url
-export const imgUrl = 'https://img.beldara.com'
+export const imgUrl = 'https://img.indiabigshop.com'
 
 
 // Beta API
 
-export const betaApi = 'https://img.beldara.com/beta_api/'
+export const betaApi = 'https://img.indiabigshop.com/beta_api/'
 
 
 //Node Api

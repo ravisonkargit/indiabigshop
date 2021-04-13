@@ -9,7 +9,7 @@ var module = {
       "Forgot Password?": "Passwort vergessen?",
       "Change Password ": "\u00c4ndere das Passwort",
       "About US": "\u00dcber uns",
-      "Sell On Beldara": " Auf Beldara verkaufen",
+      "Sell On IndiaBigShop": " Auf Beldara verkaufen",
       "Banner Advertising": " Bannerwerbung",
       "Membership - B2B Marketing Plan": "Mitgliedschaft - B2B Marketing Plan",
       "Buy Now On Beldara.Com": " Jetzt kaufen Auf Beldara.Com",

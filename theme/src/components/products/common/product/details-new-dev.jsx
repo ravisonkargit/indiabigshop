@@ -548,7 +548,7 @@ class Details extends Component {
   createCart = (id) => {
     axios
       .post(
-        "https://api.beldara.com/common/add_to_create_cart.php",
+        "https://api.indiabigshop.com/common/add_to_create_cart.php",
         {
           security_token: "",
           plateform_type: "",
@@ -675,7 +675,7 @@ class Details extends Component {
   create_wishlist = (e) => {
     axios
       .post(
-        "https://api.beldara.com/common/create_wishlist.php",
+        "https://api.indiabigshop.com/common/create_wishlist.php",
         {
           security_token: "",
           plateform_type: "",

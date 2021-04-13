@@ -126,10 +126,10 @@ export const RECEIVE_LANGUAGE_CONTENT = 'RECEIVE_LANGUAGE_CONTENT'
 export const SellerUrl = 'https://seller.beldara.com'
 
 //Beldara Url
-export const Url = 'https://beldara.com'
+export const Url = 'https://indiabigshop.com'
 
 //Api Beldara Url //
-export const ApiUrl = 'https://api.beldara.com'
+export const ApiUrl = 'https://api.indiabigshop.com'
 
 //Central Beldara Url //
 export const CentralUrl = 'https://central.beldara.com'

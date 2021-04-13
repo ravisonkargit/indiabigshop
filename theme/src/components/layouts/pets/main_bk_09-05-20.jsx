@@ -98,7 +98,7 @@ class Pets extends Component {
         }
         try {
             let query = 'mens-wear-clothing-accessorie-manufacturers.html'.split('/').pop();
-            axios.post("https://api.beldara.com/common/get_lp_detail.php", { url: query, sellerid: localStorage.get('sellerid'), security_token: '', plateform_type: '' }, { headers: { 'Content-Type': 'multipart/form-data' } })
+            axios.post("https://api.indiabigshop.com/common/get_lp_detail.php", { url: query, sellerid: localStorage.get('sellerid'), security_token: '', plateform_type: '' }, { headers: { 'Content-Type': 'multipart/form-data' } })
                 .then(async response => {
                     await this.setState({
                         catBanner: response.data.result.page_img,
@@ -175,7 +175,7 @@ class Pets extends Component {
         if(getCookie('chk_user') != '1'){
             if(getCookie('mhinpbn')){
                 try {
-                axios.post("https://api.beldara.com/common/check_user.php", { type: 'chk_user', sellerid: getCookie('mhinpbn')}, { headers: { 'Content-Type': 'multipart/form-data' } })
+                axios.post("https://api.indiabigshop.com/common/check_user.php", { type: 'chk_user', sellerid: getCookie('mhinpbn')}, { headers: { 'Content-Type': 'multipart/form-data' } })
                     .then(async response => {
                         //console.log("-- check user --",response.data.result);
                         await setCookie('chk_user', '1', '365');
@@ -250,7 +250,7 @@ class Pets extends Component {
         const { recent_search, top_product, recommended_product } = this.state
         return (
             <div>
-                <HeaderThree logoName={'logo/beldara_logo.png'} />
+                <HeaderThree logoName={'logo/ibs.png'} />
 
                 <div className="">
                 <div className="d-none light-box-auction-step" onClick={() => this.removeSearch()}></div>
@@ -587,7 +587,7 @@ class Pets extends Component {
 
                 {/* <ThemeSettings/> */}
                 <Suspense fallback={''}>
-                    <FooterOne logoName={'logo/BelDara-logo.png'} />
+                    <FooterOne logoName={'logo/ibs.png'} />
                 </Suspense>
                 </div>
                 {

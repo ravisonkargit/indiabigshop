@@ -10,7 +10,7 @@ var module = {
       "New Account": "\u65b0\u8d26\u6237",
       "Change Password ": "\u66f4\u6539\u5bc6\u7801",
       "About US": "\u5173\u4e8e\u6211\u4eec",
-      "Sell On Beldara": "\u5728\u8d1d\u5c14\u8fbe\u62c9\u51fa\u552e",
+      "Sell On IndiaBigShop": "\u5728\u8d1d\u5c14\u8fbe\u62c9\u51fa\u552e",
       "Banner Advertising": "\u6a2a\u5e45\u5e7f\u544a",
       "Membership - B2B Marketing Plan":
         "\u4f1a\u5458\u8d44\u683c -  B2B\u8425\u9500\u8ba1\u5212",

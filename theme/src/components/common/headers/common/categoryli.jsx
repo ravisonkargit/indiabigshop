@@ -11,6 +11,7 @@ export class Categoryli extends Component {
   }
   render() {
     const { categories } = this.props;
+    console.log(this.props)
     return (
       <ul className={!isMobile ? 'widthClass' : ''}>
         {Object.entries(categories.name)
@@ -18,7 +19,7 @@ export class Categoryli extends Component {
           .map(([key1, value1]) => (
             <li key={key1} className="text-break custom_text text-capitalize custom_li">
               <Link
-                to={`${process.env.PUBLIC_URL}/cat/${categories.url.toLowerCase()}/${value1.url.toLowerCase()}.html`}
+                to={`${process.env.PUBLIC_URL}/cat/${categories.url}/${value1.url}.html`}
                 target="_blank"
               >
                 {key1}

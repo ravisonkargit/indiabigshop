@@ -1210,7 +1210,7 @@ class Main extends Component {
         let formData = new FormData()
         formData.append('term', userData)
         // console.log(formData,value);
-        Axios.post("https://api.beldara.com/common/get_categories.php", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        Axios.post("https://api.indiabigshop.com/common/get_categories.php", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
             .then(response => {
                 // console.log(response);
                 let data = response.data.result.map(result => {
@@ -1400,7 +1400,7 @@ class Main extends Component {
                         <small>We are online, you can communicate with us for your sourcing needs &amp; to give a boost to your sales.</small>
                     </div>
                 </div>
-                <div className="chatTab shadow border-1">
+                <div className="chatTab shadow border-1 d-none">
                     <div className="chatWindow bg-white">
 
                         <div className="msgTab py-2" onClick={this.scrollcntList}>
@@ -1444,7 +1444,7 @@ class Main extends Component {
                                                                                             className="alert alert-success text-white"
                                                                                             style={{ backgroundColor: "#ff9944" }}
                                                                                         >
-                                                                                            Please fill out the form below and we will get back to you as
+                                                                                            Please fill out the form below and we will get back to as
                                                                                             soon as possible.
                                                                                             </div>
                                                                                         <div className="container">

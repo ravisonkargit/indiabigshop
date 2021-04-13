@@ -170,7 +170,7 @@ class auction extends Component {
         if (this.state.parentid == 0)
         await axios
             .post(
-                "https://api.beldara.com/common/static_seo.php",
+                "https://api.indiabigshop.com/common/static_seo.php",
                 { security_token: "", plateform_type: "", langCode: 'en', pageid: '44' },
                 { headers: { "Content-Type": "multipart/form-data" } }
             )
@@ -188,7 +188,7 @@ class auction extends Component {
             });
 
         else{
-            axios.post("https://api.beldara.com/common/cat_detail.php",{catid:this.state.catid, parentid:this.state.parentid, sellerid:ls.get('sellerid'),security_token:'',plateform_type:''}, {headers: {'Content-Type': 'multipart/form-data'}})
+            axios.post("https://api.indiabigshop.com/common/cat_detail.php",{catid:this.state.catid, parentid:this.state.parentid, sellerid:ls.get('sellerid'),security_token:'',plateform_type:''}, {headers: {'Content-Type': 'multipart/form-data'}})
                 .then(response => {
                     // return response.data.result;
                     this.setState({

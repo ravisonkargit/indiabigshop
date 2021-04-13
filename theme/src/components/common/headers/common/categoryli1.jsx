@@ -13,11 +13,11 @@ export class Categoryli1 extends Component {
     return (
       <ul className={!isMobile ? 'widthClass mx-2' : ''}>
         {Object.entries(categories.name)
-          .splice(11,10)
+          // .splice(11,10)
           .map(([key1, value1]) => (
             <li key={key1} className="text-break custom_text text-capitalize custom_li">
               <Link
-                to={`${process.env.PUBLIC_URL}/cat/${categories.url.toLowerCase()}/${value1.url.toLowerCase()}.html`}
+                to={`${process.env.PUBLIC_URL}/cat/${categories.url}/${value1.url}.html`}
                 target="_blank"
               >
                 {key1}

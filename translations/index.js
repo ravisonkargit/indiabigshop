@@ -86,7 +86,7 @@ router.get('/arabic',(req,res)=>{
         "Forgot Password?": "Forgot Password?",
         "Change Password ": "Change Password ",
         "About US": "About US",
-        "Sell On Beldara": "Sell On Beldara",
+        "Sell On IndiaBigShop": "Sell On IndiaBigShop",
         "Banner Advertising": "Banner Advertising",
         "Membership - B2B Marketing Plan": "Membership - B2B Marketing Plan",
         "Buy Now On Beldara.Com": "Buy Now On Beldara.Com",

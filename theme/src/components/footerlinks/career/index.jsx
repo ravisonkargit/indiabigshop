@@ -31,7 +31,7 @@ class Career extends Component {
         if (domain_language_code !== "" && domain_language_code !== undefined) {
           await axios
             .post(
-              "https://api.beldara.com/common/static_page.php",
+              "https://api.indiabigshop.com/common/static_page.php",
               { security_token: "", plateform_type: "", langCode: domain_language_code,pageid:'2' },
               { headers: { "Content-Type": "multipart/form-data" } }
             )
@@ -48,7 +48,7 @@ class Career extends Component {
         } else {
           await axios
             .post(
-              "https://api.beldara.com/common/static_page.php",
+              "https://api.indiabigshop.com/common/static_page.php",
               { security_token: "", plateform_type: "", langCode: 'en',pageid:'2' },
               { headers: { "Content-Type": "multipart/form-data" } }
             )
@@ -66,7 +66,7 @@ class Career extends Component {
 
         await axios
             .post(
-              "https://api.beldara.com/common/career.php",
+              "https://api.indiabigshop.com/common/career.php",
               { security_token: "", plateform_type: ""},
               { headers: { "Content-Type": "multipart/form-data" } }
             )

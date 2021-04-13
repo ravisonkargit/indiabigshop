@@ -34,7 +34,7 @@ class HomeCategoryProduct extends Component {
         try {
             axios
             .post(
-              "https://api.beldara.com/common/get_prod_by_lp.php",
+              "https://api.indiabigshop.com/common/get_prod_by_lp.php",
               { security_token: "", plateform_type: "",from:0,size:10, cat_id: this.props.cat_id },
               { headers: { "Content-Type": "multipart/form-data" } }
             )

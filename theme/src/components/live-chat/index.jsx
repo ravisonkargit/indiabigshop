@@ -338,7 +338,7 @@ class LiveChat extends Component {
                   className="alert alert-success text-white"
                   style={{ backgroundColor: "#ff9944" }}
                 >
-                  Please fill out the form below and we will get back to you as
+                  Please fill out the form below and we wil get back to  as
                   soon as possible.
                 </div>
                 <form onSubmit={this.chatSubmit}>

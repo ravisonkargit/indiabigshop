@@ -9,6 +9,7 @@ const initialState = {
 
 
 const singleProdReducer = (state = initialState, action) => {
+    console.log(action)
     switch (action.type) {
         case SINGLE_PRODUCT:
             return { ...state,

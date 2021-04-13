@@ -221,7 +221,7 @@ export async function captureEvent(
   try {
     axios
       .post(
-        "https://api.beldara.com/common/capture_event.php",
+        "https://api.indiabigshop.com/common/capture_event.php",
         {
           security_token: "",
           plateform_type: "",

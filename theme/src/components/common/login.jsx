@@ -143,7 +143,7 @@ class Login extends Component {
         if (this.validator.allValid()) {
             // $(".chkValidate").select().css({border:'none'})
               axios.post(
-              "https://api.beldara.com/common/signin_demo.php",
+              "https://api.indiabigshop.com/common/signin_demo.php",
               {
                 security_token: "",
                 plateform_type: "",

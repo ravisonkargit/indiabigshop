@@ -146,7 +146,7 @@ class Register extends Component {
       .prop("disabled", true);
     axios
       .post(
-        "https://api.beldara.com/common/sign_up.php",
+        "https://api.indiabigshop.com/common/sign_up.php",
         {
           security_token: "",
           plateform_type: "",
@@ -199,7 +199,7 @@ class Register extends Component {
       // console.log('loginSubmit1',140);
       axios
         .post(
-          "https://api.beldara.com/common/sign_up.php",
+          "https://api.indiabigshop.com/common/sign_up.php",
           {
             security_token: "",
             plateform_type: "",
@@ -303,7 +303,7 @@ class Register extends Component {
       .removeClass("d-block alert alert-danger");
     axios
       .post(
-        "https://api.beldara.com/common/otp_verify.php",
+        "https://api.indiabigshop.com/common/otp_verify.php",
         {
           security_token: "",
           plateform_type: "",
@@ -352,7 +352,7 @@ class Register extends Component {
     if (this.validator.allValid()) {
       axios
         .post(
-          "https://api.beldara.com/common/otp_verify.php",
+          "https://api.indiabigshop.com/common/otp_verify.php",
           {
             security_token: "",
             plateform_type: "",
@@ -404,6 +404,7 @@ class Register extends Component {
   };
 
   redirect_to_start_order = () => {
+    console.log(this.state.link)
     this.props.history.push({
       pathname: this.state.link,
       state: {
@@ -517,8 +518,8 @@ class Register extends Component {
             <div className="text-center mb-4">
               <img
                 className="mb-4"
-                src="/assets/images/icon/logo/beldara_logo.png"
-                alt="Beldara.com"
+                src="/assets/images/icon/logo/ibs.png"
+                alt="ibs.com"
                 width="172"
                 height="50"
               />
@@ -626,7 +627,7 @@ class Register extends Component {
                 </div>
 
                 <div className="a-divider a-divider-break">
-                  <h5>Already have Beldara account?</h5>
+                  <h5>Already have IndiaBigShop account?</h5>
                 </div>
                 <p>
                   <div className="form-group text-center">
@@ -645,7 +646,7 @@ class Register extends Component {
                   </div>
                 </p>
                 <p className="mt-5 text-center">
-                  © 2019, Beldara.com, All rights reserved.
+                  © 2021, IndiaBigShop.com, All rights reserved.
                 </p>
               </form>
             ) : (

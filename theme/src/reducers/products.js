@@ -33,7 +33,7 @@ const productReducer = (state = initialState, action) => {
         case RECEIVE_PRODUCTS:
             // console.log(action.type)
             return { ...state,
-                products: action.products
+                products: action.productI
             };
         case SEARCH_PRODUCTS:
             return { ...state,

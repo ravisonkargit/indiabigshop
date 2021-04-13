@@ -111,7 +111,7 @@ class StartOrder extends Component {
       // console.log('valid');
       $(".chkValidate").select().css({border:'none'})
         axios.post(
-        "https://api.beldara.com/common/upd_add_buyer.php",
+        "https://api.indiabigshop.com/common/upd_add_buyer.php",
         {
           security_token: "",
           plateform_type: "",

@@ -189,7 +189,7 @@ class auction extends Component {
         }
         await axios
             .post(
-                "https://api.beldara.com/common/static_seo.php",
+                "https://api.indiabigshop.com/common/static_seo.php",
                 { security_token: "", plateform_type: "", langCode: 'en', pageid: '44' },
                 { headers: { "Content-Type": "multipart/form-data" } }
             )

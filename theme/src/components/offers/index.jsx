@@ -33,7 +33,7 @@ class Offers extends Component {
             let query = window.location.pathname.split('/').pop();
             // let query = 'offers.html';
             
-            axios.post("https://api.beldara.com/common/get_lp_detail.php",{url:query,sellerid:ls.get('sellerid'),security_token:'',plateform_type:''}, {headers: {'Content-Type': 'multipart/form-data'}})
+            axios.post("https://api.indiabigshop.com/common/get_lp_detail.php",{url:query,sellerid:ls.get('sellerid'),security_token:'',plateform_type:''}, {headers: {'Content-Type': 'multipart/form-data'}})
             .then(async response => {
                 await this.setState({
                     catBanner: response.data.result.page_img,

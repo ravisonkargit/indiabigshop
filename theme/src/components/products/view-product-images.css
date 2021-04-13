@@ -9,7 +9,7 @@
 
 img.hover-zoom {
   transition: all 0.3s ease 0s;
-  width: 300px;
+  width: 100px;
 }
 
 img.hover-zoom:hover {
@@ -20,6 +20,12 @@ img.hover-zoom:hover {
   width: 1000px;
   margin-left: -120px !important;
 }
+@media only screen and (max-width: 600px) {
+  img.hover-zoom {
+    transition: all 0.3s ease 0s;
+    width: 100px;
+  }
+  }
 
 .active-1 {
   border: 2px solid #f5821e;
@@ -44,7 +50,7 @@ img.hover-zoom:hover {
   }
   img.hover-zoom {
     transition: all 0.3s ease 0s;
-    width: 300px;
+    width: 100px;
   }
   img.hover-zoom:hover {
     transform: scale(1.25);

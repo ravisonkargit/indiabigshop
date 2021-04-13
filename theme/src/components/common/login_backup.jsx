@@ -117,7 +117,7 @@ class Login extends Component {
         if (this.validator.allValid()) {
             // $(".chkValidate").select().css({border:'none'})
               axios.post(
-              "https://api.beldara.com/common/signin.php",
+              "https://api.indiabigshop.com/common/signin.php",
               {
                 security_token: "",
                 plateform_type: "",
@@ -136,7 +136,7 @@ class Login extends Component {
               }
               else {
                 setCookie('mhinpbn', response.data.result.sellerid, '365')
-                axios.post("https://api.beldara.com/common/map_cart.php",{
+                axios.post("https://api.indiabigshop.com/common/map_cart.php",{
                       security_token: "",
                       plateform_type: "",
                       sellerid: response.data.result.sellerid,

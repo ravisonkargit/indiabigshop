@@ -54,7 +54,7 @@ class LandingPage extends Component {
             const val = query1.split("-").splice(-1)[0];
             if(isNaN(val)){
                 var query = window.location.pathname.split('/').pop();
-                axios.post("https://api.beldara.com/common/get_lp_detail.php",{url:query,sellerid:ls.get('sellerid'),security_token:'',plateform_type:''}, {headers: {'Content-Type': 'multipart/form-data'}})
+                axios.post("https://api.indiabigshop.com/common/get_lp_detail.php",{url:query,sellerid:ls.get('sellerid'),security_token:'',plateform_type:''}, {headers: {'Content-Type': 'multipart/form-data'}})
                 .then(async response => {
                     //result.
                     await this.setState({
@@ -158,7 +158,7 @@ class LandingPage extends Component {
                                                             : ''}
                                                         
                                                         <div className="top-banner-content small-section text-left">
-                                                            <h4>{this.state.catName}</h4>
+                                                            <h4>{this.state.catName.split('/').pop().replace("-21", "")}</h4>
                                                             {/* <h5>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</h5> */}
                                                             {/* <p>{this.state.catDesc!='.' &&  this.state.catDesc!='' ? this.state.catDesc : ''} </p> */}
                                                         </div>

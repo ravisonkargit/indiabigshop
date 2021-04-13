@@ -67,7 +67,7 @@ function getSuggestionValue(suggestion) {
 function renderSuggestion(suggestion, { query }) {
   const matches = AutosuggestHighlightMatch(suggestion.name, query);
   const parts = AutosuggestHighlightParse(suggestion.name, matches);
-
+  //console.log(this.props.lp.lp);
   return (
     <span>
       {parts.map((part, index) => {
@@ -113,7 +113,7 @@ class Pets extends Component {
     var hostname = window.location.hostname;
     // if (hostname === undefined || hostname == '')
     // hostname = "hindi.beldara.com";
-    langDomain = hostname.split("beldara.com")[0];
+    langDomain = hostname.split("indiabigshop.com")[0];
     langDomain = langDomain.replace(".", "");
     store.dispatch(clearState());
   }
@@ -170,7 +170,7 @@ class Pets extends Component {
         .pop();
       axios
         .post(
-          "https://api.beldara.com/common/get_lp_detail.php",
+          "https://api.indiabigshop.com/common/get_lp_detail.php",
           {
             url: query,
             sellerid: ls.get("sellerid"),
@@ -180,6 +180,7 @@ class Pets extends Component {
           { headers: { "Content-Type": "multipart/form-data" } }
         )
         .then(async (response) => {
+         // console.log(response.data.result);
           await this.setState({
             catBanner: response.data.result.page_img,
             catName: response.data.result.page_name,
@@ -273,7 +274,7 @@ class Pets extends Component {
         try {
           axios
             .post(
-              "https://api.beldara.com/common/check_user.php",
+              "https://api.indiabigshop.com/common/check_user.php",
               { type: "chk_user", sellerid: getCookie("mhinpbn") },
               { headers: { "Content-Type": "multipart/form-data" } }
             )
@@ -297,11 +298,12 @@ class Pets extends Component {
     try {
         axios
         .post(
-              "https://api.beldara.com/common/get_web_home_banner.php",
+              "https://api.indiabigshop.com/common/get_web_home_banner.php",
               { type: "chk_user", sellerid: getCookie("mhinpbn") },
               { headers: { "Content-Type": "multipart/form-data" } }
             )
             .then(async (response) => {
+
               this.setState({
                 Banners1: response.data.result,
               });
@@ -319,7 +321,7 @@ class Pets extends Component {
     try {
         axios
         .post(
-              "https://api.beldara.com/common/verticle_banner.php",
+             "https://api.indiabigshop.com/common/verticle_banner.php",
               { sellerid: getCookie("mhinpbn"),"currency":"INR",
                 "versionCode":"",
                 "security_token":"",
@@ -387,6 +389,7 @@ class Pets extends Component {
   };
 
   SellerFlow = () => {
+    console.log(getCookie("mhinpbn"))
     if (getCookie("mhinpbn")) {
       let newDate = new Date();
       let date = newDate.getDate();
@@ -401,7 +404,7 @@ class Pets extends Component {
         try {
           axios
             .post(
-              "https://api.beldara.com/common/check_user_type.php",
+              "https://api.indiabigshop.com/common/check_user_type.php",
               { type: "chk_user", sellerid: getCookie("mhinpbn") },
               { headers: { "Content-Type": "multipart/form-data" } }
             )
@@ -447,7 +450,7 @@ class Pets extends Component {
     let formData = new FormData();
     formData.append("term", userData);
     // console.log(formData,value);
-    Axios.post("https://api.beldara.com/common/get_categories.php", formData, {
+    Axios.post("https://api.indiabigshop.com/common/get_categories.php", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     })
       .then((response) => {
@@ -631,11 +634,11 @@ class Pets extends Component {
       name: "category_name",
       id: "category_name",
       required: true,
-    };
-
+    }
+   // console.log(this.state.Banners1)
     return (
       <div>
-        <HeaderThree logoName={"logo/beldara_logo.png"} />
+        <HeaderThree logoName={"logo/ibs.png"} />
 
         <div className="">
           <div
@@ -646,24 +649,24 @@ class Pets extends Component {
             <Slider {...settings} className="slide-1 home-slider">
               {this.state.Banners1 ? Object.keys(this.state.Banners1).slice(0, 10).map((item, index) => (
                 <div key={this.state.Banners1[item].title}>
-                  {this.state.Banners1[item].link != "" ? (
+                  {this.state.Banners1[item].link!= "" ? (
                     <a href={this.state.Banners1[item].link} target={"_blank"}>
                       <div
                         className="home lazyload"
-                        style={{ backgroundImage: `url(${this.state.Banners1[item].image})` }}
+                        style={{ backgroundImage:`url(${this.state.Banners1[item].image})`}}
                       ></div>
                     </a>
                   ) : (
                     <div
                       className="home lazyload"
-                      style={{ backgroundImage: `url(${this.state.Banners1[item].image})` }}
+                      style={{ backgroundImage:`url(${this.state.Banners1[item].image})`}}
                     ></div>
                   )}
                 </div>
               )):
               banners.slice(0, 7).map((item) => (
                 <div key={item.title}>
-                  {item.link != "" ? (
+                  {item.link!= "" ? (
                     <a href={item.link} target={"_blank"}>
                       <div
                         className="home lazyload"
@@ -699,6 +702,7 @@ class Pets extends Component {
           </section>
 
           {/*Buy Lead & Post Req*/}
+         {/* <section>
           <div className="container">
             <div className="row mt-2 mb-2 ">
               <a
@@ -707,7 +711,7 @@ class Pets extends Component {
               >
                 <i className="fa fa-bullhorn text-danger fa-lg card-img-right flex-auto align-self-center d-none d-lg-block"></i>
                 {/* <i className="fa fa-bullhorn text-danger fa-lg card-img-right flex-auto align-self-center d-none d-lg-block"></i> */}
-                <div className="card-body d-flex flex-column align-items-start justify-content-center p-1">
+               {/* <div className="card-body d-flex flex-column align-items-start justify-content-center p-1">
                   <div className="d-inline-block text-danger font-weight-light">
                     {translate("Post Requirement")}
                   </div>
@@ -727,6 +731,8 @@ class Pets extends Component {
               <div className="clearfix"></div>
             </div>
           </div>
+         </section>*/}
+         
           {/*Buy Lead & Post Req*/}
 
           {/*Landing Page Top New*/}
@@ -822,7 +828,7 @@ class Pets extends Component {
           {/*Product Section*/}
           {/* <Collection type={'pets'} title="TOP Products" subtitle="Special Offer"/> */}
 
-          <div className="christmas_offer">
+          {/*<div className="christmas_offer">
             <div className="container">
               <div className="row" style={{ marginTop: "20px" }}>
                 <div
@@ -896,7 +902,7 @@ class Pets extends Component {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* <div className="text-center">
             <img
@@ -907,7 +913,7 @@ class Pets extends Component {
             />
           </div> */}
 
-          <div className="christmas_offer">
+        {/* <div className="christmas_offer">
             <div className="container">
               <div className="row" style={{ marginTop: "20px" }}>
                 <div
@@ -966,7 +972,7 @@ class Pets extends Component {
  <div>
  <h2>Clothes</h2>
  </div>
- </div> */}
+ </div> 
                         </a>
                       </div>
                       <div className="home-category-info-detail">
@@ -986,12 +992,13 @@ class Pets extends Component {
                 </div>
               </div>
             </div>
-          </div>
+          </div>*/}
+
 
           {/* post requirement model */}
           {/* <ReqCollection /> */}
 
-          <div className="top_product d-none">
+        {/*  <div className="top_product d-none">
             <Suspense fallback={"Loading"}>
               <Collection
                 action={this.getAction}
@@ -1012,9 +1019,8 @@ class Pets extends Component {
                 title={"Recommended Product"}
               />
             </Suspense>
-          </div>
-
-          <div className="recent_search d-none">
+          </div>*/}
+            <div className="recent_search d-none">
             <Suspense fallback={"Loading"}>
               <Collection
                 action={this.getAction}
@@ -1089,7 +1095,7 @@ class Pets extends Component {
 
           {/*Logo Block section*/}
           {/* <Collection /> */}
-          <LazyLoad debounce={false} offsetVertical={500}>
+         {/* <LazyLoad debounce={false} offsetVertical={500}>
             <LogoBlock
               type={"pets"}
               title={translate("Our suppliers")}
@@ -1107,7 +1113,7 @@ class Pets extends Component {
 
           {/* <ThemeSettings/> */}
           <Suspense fallback={""}>
-            <FooterOne logoName={"logo/BelDara-logo.png"} />
+            <FooterOne logoName={"logo/ibs.png"} />
           </Suspense>
         </div>
         {this.state.isAndroidAppOpen && (
@@ -1377,10 +1383,12 @@ class Pets extends Component {
 }
 
 const mapStateToProps = (state) => ({
+  
   banners: state.banners,
   lp: state.lp,
   tm: state.tm,
   languageMaster: state.languageMaster.languageMaster,
+  
 });
 
 export default withTranslate(

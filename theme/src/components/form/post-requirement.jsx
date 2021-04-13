@@ -173,7 +173,7 @@ class PostRequirement extends Component {
         if (domain_language_code !== "" && domain_language_code !== undefined) {
             await axios
                 .post(
-                    "https://api.beldara.com/common/static_page.php",
+                    "https://api.indiabigshop.com/common/static_page.php",
                     { security_token: "", plateform_type: "", langCode: domain_language_code, pageid: '17' },
                     { headers: { "Content-Type": "multipart/form-data" } }
                 )
@@ -189,7 +189,7 @@ class PostRequirement extends Component {
         } else {
             await axios
                 .post(
-                    "https://api.beldara.com/common/static_page.php",
+                    "https://api.indiabigshop.com/common/static_page.php",
                     { security_token: "", plateform_type: "", langCode: 'en', pageid: '17' },
                     { headers: { "Content-Type": "multipart/form-data" } }
                 )
@@ -324,7 +324,7 @@ class PostRequirement extends Component {
         userData = JSON.stringify(userData)
         let formData = new FormData()
         formData.append('data', userData)
-        axios.post("https://api.beldara.com/common/search_universal.php", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        axios.post("https://api.indiabigshop.com/common/search_universal.php", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
             .then(response => {
                 // console.log('productid axios: '+this.state.productid);
                 let data = response.data.result.map(result => {

@@ -21,7 +21,7 @@ class Activitylist extends Component{
         try{
             await axios
             .post(
-              "https://api.beldara.com/common/static_seo.php",
+              "https://api.indiabigshop.com/common/static_seo.php",
               { security_token: "", plateform_type: "", langCode: "en",pageid:'45' },
               { headers: { "Content-Type": "multipart/form-data" } }
             )

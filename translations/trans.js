@@ -34,7 +34,7 @@ var trans = {
           "Forgot Password?": "Forgot Password?",
           "Change Password ": "Change Password ",
           "About US": "About US",
-          "Sell On Beldara": "Sell On Beldara",
+          "Sell On IndiaBigShop": "Sell On IndiaBigShop",
           "Banner Advertising": "Banner Advertising",
           "Membership - B2B Marketing Plan": "Membership - B2B Marketing Plan",
           "Buy Now On Beldara.Com": "Buy Now On Beldara.Com",
@@ -5936,7 +5936,7 @@ var trans = {
   
         "BRAND PRODUCTS": "BRAND PRODUCTS",
         "Write Your Feedback here":"Write Your Feedback here",
-        "Sell On Beldara":
+        "Sell On IndiaBigShop":
           "\u092c\u0947\u0932\u0926\u0930\u093e \u092a\u0930 \u092c\u0947\u091a\u0947\u0902",
         "Reach Out To Multiple Sellers - B2B MarketPlace":
           "\u092e\u0932\u094d\u091f\u0940\u092a\u0932 \u0938\u0947\u0932\u0930\u094d\u0938 \u0924\u0915 \u092a\u0939\u0941\u0902\u091a\u0947\u0902 - \u092c\u0940 2 \u092c\u0940 \u092e\u093e\u0930\u094d\u0915\u0947\u091f\u092a\u094d\u0932\u0947\u0938",

@@ -49,7 +49,7 @@ class Requirement extends Component {
         if(email != '' ||  mobile != ''){
             try{
                 axios.post(
-                    "https://api.beldara.com/common/checkout-with-otp.php",
+                    "https://api.indiabigshop.com/common/checkout-with-otp.php",
                     {
                         type: "OTP",
                         userName:'',

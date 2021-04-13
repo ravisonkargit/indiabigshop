@@ -57,13 +57,13 @@ export const getLogOut = () => dispatch => {
       case 'http://localhost:3000' :
         url_type = 'lo';
         break;
-        case 'https://beldara.com' :
+        case 'https://indiabigshop.com' :
         url_type = 'go';
         break;
-        case 'https://en.beldara.com' :
+        case 'https://en.indiabigshop.com' :
         url_type = 'en';
         break;
-        case 'https://uat.beldara.com' :
+        case 'https://uat.indiabigshop.com' :
         url_type = 'uat';
         break;
       }
@@ -210,7 +210,6 @@ export const getTotalCost = value => dispatch => {
 
 //update User
 export const getUpdateUser = sellerid => dispatch => {
-  console.log(sellerid)
   try {
     axios
       .post(
@@ -315,42 +314,42 @@ export const getAllLanguages = domain => async dispatch => {
         code: "en",
         language: "English",
         main_language: "English",
-        url: "https://beldara.com"
+        url: "https://indiabigshop.com"
       },
       {
         id: "12",
         code: "hi",
         language: "हिंदी",
         main_language: "Hindi",
-        url: "https://hindi.beldara.com"
+        url: "https://hindi.indiabigshop.com"
       },
       {
         id: "4",
         code: "zh",
         language: "中文",
         main_language: "Chinese",
-        url: "https://chinese.beldara.com"
+        url: "https://chinese.indiabigshop.com"
       },
       {
         id: "13",
         code: "ar",
         language: "عربى",
         main_language: "Arabic",
-        url: "https://arabic.beldara.com"
+        url: "https://arabic.indiabigshop.com"
       },
       {
         id: "15",
         code: "de",
         language: "Deutsche",
         main_language: "German",
-        url: "https://german.beldara.com"
+        url: "https://german.indiabigshop.com"
       },
       {
         id: "5",
         code: "ru",
         language: "русский",
         main_language: "russian",
-        url: "https://russian.beldara.com"
+        url: "https://russian.indiabigshop.com"
       }
     ];
     dispatch(receiveLanguage(langCode));
@@ -382,6 +381,8 @@ export const getSearchResults = (from, limit) => dispatch => {
     return axios
       .post(
         `${ApiUrl}/common/search_result1.php`,
+       // `${ApiUrl}/beta_api/recent_search_product.php,
+
         {
           term: query,
           sellerid: ls.get("sellerid"),
@@ -453,7 +454,9 @@ export const receiveRecentProducts = product => ({
   product
 });
 export const getRecentSearch = () => dispatch => {
+  console.log(getCookie('mhinpbnb'));
   dispatch(showLoading("sectionBar"));
+  console.log(getCookie('mhinpbn'));
   axios.post(`${ApiUrl}/common/recent_search.php`,
     {
       security_token: "",
@@ -466,7 +469,7 @@ export const getRecentSearch = () => dispatch => {
     .then(response => {
 
       dispatch(receiveRecentProducts(response.data.result));
-
+        console.log(response.data.result);
       return response.data.result.products;
     })
     .catch(error => {
@@ -562,18 +565,17 @@ export const SingleProduct = productId => ({
   productId
 });
 export const getSingleProduct = url => dispatch => {
-  console.log(url)
   
   try {
     dispatch(ClearSingleProduct(''));
     return axios
       .post(
-        `${ApiUrl}/common/product-details.php`,
+        `${ApiUrl}/common/fetch_single_prod.php`,
         // `${ApiUrl}/common/fetch_single_prod_test.php`,
         // common/fetch_single_prod.php
         // /common/product-details.php
         {
-          id: url,
+          url: url,
           sellerid: ls.get("sellerid"),
           security_token: "",
           plateform_type: ""
@@ -581,6 +583,7 @@ export const getSingleProduct = url => dispatch => {
         { headers: { "Content-Type": "multipart/form-data" } }
       )
       .then(response => {
+        console.log(response);
         dispatch(SingleProduct(response.data.result));
         // return Promise.reject(error)
         console.log(response.data.result,"b")
@@ -619,9 +622,11 @@ export const getSearchResultsByCategory = (from, limit, query) => dispatch => {
         { headers: { "Content-Type": "multipart/form-data" } }
       )
       .then(response => {
+        console.log("text");
         
         //dispatch(productsByCategory(response.data.result));
         return response.data.result;
+        
       })
       .catch(error => {
         const result = error.response;
@@ -655,7 +660,7 @@ export const getProductsByLP = (cat_id,typeData,datatype,is_search_by_keyword)=>
     is_search_by_keyword=""
   }
   if(typeData == '1'){
-    axios.post("https://api.beldara.com/common/get_prod_by_lp.php",
+    axios.post("https://api.indiabigshop.com/common/get_prod_by_lp.php",
       { security_token: "", plateform_type: "", cat_id: cat_id, type: is_search_by_keyword },
       {headers: {'Content-Type': 'multipart/form-data'}}
     )
@@ -667,11 +672,12 @@ export const getProductsByLP = (cat_id,typeData,datatype,is_search_by_keyword)=>
       return Promise.reject(result);
     });
   }else{
-    axios.post("https://api.beldara.com/common/get_prod_by_lp_universal.php",
+    axios.post("https://api.indiabigshop.com/common/get_prod_by_lp_universal.php",
       { security_token: "", plateform_type: "", term :cat_id,sellerid:ls.get('sellerid'),type:datatype,currency:"INR",user_cat:cat_id},
       {headers: {'Content-Type': 'multipart/form-data'}}
     )
     .then(response => {
+      console.log(response.data.result);
       console.log(200,'lp',response)
       dispatch(receiveProductsByLP(response.data.result));
     })
@@ -691,7 +697,7 @@ export const getRelatedProducts = productId => dispatch => {
   try {
     axios
       .post(
-        "https://api.beldara.com/common/get_seller_related_prod.php",
+        "https://api.indiabigshop.com/common/get_seller_related_prod.php",
         { prod_id: productId, security_token: "", plateform_type: "" },
         { headers: { "Content-Type": "multipart/form-data" } }
       )
@@ -716,13 +722,13 @@ export const receiveBanners = banners => ({
 export const getAllBanners = language => dispatch => {
   try {
     var data = [];
-    shop.getBanners(banners => {
-      banners.forEach(item => {
-        if (item.lang === language) data.push(item);
-      });
-      dispatch(receiveBanners(data));
-      return data;
-    });
+    // shop.getBanners(banners => {
+    //   banners.forEach(item => {
+    //     if (item.lang === language) data.push(item);
+    //   });
+    //   dispatch(receiveBanners(data));
+    //   return data;
+    // });
   } catch (e) {
     console.log(`😱 File not found: ${e}`);
   }
@@ -817,7 +823,7 @@ export function getStoreFront(surl) {
     return async dispatch => {
       await axios
         .post(
-          "https://api.beldara.com/common/SFData.php",
+          "https://api.indiabigshop.com/common/SFData.php",
           { security_token: "", plateform_type: "", surl: surl },
           { headers: { "Content-Type": "multipart/form-data" } }
         )
@@ -845,7 +851,7 @@ export const getSellerProducts = (sellerid, offset, limit) => dispatch => {
     // console.log('Ho')
     axios
       .post(
-        "https://api.beldara.com/common/MyProductList.php",
+        "https://api.indiabigshop.com/common/MyProductList.php",
         {
           security_token: "",
           plateform_type: "",
@@ -1264,12 +1270,10 @@ export const clearCartListItems = () => ({
 
 //fetch cartlength
 export const getCartLength = (sellerid,visitorid) => dispatch => {
+  console.log("k")
   try{
-    console.log(sellerid,visitorid)
     // console.log(sellerid,visitorid,1256);
     dispatch(clearCartListItems());
-
-   
     axios
       .post(
         `${ApiUrl}/common/getCartlength.php`,
@@ -1282,12 +1286,13 @@ export const getCartLength = (sellerid,visitorid) => dispatch => {
         { headers: { "Content-Type": "multipart/form-data" } }
       )
       .then(response => {
+        console.log(response.data.result)
         // console.log(response.data.result,1256);
         dispatch(cartListItems(response.data.result));
         // return Promise.reject(error)
         // return response.data.result;
         // return Promise.resolve()
-        console.log(response.data.result, "h")
+       
       })
       .catch(error => {
         const result = error.response;

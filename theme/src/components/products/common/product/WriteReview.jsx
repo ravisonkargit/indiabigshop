@@ -54,7 +54,7 @@ class WriteReview extends Component {
             } else {
                
                 axios.post(
-                    "https://api.beldara.com/common/fetch_single_prod.php",
+                    "https://api.indiabigshop.com/common/fetch_single_prod.php",
                     {
                       security_token: "",
                       plateform_type: "",
@@ -81,7 +81,7 @@ class WriteReview extends Component {
         } catch (e) {
            
             axios.post(
-                "https://api.beldara.com/common/fetch_single_prod.php",
+                "https://api.indiabigshop.com/common/fetch_single_prod.php",
                 {
                   security_token: "",
                   plateform_type: "",

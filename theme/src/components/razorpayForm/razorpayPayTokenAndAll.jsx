@@ -62,7 +62,7 @@ class RazorpayForm extends Component {
   createFrom = (allProps) => {
     axios
       .post(
-        `https://api.beldara.com/common/generate_order_id_razor_pay.php`,
+        `https://api.indiabigshop.com/common/generate_order_id_razor_pay.php`,
         {
           amount: allProps.amount,
           currency: this.props.currency,

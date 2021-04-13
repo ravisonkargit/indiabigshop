@@ -24,7 +24,7 @@ class OtpVerify extends Component {
         const sellerid = ls.get('sellerid');
 
         try {
-            axios.post("https://api.beldara.com/common/signupOtp.php",{otp:otp, plateform_type:plateform_type, sellerid:sellerid}, {headers: {'Content-Type': 'multipart/form-data'}})
+            axios.post("https://api.indiabigshop.com/common/signupOtp.php",{otp:otp, plateform_type:plateform_type, sellerid:sellerid}, {headers: {'Content-Type': 'multipart/form-data'}})
             .then(response => {
             })
             .catch(error => {

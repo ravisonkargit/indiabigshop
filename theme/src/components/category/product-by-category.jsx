@@ -58,12 +58,12 @@ class ProductByCategory extends Component {
             this.props.getSearchResultsByCategory(this.state.offset, this.state.perPage,query)
             .then(res => {
                 console.log(res);
-                if (this.state.isPageLoaded == 0 && res[0][0]) {
+                if (this.state.isPageLoaded == 0) {
                     this.setState({
                     isPageLoaded: 1,
-                    products: res[0][0],
-                    totalCount: res[0][1],
-                    pageCount : Math.ceil( parseInt(res[0][1]) / parseInt(this.state.perPage))
+                    products: res,
+                    totalCount: res,
+                    pageCount : Math.ceil( parseInt(res) / parseInt(this.state.perPage))
                     });
                 }
             })

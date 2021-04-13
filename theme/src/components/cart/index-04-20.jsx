@@ -437,7 +437,7 @@ class cartComponent extends Component {
  
  try{
  axios.post(
- "https://api.beldara.com/common/calculate_country_wise_price.php",
+ "https://api.indiabigshop.com/common/calculate_country_wise_price.php",
  {
  security_token: "",
  plateform_type: "",
@@ -573,7 +573,7 @@ this.setState({
 //  console.log('update_total_price_cart');
  try {
  axios.post(
- "https://api.beldara.com/common/update_total_price_cart.php",
+ "https://api.indiabigshop.com/common/update_total_price_cart.php",
  {
  security_token: "",
  plateform_type: "",
@@ -623,7 +623,7 @@ this.setState({
  });
  axios
  .post(
- "https://api.beldara.com/common/calculate_country_wise_price.php",
+ "https://api.indiabigshop.com/common/calculate_country_wise_price.php",
  {
  security_token: "",
  plateform_type: "",

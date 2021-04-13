@@ -1156,7 +1156,7 @@ class Main extends Component {
         let formData = new FormData()
         formData.append('term', userData)
         // console.log(formData,value);
-        Axios.post("https://api.beldara.com/common/get_categories.php", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        Axios.post("https://api.indiabigshop.com/common/get_categories.php", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
             .then(response => {
                 // console.log(response);
                 let data = response.data.result.map(result => {

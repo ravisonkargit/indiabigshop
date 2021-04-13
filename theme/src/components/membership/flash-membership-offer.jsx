@@ -195,7 +195,7 @@ class FlashMembership extends Component {
     if (domain_language_code !== "" && domain_language_code !== undefined) {
       await axios
         .post(
-          "https://api.beldara.com/common/static_page.php",
+          "https://api.indiabigshop.com/common/static_page.php",
           {
             security_token: "",
             plateform_type: "",
@@ -218,7 +218,7 @@ class FlashMembership extends Component {
     } else {
       await axios
         .post(
-          "https://api.beldara.com/common/static_page.php",
+          "https://api.indiabigshop.com/common/static_page.php",
           {
             security_token: "",
             plateform_type: "",

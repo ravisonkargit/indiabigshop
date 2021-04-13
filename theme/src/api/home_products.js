@@ -2,7 +2,7 @@ import axios from 'axios'
  
  
  // Top Products 
- axios.get("https://api.beldara.com/common/home_products.php", {headers: {'Content-Type': 'multipart/form-data'}})
+ axios.get("https://api.indiabigshop.com/common/home_products.php", {headers: {'Content-Type': 'multipart/form-data'}})
  .then(response => {
     //  this.setState(prevState => {
        console.log("uih")

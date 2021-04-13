@@ -21,6 +21,7 @@ class PriceCalc extends Component {
 
     componentDidMount(){
         this.getPrice(this.props)
+        console.log(this.props)
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
@@ -153,6 +154,7 @@ class PriceCalc extends Component {
     render() {
         // console.log('render',151);
         const {start_price, symbol, end_price} = this.state;
+        console.log(this.props)
         return (
             // <React.Fragment>
             //     <div>
@@ -170,9 +172,9 @@ class PriceCalc extends Component {
                 <div>
                     {start_price !== undefined && start_price != 'undefined' ?
                     ( parseFloat(start_price) > parseFloat(end_price) && parseFloat(end_price) > parseFloat(0) )?
-                            <div className="font-weight-bold small"> {parseFloat(end_price) !== 0.00 ? symbol + ' ' + new Intl.NumberFormat().format(end_price) : 'Ask for price'} {start_price ? '- '  + new Intl.NumberFormat().format(start_price) : ''}</div>
+                            <div className="font-weight-bold small"> {parseFloat(end_price) !== 0.00 ? symbol + ' ' + new Intl.NumberFormat().format(end_price) : 'Ask for price'}</div>
                     :( parseFloat(start_price) >  parseFloat(0) && parseFloat(end_price) >  parseFloat(0))?
-                            <div className="font-weight-bold small"> { parseFloat(start_price) !== 0.00 ? symbol + ' ' + new Intl.NumberFormat().format(start_price) : ''} {end_price ? '- ' + new Intl.NumberFormat().format(end_price) : ''}</div>
+                            <div className="font-weight-bold small"> { parseFloat(start_price) !== 0.00 ? symbol + ' ' + new Intl.NumberFormat().format(start_price) : ''} </div>
                     :( parseFloat(start_price) >  parseFloat(0))?
                         <div className="font-weight-bold small"> { parseFloat(start_price) !== 0.00 ? symbol + ' ' + new Intl.NumberFormat().format(start_price) : 'Ask for price'} </div>
                     :( parseFloat(end_price) >  parseFloat(0))?
@@ -180,6 +182,8 @@ class PriceCalc extends Component {
                     : <div className="font-weight-bold"> {parseFloat(start_price) !== 0.00 ? <React.Fragment> {this.prodCost(start_price)} {symbol + ' ' + new Intl.NumberFormat().format(start_price)} </React.Fragment>: 'Ask for price'}</div>
                     :''}
                 </div>
+                <div>{this.props.weight}</div>
+                <div></div>
 
                 {/* <div>
                     {start_price !== undefined && start_price != 'undefined' ?

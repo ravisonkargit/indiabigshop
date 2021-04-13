@@ -338,7 +338,7 @@ class StartOrderTest extends Component {
   // };
 
   orderSubmit = async (e) => {
-    if (ls.get("sellerid")) {
+      console.log("hsbdcdhjbjhb")
       $(".unique_class").attr("disabled", "true");
       $("#confirm_order_sppinner").removeClass("d-none");
       this.setState({
@@ -347,10 +347,12 @@ class StartOrderTest extends Component {
       e.preventDefault();
 
       if (this.validator.allValid()) {
+        console.log("jhsbcdajhcbdcjhdbcadjhcbdacjhadb")
         if (
           this.state.gst_in == "" ||
           (this.state.gst_in != "" && this.state.gst_validated)
         ) {
+          console.log("jhbscdjhcbdhjb")
           $("#price_validating_start").removeClass("d-none");
           //  console.log("valid");
           $(".chkValidate")
@@ -358,7 +360,7 @@ class StartOrderTest extends Component {
             .css({ border: "none" });
           axios
             .post(
-              "https://api.beldara.com/common/upd_add_buyer.php",
+              "https://api.indiabigshop.com/common/upd_add_buyer.php",
               {
                 security_token: "",
                 plateform_type: "",
@@ -372,6 +374,7 @@ class StartOrderTest extends Component {
               { headers: { "Content-Type": "multipart/form-data" } }
             )
             .then(async (response) => {
+              console.log(response)
               // console.log(this.state.totalProductCost,this.state.symbol,this.state.cartId,129);
               axios
                 .post(
@@ -386,8 +389,10 @@ class StartOrderTest extends Component {
                   { headers: { "Content-Type": "multipart/form-data" } }
                 )
                 .then((response) => {
+                  console.log(response)
                   this.updateAddress();
-                  if (response.data.result[0].status == "true") {
+                  if (response.data.status == "Success") {
+                    console.log("hbdjhsdbs")
                     axios
                       .post(
                         `${ImgUrl}/beta_api/validate-pincode-deliverable-web.php`,
@@ -402,6 +407,7 @@ class StartOrderTest extends Component {
                       )
                       .then((res) => {
                         if (res.data.statusId == 1) {
+                          console.log(this.state.link)
                           //  console.log("pincode validated");
                           $("#price_validating_start").addClass("d-none");
                           let product_currency = this.state.symbol;
@@ -420,6 +426,7 @@ class StartOrderTest extends Component {
                             value: total_price,
                             currency: "USD",
                           });
+                          console.log(this.state.link)
                           axios
                             .post(
                               this.state.link,
@@ -452,6 +459,7 @@ class StartOrderTest extends Component {
                               }
                             )
                             .then((res) => {
+                              console.log(res)
                               $(".unique_class").removeAttr("disabled");
                               //  console.log(res, "statusid");
                               if (res.data.message == 1) {
@@ -526,10 +534,7 @@ class StartOrderTest extends Component {
                     $("#confirm_order_sppinner").addClass("d-none");
                     $("#price_validating_start").addClass("d-none");
                     $("#price_validating_end").removeClass("d-none");
-                    var inter = setInterval(() => {
-                      window.location.href = "/cart.html";
-                      clearInterval(inter);
-                    }, 5000);
+                   
                     // console.log('error occurred: '+response.data.result[0].status);
                   }
                   // return
@@ -577,32 +582,7 @@ class StartOrderTest extends Component {
         ls.get("sellerid"),
         getCookie("mhinpbnb")
       );
-    } else {
-      this.props.history.push({
-        pathname: "/register.html",
-        state: {
-          totalCartValue: this.state.totalCartValue,
-          totalProductCost: parseFloat(this.state.totalProductCost).toFixed(2),
-          totalShippingCost: this.state.totalShippingCost,
-          finalShippingCost: this.state.finalShippingCost,
-          cartItems: this.state.cartItems,
-          countryName: this.state.shippingCountryName,
-          symbol: this.state.symbol,
-          cartId: this.state.cartid,
-          //pixeldata: pixeldata,
-          shippingCharges: this.state.shippingCharges,
-          inrValue: this.state.inrValue,
-          // link:
-          //   "/start-order/" +
-          //   Math.random()
-          //     .toString(36)
-          //     .replace(/[^a-z]+/g, "")
-          //     .substr(0, 8) +
-          //   ".html",
-          link: "/start-order.html",
-        },
-      });
-    }
+   
   };
 
   checkProductPrice = () => {
@@ -720,7 +700,7 @@ class StartOrderTest extends Component {
             plateform_type: "",
             security_token: "",
             visitor_id: getCookie("mhinpbnb"),
-            currency: getCookie("currency"),
+            currency: "INR",
             country_code: getCookie("country_code"),
             country_to: getCookie("countryid"),
             //txn_type: this.props.location.state.txn_type,
@@ -790,7 +770,7 @@ class StartOrderTest extends Component {
             plateform_type: "",
             security_token: "",
             visitor_id: getCookie("mhinpbnb"),
-            symbol: getCookie("currency"),
+            symbol: "INR",
             //txn_type: this.props.location.state.txn_type,
           },
           {
@@ -894,6 +874,7 @@ class StartOrderTest extends Component {
 
   updateCart = async () => {
     $(".common_class_for_spin").removeClass("d-none");
+    console.log(getCookie("mhinpbnb"),"abshjbshjbsjhsbshjbsjhxb")
     axios
       .post(
         `${ApiUrl}/common/receive_cart.php`,
@@ -902,7 +883,7 @@ class StartOrderTest extends Component {
           plateform_type: "",
           security_token: "",
           visitor_id: getCookie("mhinpbnb"),
-          symbol: getCookie("currency"),
+          symbol:"INR",
           country_code: getCookie("country_code"),
           //txn_type: this.props.location.state.txn_type,
         },
@@ -913,6 +894,8 @@ class StartOrderTest extends Component {
         }
       )
       .then(async (response) => {
+
+        console.log(response)
         if (response.data.statusId == "1") {
           console.log(response.data.result.cart.length)
           await this.setState({
@@ -951,12 +934,12 @@ class StartOrderTest extends Component {
             checkoutmsg: response.data.result.checkoutmsg,
           });
           $(".common_class_for_spin").addClass("d-none");
-          console.log(
+          console.log(  
             "------------------------1-------------------------",
             this.state.totalCartValue
           );
           this.setDefaultAddress(response.data.result.address);
-
+console.log(response.data.result.cartamount.finalShippingCost)
           // console.log(response.data.result,115);
         } else {
           // console.log("error occured");
@@ -1444,7 +1427,7 @@ class StartOrderTest extends Component {
       });
       axios
         .post(
-          `https://api.beldara.com/get_pincode_details.php`,
+          `https://api.indiabigshop.com/get_pincode_details.php`,
           {
             pincode: this.state.pincode,
           },
@@ -1486,7 +1469,7 @@ class StartOrderTest extends Component {
       // if (this.state.cartItems.length == 1) {
       axios
         .post(
-          `https://api.beldara.com/common/delete_cart_item_test.php`,
+          `https://api.indiabigshop.com/common/delete_cart_item_test.php`,
           {
             cartitemid: item.cartitemid,
             sellerid: ls.get("log_id"),
@@ -1613,7 +1596,7 @@ class StartOrderTest extends Component {
         // this.props.changeQty(pid, cid, qty, symbol, inr, usd);
         axios
           .post(
-            `https://api.beldara.com/common/update_cart_test.php`,
+            `https://api.indiabigshop.com/common/update-cart.php`,
             {
               security_token: "",
               plateform_type: "",
@@ -1647,7 +1630,7 @@ class StartOrderTest extends Component {
               // console.log(countryOfSeller,shippingArray,286);
               await this.setState({
                 cartItems: response.data.result.cart,
-                isPageLoaded: 1,
+                isPageLoaded: 1, 
                 symbol: getCookie("currency"),
                 totalProductCost: response.data.result.cartamount.basePrice,
                 totalCartStaticValue:
@@ -1722,6 +1705,7 @@ class StartOrderTest extends Component {
     offer_stock,
     items
   ) => {
+    console.log(pid,cid,qty,offer_price,offer_from_date,offer_to_date,offer_min_qty)
     $(".common_class_for_spin").removeClass("d-none");
     //$(".common_class_for_spin").removeClass('d-none');
     if (offer_stock == 0) return false;
@@ -1752,7 +1736,7 @@ class StartOrderTest extends Component {
       //productid, cartitemid, qty, symbol, inrValue, usdValue)
       axios
         .post(
-          `https://api.beldara.com/common/update_cart_test.php`,
+          `https://api.indiabigshop.com/common/update-cart.php`,
           {
             security_token: "",
             plateform_type: "",
@@ -1941,11 +1925,12 @@ class StartOrderTest extends Component {
       totalProductCost,
       finalShippingCost,
       countryName,
-      totalCartStaticValue,
+      totalCartStaticValue, 
       cashback_amount_inr,
       cashback_amount_usd,
       cashback_value,
     } = this.state;
+    console.log(this.state,finalShippingCost)
     let {
       name,
       email,
@@ -1981,7 +1966,10 @@ class StartOrderTest extends Component {
     //     }
     //   </ul>
     // }
+    console.log(this.state.cartItems.length)
     return (
+      <div>
+        {this.state.cartItems.length>0?(
       <div id={this.state.key}>
         <div className="container">
           <div className="row col-md-12">
@@ -2504,12 +2492,12 @@ class StartOrderTest extends Component {
                   <React.Fragment>
                     {this.state.cartItems.map((val, index) => (
                       <>
-                        <div className="col-md-12 row mx-0 my-2 border bg-cart-color">
+                        <div className="col-md-12 row mx-0 my-2 border bg-cart-color col-xs-11">
                           <div className="col-md-3 mx-2 my-2">
                             <a href={`/product/${val.url}.html`} target="_blank">
                               <img
                                 className="w-100 h-100"
-                                src={`https://img.beldara.com/product_images_thumb/${val.img}`}
+                                src={`https://img.indiabigshop.com/product_images_thumb/${val.img}`}
                               />
                             </a>
                           </div>
@@ -2548,14 +2536,7 @@ class StartOrderTest extends Component {
                               </p>
                             </div>
                           </div>
-                          {isMobile ? (
-                            <div
-                              class="col-md-12 my-2 align-items-end"
-                              style={{
-                                marginLeft: "195px",
-                                //marginTop: "-315px",
-                              }}
-                            >
+                            <div className="d-none d-sm-block">
                               <span
                                 class="mouse_pointer"
                                 onClick={this.deleteCartitem.bind(this, val)}
@@ -2563,16 +2544,7 @@ class StartOrderTest extends Component {
                                 <i class="fa fa-trash text-danger"></i>
                               </span>
                             </div>
-                          ) : (
-                            <div>
-                              <span
-                                class="mouse_pointer"
-                                onClick={this.deleteCartitem.bind(this, val)}
-                              >
-                                <i class="fa fa-trash text-danger"></i>
-                              </span>
-                            </div>
-                          )}
+                    
 
                           <div class="col-lg-12 my-2 align-items-center">
                             <div class="qty-box align-items-center">
@@ -2702,6 +2674,7 @@ class StartOrderTest extends Component {
                         }
                       ></i>{" "}
                       {new Intl.NumberFormat().format(finalShippingCost)}
+                      {console.log(finalShippingCost)}
                     </span>
                   </div>
                 </div>
@@ -3525,7 +3498,7 @@ class StartOrderTest extends Component {
                                 <>
                                   {isMobile ? (
                                     <div className="">
-                                      <RazorpayForm
+                                      {/* <RazorpayForm
                                         totalCost={token_amt}
                                         name={name}
                                         email={email}
@@ -3565,7 +3538,7 @@ class StartOrderTest extends Component {
                                           ",amount=" +
                                           token_amt
                                         }
-                                      />
+                                      /> */}
 
                                       <RazorpayForm
                                         totalCost={totalCartValue}
@@ -3611,7 +3584,7 @@ class StartOrderTest extends Component {
                                     </div>
                                   ) : (
                                     <div className="d-flex justify-content-between">
-                                      <RazorpayForm
+                                      {/* <RazorpayForm
                                         totalCost={token_amt}
                                         name={name}
                                         email={email}
@@ -3651,7 +3624,7 @@ class StartOrderTest extends Component {
                                           ",amount=" +
                                           token_amt
                                         }
-                                      />
+                                      /> */}
 
                                       <RazorpayForm
                                         totalCost={totalCartValue}
@@ -3699,7 +3672,7 @@ class StartOrderTest extends Component {
                                 </>
                               ) : this.state.checked == "paytm" ? (
                                 <>
-                                  <button
+                                  {/* <button
                                     className="btn btn-solid my-3 mr-2"
                                     id={cartItems.cartitemid}
                                     data-id="1"
@@ -3717,7 +3690,7 @@ class StartOrderTest extends Component {
                                       this.state.token_amt
                                     )}{" "}
                                     now
-                                  </button>
+                                  </button> */}
 
                                   <button
                                     className="btn btn-solid my-3 mr-2"
@@ -4001,6 +3974,29 @@ class StartOrderTest extends Component {
             </div>
           </div>
         </Modal>
+      </div>):(<section className="cart-section section-b-space">
+            <div className="container">
+              <div className="row">
+                <div className="col-sm-12">
+                  <div>
+                    <div className="col-sm-12 empty-cart-cls text-center">
+                      <img
+                        src={`${process.env.PUBLIC_URL}/assets/images/icon-empty-cart.png`}
+                        className="img-fluid mb-4"
+                        alt=""
+                      />
+                      <h3>
+                        <strong>Your Cart is Empty</strong>
+                      </h3>
+                      <h4>Explore more shortlist some items.</h4>
+                      
+                      <a href="https://indiabigshop.com"><button className="btn btn-solid">Continue shopping</button></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>)}
       </div>
     );
   }

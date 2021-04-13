@@ -238,7 +238,7 @@ class HeaderThree extends Component {
     formData.append("data", userData);
     axios
       .post(
-        "https://api.beldara.com/common/search_universal_new.php",
+        "https://api.indiabigshop.com/common/search_universal_new.php",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -400,7 +400,7 @@ class HeaderThree extends Component {
         <header id="sticky" className="sticky">
           <div className="mobile-fix-option" />
           {/*Top Header Component*/}
-          <Suspense fallback={""}>
+          {/* <Suspense fallback={""}>
             {TopBarDark ? (
               <TopBarDark
                 languageMaster={this.props.languageMaster}
@@ -410,7 +410,7 @@ class HeaderThree extends Component {
             ) : (
               ""
             )}
-          </Suspense>
+          </Suspense> */}
           {/* <TopBarDark /> */}
           {/* <Category/> */}
           <div className="container">
@@ -492,68 +492,91 @@ class HeaderThree extends Component {
                       ) : (
                         ""
                       )}
+               
                       <button type="submit" className="btn-search">
                         <i className="fa fa-search" />
                       </button>
                     </form>
                     {/* {!isMobile ? <a href="/download-app.html" className="mx-3 h6"><img src="https://img.beldara.com/assets/images/mobile_icon_android1.png" /> Get App</a> : ''} */}
                   </div>
-                  <div className="menu-right pull-right">
-                    <div>
-                      <div className="icon-nav">
-                        <ul>
-                          <li className="onhover-div mobile-search">
-                            <div>
-                              <img
-                                src={`${process.env.PUBLIC_URL}/assets/images/icon/search.png`}
-                                onClick={this.openSearch}
-                                className="img-fluid"
-                                alt="Search-beldara.com"
-                              />
-                              <i
-                                className="fa fa-search"
-                                onClick={this.openSearch}
-                              />
-                            </div>
-                          </li>
-                          {isMobile ? (
-                            <li className="onhover-div post-req pl-0 mr-4">
-                              {/* <div>
-                                  
-                                </div> */}
-                              <div>
-                                <Link
-                                  to={`${process.env.PUBLIC_URL}/post-requirement.html`}
-                                  className="btn"
-                                  style={btnsolidmb}
-                                >
-                                  <i className="fa fa-paper-plane" />{" "}
-                                  {translate("Post Requirement")}{" "}
-                                </Link>
-                                <i
-                                  className="fa fa-search ml-2"
-                                  style={{ fontSize: "16px" }}
-                                  onClick={this.openSearch}
-                                />
-                              </div>
-                            </li>
-                          ) : (
-                            <li className="onhover-div post-req">
-                              <div>
-                                <Link
-                                  to={`${process.env.PUBLIC_URL}/post-requirement.html`}
-                                  className="btn btn-solid"
-                                >
-                                  <i className="fa fa-paper-plane" />{" "}
-                                  {translate("Post Requirement")}{" "}
-                                </Link>
-                              </div>
-                            </li>
-                          )}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
+
+                  <span className="px-3 py-2 rounded" style={{backgroundColor:"#ff9944"}}>   
+                    <a href={"/start-order.html"} className="text-dark">
+                {/* <a href={"/start-order/"+ Math.random().toString(36).replace(/[^a-z]+/g, "").substr(0, 8) +".html"} className="text-white"> */}
+                  {/* <a href="/cart.html" className="text-white"> */}
+                    <i className="text-dark fa fa-shopping-cart"></i> Cart
+                    {/* { (ls.get('sellerid'))? */}
+                    <span className="badge cart_badge badge-info">
+                      {/* {this.state.cartCount} */}
+                      {this.props.cartList}
+                    </span>
+                    {/* :''} */}
+                  </a></span>
+                  <span>
+                  <ul>
+                <li className="onhover-dropdown mobile-account text-dark myAccount px-4 py-2 rounded" style={{backgroundColor:"#ff9944"}}>
+                  <i className="fa fa-user text-dark" aria-hidden="true" />
+                  {this.props.user.user.name ? (
+                    <span className="text-truncate">
+                      {this.props.user.user.name}
+                    </span>
+                  ) : (
+                    translate("My Account")
+                  )}
+                  {this.props.user.user.name ? (
+                    <ul className="onhover-show-div">
+                      <li>
+                        <a href="https://seller.indiabigshop.com" data-lng="en">
+                          <small>{translate("My dashboard")}</small>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/wishlist.html" data-lng="en">
+                          <small>{translate("Wishlist")}</small>
+                          {/* <small>Wishlist</small> */}
+                        </a>
+                      </li>
+                      <li>
+                        <a href="https://msg.indiabigshop.com" data-lng="es">
+                          <small>{translate("Message Center")}</small>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/logout.html" data-lng="es">
+                          <small>{translate("Logout")}</small>
+                        </a>
+                      </li>
+                    </ul>
+                  ) : (
+                    <ul className="onhover-show-div">
+                      <li>
+                        <a
+                          href="https://seller.indiabigshop.com/login.html"
+                          data-lng="en"
+                          target="_blank"
+                        >
+                          <small>{translate("Login")}</small>
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://seller.indiabigshop.com/business-listing.html"
+                          data-lng="es"
+                          target="_blank"
+                        >
+                          <small>{translate("Sell On IndiaBigShop")}</small>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/wishlist.html" data-lng="en">
+                          <small>{translate("Wishlist")}</small>
+                          {/* <small>Wishlist</small> */}
+                        </a>
+                      </li>
+                    </ul>
+                  )}
+                </li></ul>
+                </span>
                 </div>
               </div>
             </div>

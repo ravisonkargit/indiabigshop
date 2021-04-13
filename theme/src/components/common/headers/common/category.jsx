@@ -79,39 +79,12 @@ export class Category extends Component {
                     <a
                       href={`${
                         process.env.PUBLIC_URL
-                      }/cat/${value.url.toLowerCase()}.html`}
+                      }/cat/${value.url}.html`}
                       target="_blank"
                     >
                       {key}
                       <i className="arrow-down float-right mt-2"></i>
                     </a>
-                    <ul className="mega-menu clothing-menu">
-                      <li>
-                        <div className="row m-0">
-                          <div className="link-section">
-                            <h5 className="text-center">
-                              <Link
-                                to={`${
-                                  process.env.PUBLIC_URL
-                                }/cat/${value.url.toLowerCase(0)}.html`}
-                                target="_blank"
-                                className="subheadcat"
-                              >
-                                {key}
-                              </Link>
-                            </h5>
-                            {Object.keys(value.name) != "" ? (
-                              <li className={!isMobile ? "d-flex" : ""}>
-                                <Categoryli categories={value} />
-                                <Categoryli1 categories={value} />
-                              </li>
-                            ) : (
-                              ""
-                            )}
-                          </div>
-                        </div>
-                      </li>
-                    </ul>
                   </li>
                   {index == "4" ? (
                     <>

@@ -63,7 +63,7 @@ class myOrder extends Component {
     if (domain_language_code !== "" && domain_language_code !== undefined) {
       await axios
         .post(
-          "https://api.beldara.com/common/static_page.php",
+          "https://api.indiabigshop.com/common/static_page.php",
           {
             security_token: "",
             plateform_type: "",
@@ -84,7 +84,7 @@ class myOrder extends Component {
     } else {
       await axios
         .post(
-          "https://api.beldara.com/common/static_page.php",
+          "https://api.indiabigshop.com/common/static_page.php",
           {
             security_token: "",
             plateform_type: "",
@@ -113,7 +113,7 @@ class myOrder extends Component {
     try {
       axios
         .post(
-          "https://api.beldara.com/common/get_company_bank_details.php",
+          "https://api.indiabigshop.com/common/get_company_bank_details.php",
           {
             type: "",
           },
@@ -248,7 +248,7 @@ class myOrder extends Component {
         try {
           axios
             .post(
-              "https://api.beldara.com/common/get_my_order.php",
+              "https://api.indiabigshop.com/common/get_my_order.php",
               {
                 buyerid: this.state.getpath[0].split("-")[3],
                 count: "0",
@@ -303,7 +303,7 @@ class myOrder extends Component {
         try {
           axios
             .post(
-              "https://api.beldara.com/common/get_my_order.php",
+              "https://api.indiabigshop.com/common/get_my_order.php",
               {
                 buyerid: this.state.seller_id,
                 count: "0",
@@ -417,7 +417,7 @@ class myOrder extends Component {
         try {
           axios({
             method: "post",
-            url: "https://api.beldara.com/common/upload_purchased_receipt.php",
+            url: "https://api.indiabigshop.com/common/upload_purchased_receipt.php",
             data: formdata,
             config: { headers: { "Content-Type": "multipart/form-data" } },
           })

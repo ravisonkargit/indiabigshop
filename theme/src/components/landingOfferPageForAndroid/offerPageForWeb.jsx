@@ -40,7 +40,7 @@ class LandingPage extends Component {
         try {
             let query = window.location.pathname.split('-').pop();
             let query1 = query.split('.');
-            axios.post("https://api.beldara.com/common/get_lp_offer_details.php",{cat_id:query1[0],security_token:'',plateform_type:''}, {headers: {'Content-Type': 'multipart/form-data'}})
+            axios.post("https://api.indiabigshop.com/common/get_lp_offer_details.php",{cat_id:query1[0],security_token:'',plateform_type:''}, {headers: {'Content-Type': 'multipart/form-data'}})
             //axios.post(`${localhost}/api/landingPage/getLpDetail`,{url:query,sellerid:ls.get('sellerid'),security_token:'',plateform_type:''}, {headers: {'Content-Type': 'application/json'}})
             .then(async response => {
                 //result.

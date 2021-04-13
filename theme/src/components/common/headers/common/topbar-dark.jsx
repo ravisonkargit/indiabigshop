@@ -234,7 +234,7 @@ class TopBarDark extends Component {
                       href={`${sellerUrl + "" + this.state.sellonbeldara}`}
                       className="text-white"
                     >
-                      {translate("Sell On Beldara")}
+                      {translate("Sell On IndiaBigShop")}
                     </a>
                   </li>
                   {/* <li className="text-white">
@@ -424,7 +424,7 @@ class TopBarDark extends Component {
                     <ul className="onhover-show-div">
                       <li>
                         <a
-                          href="http://localhost:3000/seller.beldara.com/login.html"
+                          href="https://seller.beldara.com/login.html"
                           data-lng="en"
                           target="_blank"
                         >
@@ -437,7 +437,7 @@ class TopBarDark extends Component {
                           data-lng="es"
                           target="_blank"
                         >
-                          <small>{translate("Sell On Beldara")}</small>
+                          <small>{translate("Sell On IndiaBigShop")}</small>
                         </a>
                       </li>
                       <li>

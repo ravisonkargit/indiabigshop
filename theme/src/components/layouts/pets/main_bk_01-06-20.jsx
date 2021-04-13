@@ -159,7 +159,7 @@ class Pets extends Component {
         .pop();
       axios
         .post(
-          "https://api.beldara.com/common/get_lp_detail.php",
+          "https://api.indiabigshop.com/common/get_lp_detail.php",
           {
             url: query,
             sellerid: localStorage.get("sellerid"),
@@ -253,7 +253,7 @@ class Pets extends Component {
         try {
           axios
             .post(
-              "https://api.beldara.com/common/check_user.php",
+              "https://api.indiabigshop.com/common/check_user.php",
               { type: "chk_user", sellerid: getCookie("mhinpbn") },
               { headers: { "Content-Type": "multipart/form-data" } }
             )
@@ -330,7 +330,7 @@ class Pets extends Component {
         try {
           axios
             .post(
-              "https://api.beldara.com/common/check_user_type.php",
+              "https://api.indiabigshop.com/common/check_user_type.php",
               { type: "chk_user", sellerid: getCookie("mhinpbn") },
               { headers: { "Content-Type": "multipart/form-data" } }
             )
@@ -376,7 +376,7 @@ class Pets extends Component {
     let formData = new FormData();
     formData.append("term", userData);
     // console.log(formData,value);
-    Axios.post("https://api.beldara.com/common/get_categories.php", formData, {
+    Axios.post("https://api.indiabigshop.com/common/get_categories.php", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     })
       .then((response) => {
@@ -472,7 +472,7 @@ class Pets extends Component {
 
     return (
       <div>
-        <HeaderThree logoName={"logo/beldara_logo.png"} />
+        <HeaderThree logoName={"logo/ibs.png"} />
 
         <div className="">
           <div
@@ -887,7 +887,7 @@ class Pets extends Component {
 
           {/* <ThemeSettings/> */}
           <Suspense fallback={""}>
-            <FooterOne logoName={"logo/BelDara-logo.png"} />
+            <FooterOne logoName={"logo/ibs.png"} />
           </Suspense>
         </div>
         {this.state.isAndroidAppOpen && (

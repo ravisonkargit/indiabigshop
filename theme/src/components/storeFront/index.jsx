@@ -97,7 +97,7 @@ class StoreFront extends Component {
   componentDidMount = async () => {
     await axios
       .post(
-        "https://api.beldara.com/common/SFData.php",
+        "https://api.indiabigshop.com/common/SFData.php",
         {
           security_token: "",
           plateform_type: "",

@@ -109,7 +109,7 @@ class ProductListItemNew extends Component {
 
   createCart(productid, qty, amount, currency, eachunit, product_currency, product_sellerid){
     axios.post(
-      "https://api.beldara.com/common/add_to_create_cart.php",
+      "https://api.indiabigshop.com/common/add_to_create_cart.php",
       {
         security_token: "",
         plateform_type: "",

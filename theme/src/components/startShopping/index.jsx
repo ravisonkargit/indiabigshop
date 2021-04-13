@@ -14,7 +14,7 @@ function checkUserActivity(sellerIDE) {
     try {
         axios
             .post(
-                "https://api.beldara.com/common/user_check_activity.php",
+                "https://api.indiabigshop.com/common/user_check_activity.php",
                 { buyerid: sellerIDE},
                 { headers: { "Content-Type": "multipart/form-data" } }
             )
@@ -43,7 +43,7 @@ class Continue extends Component{
         try {
             await axios
                 .post(
-                    "https://api.beldara.com/common/static_seo.php",
+                    "https://api.indiabigshop.com/common/static_seo.php",
                     { security_token: "", plateform_type: "", langCode: "en", pageid: '46' },
                     { headers: { "Content-Type": "multipart/form-data" } }
                 )

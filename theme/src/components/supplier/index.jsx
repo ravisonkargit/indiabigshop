@@ -35,7 +35,7 @@ class Category extends Component {
             
 
             let query = window.location.pathname.split('/').pop().replace('.html', '');
-            axios.post("https://api.beldara.com/common/cat_detail.php",{url:query,sellerid:ls.get('sellerid'),security_token:'',plateform_type:''}, {headers: {'Content-Type': 'multipart/form-data'}})
+            axios.post("https://api.indiabigshop.com/common/cat_detail.php",{url:query,sellerid:ls.get('sellerid'),security_token:'',plateform_type:''}, {headers: {'Content-Type': 'multipart/form-data'}})
             .then(response => {
                 console.log(response);
                 // return response.data.result;

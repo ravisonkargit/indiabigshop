@@ -1,106 +1,170 @@
-import React, { Component,Suspense,lazy } from "react";
+import React, { Component, Suspense, lazy } from "react";
 import { Link } from "react-router-dom";
 import ls from "local-storage";
 import $ from "jquery";
 import { SlideUpDown } from "../../../services/script";
 
 import { withTranslate } from "react-redux-multilingual";
-import { isEmail, subscribe,getCookie, setCookie } from "../../../functions";
-import axios from 'axios'
+import { isEmail, subscribe, getCookie, setCookie } from "../../../functions";
+import axios from "axios";
 import "./footer.css";
 
-// To initialize allowed notification 
+// To initialize allowed notification
 // import "../../firebase/cloud-messaging";
 
 import LiveChat from "../../live-chat";
 import store from "../../../store";
-import { getLoggedIn, getCart,getCartLength } from "../../../actions";
+import { getLoggedIn, getCart, getCartLength } from "../../../actions";
 import { ApiUrl } from "../../../constants/ActionTypes";
 import { connect } from "react-redux";
-const ChatBox = lazy(()=>import("../../live-chat/chatbox")) ;
+const ChatBox = lazy(() => import("../../live-chat/chatbox"));
 
-var cname, target, source, mhinpbnb , url, productid,whole_url, cat, uri, mailid,send_source,sms_id,notification_id,referid; 
+var cname,
+  target,
+  source,
+  mhinpbnb,
+  url,
+  productid,
+  whole_url,
+  cat,
+  uri,
+  mailid,
+  send_source,
+  sms_id,
+  notification_id,
+  referid;
 
-const LogoImage = lazy(()=>import('../headers/common/logo'))
-const Online = lazy(()=>import("./online")) ;
+const LogoImage = lazy(() => import("../headers/common/logo"));
+const Online = lazy(() => import("./online"));
 class FooterOne extends Component {
   constructor(props) {
     super(props);
     this.state = {
       emailValid: 1,
-      messageList: [],  
-      
-      Tracking: null
+      messageList: [],
+
+      Tracking: null,
+      year:""
       // askCountry: false
     };
-    
+
     let search = window.location.search;
     let params = new URLSearchParams(search);
-    referid = params.get('refid');
-    if((getCookie('refid') === null || getCookie('refid') == 'null' ||  getCookie('refid') == '') && referid !== null && referid != ''){
-      setCookie('refid',referid,'365');
+    referid = params.get("refid");
+    if (
+      (getCookie("refid") === null ||
+        getCookie("refid") == "null" ||
+        getCookie("refid") == "") &&
+      referid !== null &&
+      referid != ""
+    ) {
+      setCookie("refid", referid, "365");
     }
-    cname = params.get('utm_campaign') ? params.get('utm_campaign') : params.get('campaign');
-    target = params.get('utm_target') ? params.get('utm_target') : params.get('target');
-    source = params.get('utm_source') ? params.get('utm_source') : params.get('source');
-    send_source = params.get('send_source') ? params.get('send_source') : params.get('send_source');
-    mailid = params.get('mailid');
-    const m_central = params.get('m');
-    const country = params.get('country');
-    mhinpbnb = getCookie('mhinpbnb');
-    cat = ls.get('q');
+    cname = params.get("utm_campaign")
+      ? params.get("utm_campaign")
+      : params.get("campaign");
+    target = params.get("utm_target")
+      ? params.get("utm_target")
+      : params.get("target");
+    source = params.get("utm_source")
+      ? params.get("utm_source")
+      : params.get("source");
+    send_source = params.get("send_source")
+      ? params.get("send_source")
+      : params.get("send_source");
+    mailid = params.get("mailid");
+    const m_central = params.get("m");
+    const country = params.get("country");
+    mhinpbnb = getCookie("mhinpbnb");
+    cat = ls.get("q");
     url = window.location.pathname;
     productid = window.location.pathname;
     whole_url = window.location.href;
-    if(send_source == 'notification'){
-      notification_id = params.get('notification_id');
+    if (send_source == "notification") {
+      notification_id = params.get("notification_id");
       axios
-      .post(`${ApiUrl}/common/capture_notification_sms.php`,{send_source:send_source,security_token : '', plateform_type : '',notification_id:notification_id},{
-        headers: { "Content-Type": "multipart/form-data" }
-      })
-      .then(response => {
-        console.log('notification api called successfully',55);
-      })
-      .catch(error => { 
-        const result = error.response;
-        return Promise.reject(result);
-      });
-    }
-    else if(send_source == 'sms'){
-      console.log(55,'api called in sms condition');
-      sms_id = params.get('sms_id');
+        .post(
+          `${ApiUrl}/common/capture_notification_sms.php`,
+          {
+            send_source: send_source,
+            security_token: "",
+            plateform_type: "",
+            notification_id: notification_id,
+          },
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        )
+        .then((response) => {
+          console.log("notification api called successfully", 55);
+        })
+        .catch((error) => {
+          const result = error.response;
+          return Promise.reject(result);
+        });
+    } else if (send_source == "sms") {
+      console.log(55, "api called in sms condition");
+      sms_id = params.get("sms_id");
       axios
-      .post(`${ApiUrl}/common/capture_notification_sms.php`,{send_source:send_source,security_token : '', plateform_type : '',sms_id:sms_id},{
-        headers: { "Content-Type": "multipart/form-data" }
-      })
-      .then(response => {
-        console.log('sms api called successfully',70);
-      })
-      .catch(error => { 
-        const result = error.response;
-        return Promise.reject(result);
-      });
-    }else{
-      
+        .post(
+          `${ApiUrl}/common/capture_notification_sms.php`,
+          {
+            send_source: send_source,
+            security_token: "",
+            plateform_type: "",
+            sms_id: sms_id,
+          },
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        )
+        .then((response) => {
+          console.log("sms api called successfully", 70);
+        })
+        .catch((error) => {
+          const result = error.response;
+          return Promise.reject(result);
+        });
+    } else {
     }
     axios
-      .post(`${ApiUrl}/common/capture_visitor.php`,{ m_central: m_central, sellerid: ls.get('sellerid'),security_token : '', plateform_type : '',mhinpbnb : mhinpbnb,url : url, productid:productid,whole_url:whole_url, cat:cat, uri:uri, cname:cname, target:target , source: source, mailid: mailid, country: getCookie('country_code') }, {
-        headers: { "Content-Type": "multipart/form-data" }
+      .post(
+        `${ApiUrl}/common/capture_visitor.php`,
+        {
+          m_central: m_central,
+          sellerid: ls.get("sellerid"),
+          security_token: "",
+          plateform_type: "",
+          mhinpbnb: mhinpbnb,
+          url: url,
+          productid: productid,
+          whole_url: whole_url,
+          cat: cat,
+          uri: uri,
+          cname: cname,
+          target: target,
+          source: source,
+          mailid: mailid,
+          country: getCookie("country_code"),
+        },
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      )
+      .then((response) => {
+        setCookie("mhinpbnb", response.data.result, "365");
       })
-      .then(response => {
-        setCookie('mhinpbnb', response.data.result, '365');
-      })
-      .catch(error => {
+      .catch((error) => {
         const result = error.response;
         return Promise.reject(result);
       });
   }
 
   componentDidMount = async (nextProps) => {
-    store.dispatch(getLoggedIn())
+    store.dispatch(getLoggedIn());
     // console.log('componentDidMount called');
-    store.dispatch(getCartLength(ls.get('sellerid'),getCookie('mhinpbnb')));
-    var contentwidth = window.innerWidth; 
+    store.dispatch(getCartLength(ls.get("sellerid"), getCookie("mhinpbnb")));
+    var contentwidth = window.innerWidth;
     if (contentwidth < 750) {
       SlideUpDown("footer-title");
     } else {
@@ -110,49 +174,60 @@ class FooterOne extends Component {
         el.style = "display: block";
       });
     }
-    import('../../analytics').then(module => {
+    import("../../analytics").then((module) => {
       this.setState({
-        Tracking:module.default
-      })
-    })
+        Tracking: module.default,
+      });
+    });
     try {
-      if (this.props.cartList.cart !== null && this.props.cartList.cart !== undefined) {
+      if (
+        this.props.cartList.cart !== null &&
+        this.props.cartList.cart !== undefined
+      ) {
         if (this.props.cartList.cart.length == 0)
-          store.dispatch(getCart(ls.get('sellerid'), getCookie('mhinpbnb') ,this.props.data.symbol))
+          store.dispatch(
+            getCart(
+              ls.get("sellerid"),
+              getCookie("mhinpbnb"),
+              this.props.data.symbol
+            )
+          );
       }
     } catch (e) {
-      console.log('check cart: ',e)
+      console.log("check cart: ", e);
     }
-
-  }
-  subscribeBtn = async e => {
+    var d = new Date();
+    var n = d.getFullYear();
+  this.setState({
+    year:n
+  })
+  };
+  subscribeBtn = async (e) => {
     const email = $("#subsribeEmail").val();
     const isEmailValid = isEmail(email);
     if (isEmailValid) {
       const subscribeSeller = await subscribe(email, ls.get("sellerid"));
       if (subscribeSeller.statusId == 1)
         this.setState({
-          emailValid: 3
+          emailValid: 3,
         });
       else
         this.setState({
-          emailValid: 2
+          emailValid: 2,
         });
     } else {
       this.setState({
-        emailValid: 0
+        emailValid: 0,
       });
     }
   };
 
-  
   render() {
     const { translate } = this.props;
-    const {Tracking} = this.state
+    const { Tracking } = this.state;
     // console.log(this.props.chat.chatToSeller.chatWithSupplier)
     return (
       <footer className="footer-light">
-
         <div className="light-layout">
           <div className="container">
             <section className="small-section border-section border-top-0">
@@ -163,7 +238,7 @@ class FooterOne extends Component {
                       <h4>{translate("KNOW IT ALL FIRST")}</h4>
                       <p>
                         {translate(
-                          "Never Miss Anything From Beldara By Signing Up To Our Newsletter"
+                          "Never Miss Anything From IndiaBigShop By Signing Up To Our Newsletter"
                         )}
                       </p>
                     </div>
@@ -216,33 +291,33 @@ class FooterOne extends Component {
                 </div>
                 <div className="footer-contant">
                   <div className="footer-logo">
-                    <Suspense fallback={''}>
-                    <LogoImage logo={this.props.logoName} />
+                    <Suspense fallback={""}>
+                      <LogoImage logo={this.props.logoName} />
                     </Suspense>
-                    
                   </div>
                   <ul>
                     <li>
-                    {getCookie('country_code').toLowerCase() == 'in' || getCookie('country_code') == '' ?
-                      <React.Fragment>
-                        <i className="fa fa-phone mr-2" />
-                      {translate("For Support")}: +91-9555788833
-                      </React.Fragment>
-                      :
-                      <React.Fragment>
-                        <i className="fa fa-phone mr-2" />
-                      {translate("For Support")}: +1-913-289-0433
-                      </React.Fragment>
-                        }
+                      {getCookie("country_code").toLowerCase() == "in" ||
+                      getCookie("country_code") == "" ? (
+                        <React.Fragment>
+                          <i className="fa fa-phone mr-2" />
+                          {translate("For Support")}: +91-9372245294
+                        </React.Fragment>
+                      ) : (
+                        <React.Fragment>
+                          <i className="fa fa-phone mr-2" />
+                          {translate("For Support")}: +91-9372245294
+                        </React.Fragment>
+                      )}
                     </li>
                   </ul>
-       
+
                   <div className="footer-social">
                     <ul>
                       <li>
                         <a
                           target="_blank"
-                          href="https://www.facebook.com/beldara"
+                          href="https://www.facebook.com/indiabigshop"
                           rel="nofollow"
                         >
                           <i className="fa fa-facebook" aria-hidden="true" />
@@ -296,24 +371,30 @@ class FooterOne extends Component {
                     </ul>
                   </div>
                 </div>
-                <div class="d-flex col-md-4 justify-content-aroud my-5" style={{marginLeft: "-12px"}}>
-                  <div class="float-left mr-2">
+                <div
+                  class="d-flex col-md-4 justify-content-aroud my-5"
+                  style={{ marginLeft: "-12px" }}
+                >
+                  {/* <div class="float-left mr-2">
                     <a href="https://apps.apple.com/us/app/beldara-b2b-marketplace/id1455069486?ls=1" target="_blank">
                       <img src="https://img.beldara.com/images/ios_mobile_logo.png" />
                     </a>
-                  </div>
+                  </div> */}
                   <div class="float-right mr-2">
-                    <a href="https://play.google.com/store/apps/details?id=app.beldara.com" target="_blank">
-                      <img src="https://img.beldara.com/images/android_mobile_logo.png"/>
+                    <a
+                      href="https://play.google.com/store/apps/details?id=app.ibs.com"
+                      target="_blank"
+                    >
+                      <img src="https://img.beldara.com/images/android_mobile_logo.png" />
                     </a>
                   </div>
                 </div>
               </div>
-              
+
               <div className="col offset-xl-1">
-                <div className="sub-title">
+                {/* <div className="sub-title">
                   <div className="footer-title">
-                    <h4>{translate("How To Sell Fast")}</h4>
+                    <h4>Useful links</h4>
                   </div>
                   <div className="footer-contant">
                     <ul>
@@ -324,28 +405,31 @@ class FooterOne extends Component {
                           {translate("Live E-Auction")}
                         </Link>
                       </li> */}
-                      <li>
-                        <Link
+                <li>
+                  {/* <Link
                           to={`${process.env.PUBLIC_URL}/how-to-sell-fast.html`}
                         >
                           {translate("How To Sell Fast")}
-                        </Link>
-                      </li>
-                      <li>
+                        </Link> */}
+                  {/* <Link to={`${process.env.PUBLIC_URL}/about.html`}>
+                          {translate("About US")}
+                        </Link> */}
+                </li>
+                {/* <li>
                         <Link
                           to={`${
                             process.env.PUBLIC_URL
                           }/buy-now-on-beldara.html`}
                         >
-                          {translate("Buy Now On Beldara")}
+                          UseFul links
                         </Link>
-                      </li>
-                      {/* <li>
+                      </li> */}
+                {/* <li>
                         <Link to={`${process.env.PUBLIC_URL}/membership.html`}>
                           {translate("Membership - B2B Marketing Plan")}
                         </Link>
                       </li> */}
-                      <li>
+                {/* <li>
                         <Link to={`${process.env.PUBLIC_URL}/banner-ads.html`}>
                           {translate("Banner Advertising")}
                         </Link>
@@ -358,8 +442,8 @@ class FooterOne extends Component {
                         >
                           {translate("Promote your business")}
                         </Link>
-                      </li>
-                      <li>
+                      </li> */}
+                {/* <li>
                         <Link
                           to={`${
                             process.env.PUBLIC_URL
@@ -367,24 +451,24 @@ class FooterOne extends Component {
                         >
                           {translate("Beldara Logistics Services")}
                         </Link>
-                      </li>
-                      <li>
+                      </li> */}
+                {/* <li>
                         <Link
                           to={`/warehouse-services.html`}
                         >
                           {translate("Warehouse Services")}
                         </Link>
-                      </li>
-                      <li>
+                      </li> */}
+                {/* <li>
                         <Link
                           to={`/trade-show.html`}
                         >
                           {translate("Trade Show")}
                         </Link>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+                      </li> */}
+                {/* </ul> */}
+                {/* </div> */}
+                {/* </div> */}
               </div>
               {/* changed */}
               <div className="col">
@@ -394,33 +478,33 @@ class FooterOne extends Component {
                   </div>
                   <div className="footer-contant">
                     <ul>
-                    <li>
+                      <li>
                         <Link to={`${process.env.PUBLIC_URL}/contact.html`}>
                           {translate("Contact us")}
                         </Link>
                       </li>
-                      <li>
+                      {/* <li>
                         <Link to={`${process.env.PUBLIC_URL}/partner-with-us.html`}>
                           {translate("Partner With Us")}
                         </Link>
-                      </li>
+                      </li> */}
                       <li>
                         <Link to={`${process.env.PUBLIC_URL}/faq.html`}>
                           {translate("FAQ")}
                         </Link>
                       </li>
-                      <li>
+                      {/* <li>
                         <Link
                           to={`${process.env.PUBLIC_URL}/stay-safe-on-beldara.html`}
                         >
                           {translate("Stay Safe On Beldara")}
                         </Link>
                       </li>
-                      
+                       */}
                       {/* <li >
                       <a target="_blank" rel="noopener noreferrer" className="mouse_pointer" href="https://img.beldara.com/about_img/Beldara-product-listing-guideline.pdf">{translate("Product Listings Guideline")}</a>
                       </li> */}
-                      <li>
+                      {/* <li>
                         <Link
                           to={`${
                             process.env.PUBLIC_URL
@@ -428,8 +512,8 @@ class FooterOne extends Component {
                         >
                           {translate("Product Listings Guideline")}
                         </Link>
-                      </li>
-                      <li>
+                      </li> */}
+                      {/* <li>
                         <Link
                           to={`${
                             process.env.PUBLIC_URL
@@ -437,58 +521,15 @@ class FooterOne extends Component {
                         >
                           {translate("Beldara First")}
                         </Link>
-                      </li>
-                      <li>
-                        {/* <Link to= ></Link> */}
-                        <a
+                      </li> */}
+                      {/* <li> */}
+                      {/* <Link to= ></Link> */}
+                      {/* <a
                           href={`${process.env.PUBLIC_URL}/blog`}
                           target="_blank"
                         >
                           {translate("Blog")}
                         </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div className="col">
-                <div className="sub-title">
-                  <div className="footer-title">
-                    <h4>{translate("About US")}</h4>
-                  </div>
-                  <div className="footer-contant">
-                    {/* <ul className="contact-list"> */} 
-                    <ul>
-                      <li>
-                        <a target="_blank" className="mouse_pointer" href={`http://khandekargroup.com/`}>
-                          {'Khandekar Group'}
-                        </a>
-                      </li>
-                      <li>
-                        <Link to={`${process.env.PUBLIC_URL}/about.html`}>
-                          {translate("About US")}
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to={`${process.env.PUBLIC_URL}/career.html`}>
-                          {translate("Career")}
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to={`${
-                            process.env.PUBLIC_URL
-                          }/terms-and-condition.html`}
-                        >
-                          {translate("Terms & Conditions")}
-                        </Link>
-                      </li>
-                      {/* <li>
-                        <Link
-                          to={`${process.env.PUBLIC_URL}/privacy-policy.html`}
-                        >
-                          {translate("Privacy Policy")}
-                        </Link>
                       </li> */}
                       <li>
                         <Link to={`${process.env.PUBLIC_URL}/Sitemap.html`}>
@@ -509,15 +550,56 @@ class FooterOne extends Component {
                           {translate("Return Policy")}
                         </Link>
                       </li> */}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div className="col">
+                <div className="sub-title">
+                  <div className="footer-title">
+                    <h4>{translate("About US")}</h4>
+                  </div>
+                  <div className="footer-contant">
+                    {/* <ul className="contact-list"> */}
+                    <ul>
                       <li>
-                        <Link
-                          to={`${
-                            process.env.PUBLIC_URL
-                          }/policies.html`}
+                        <a
+                          target="_blank"
+                          className="mouse_pointer"
+                          href={`http://khandekargroup.com/`}
                         >
-                          {translate("Beldara Policies")}
+                          {"Khandekar Group"}
+                        </a>
+                      </li>
+                      <li>
+                        <Link to={`${process.env.PUBLIC_URL}/about.html`}>
+                          {translate("About US")}
                         </Link>
                       </li>
+                      <li>
+                        <Link to={`${process.env.PUBLIC_URL}/career.html`}>
+                          {translate("Career")}
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          to={`${process.env.PUBLIC_URL}/terms-and-condition.html`}
+                        >
+                          {translate("Terms & Conditions")}
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to={`${process.env.PUBLIC_URL}/privacy-policies.html`}>
+                          {translate("Privacy Policy")}
+                        </Link>
+                      </li>
+                      {/* <li>
+                        <Link
+                          to={`${process.env.PUBLIC_URL}/privacy-policy.html`}
+                        >
+                          {translate("Privacy Policy")}
+                        </Link>
+                      </li> */}
                     </ul>
                   </div>
                 </div>
@@ -531,9 +613,9 @@ class FooterOne extends Component {
               <div className="col-xl-6 col-md-6 col-sm-12">
                 <div className="footer-end">
                   <p>
-
-                    <i className="fa fa-copyright" aria-hidden="true" /> 2018-2020
-                    Beldara.com. {translate("All copyright reserved")}.
+                    <i className="fa fa-copyright" aria-hidden="true" />{" "}
+                    2020-{this.state.year} IndiaBigShop.com. {translate("All copyright reserved")}
+                    .
                   </p>
                 </div>
               </div>
@@ -548,9 +630,7 @@ class FooterOne extends Component {
                     <li>
                       <a href="#">
                         <img
-                          src={`${
-                            process.env.PUBLIC_URL
-                          }/assets/images/icon/mastercard.png`}
+                          src={`${process.env.PUBLIC_URL}/assets/images/icon/mastercard.png`}
                           alt="beldara.com"
                         />
                       </a>
@@ -558,9 +638,7 @@ class FooterOne extends Component {
                     <li>
                       <a href="#">
                         <img
-                          src={`${
-                            process.env.PUBLIC_URL
-                          }/assets/images/icon/paypal.png`}
+                          src={`${process.env.PUBLIC_URL}/assets/images/icon/paypal.png`}
                           alt="beldara.com"
                         />
                       </a>
@@ -568,9 +646,7 @@ class FooterOne extends Component {
                     <li>
                       <a href="#">
                         <img
-                          src={`${
-                            process.env.PUBLIC_URL
-                          }/assets/images/icon/american-express.png`}
+                          src={`${process.env.PUBLIC_URL}/assets/images/icon/american-express.png`}
                           alt="beldara.com"
                         />
                       </a>
@@ -578,9 +654,7 @@ class FooterOne extends Component {
                     <li>
                       <a href="#">
                         <img
-                          src={`${
-                            process.env.PUBLIC_URL
-                          }/assets/images/icon/discover.png`}
+                          src={`${process.env.PUBLIC_URL}/assets/images/icon/discover.png`}
                           alt="beldara.com"
                         />
                       </a>
@@ -591,18 +665,16 @@ class FooterOne extends Component {
             </div>
           </div>
         </div>
-   
-        {/* <LiveChat /> */}
-        {
-          window.location.pathname.split('/')[1] !== 'product' ? 
-          <Suspense loading={''}>
-            {/* <ChatBox chatWithSupplier={this.props.chat.chatToSeller.length>0 ? this.props.chat.chatToSeller : false}/> */}
-            <Online/> 
-          </Suspense>
-          : ''
-        }
-        {Tracking ? <Tracking /> : ''}
 
+        {/* <LiveChat /> */}
+        {window.location.pathname.split("/")[1] !== "product" ? (
+          <Suspense loading={""}>
+            {/* <ChatBox chatWithSupplier={this.props.chat.chatToSeller.length>0 ? this.props.chat.chatToSeller : false}/> */}
+          </Suspense>
+        ) : (
+          ""
+        )}
+        {Tracking ? <Tracking /> : ""}
       </footer>
     );
   }
@@ -610,10 +682,8 @@ class FooterOne extends Component {
 
 const mapStateToProps = (state) => {
   return state;
-}
+};
 
-export default withTranslate(connect(
-  mapStateToProps
-)(FooterOne))
+export default withTranslate(connect(mapStateToProps)(FooterOne));
 
 //export default withTranslate(FooterOne);

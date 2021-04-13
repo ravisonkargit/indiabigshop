@@ -88,7 +88,7 @@ class wishlists extends Component {
      
     removeWishlist = (productid, wishlistid) => {
       axios.post(
-        "https://api.beldara.com/common/delete_wishlist.php",
+        "https://api.indiabigshop.com/common/delete_wishlist.php",
         {
           security_token: "",
           plateform_type: "",
@@ -109,7 +109,7 @@ class wishlists extends Component {
   
     createCart = (productid, qty, amount, currency, eachunit, wishlistid, product_currency) => {
       axios.post(
-        "https://api.beldara.com/common/convert_wishlist_to_cart.php",
+        "https://api.indiabigshop.com/common/convert_wishlist_to_cart.php",
         {
           security_token: "",
           plateform_type: "",
@@ -219,7 +219,7 @@ class wishlists extends Component {
         }
         if (this.state.wishlist.length == 0){
           try {
-            axios.post("https://api.beldara.com/common/fetch_wishlist.php",{visitorid:getCookie('mhinpbnb'),sellerid:ls.get('sellerid'),security_token:'',plateform_type:''}, {headers: {'Content-Type': 'multipart/form-data'}})
+            axios.post("https://api.indiabigshop.com/common/fetch_wishlist.php",{visitorid:getCookie('mhinpbnb'),sellerid:ls.get('sellerid'),security_token:'',plateform_type:''}, {headers: {'Content-Type': 'multipart/form-data'}})
             .then(async response => {
                 this.setState({
                     wishlist: response.data.result.wishlist,

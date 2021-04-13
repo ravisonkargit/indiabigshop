@@ -154,7 +154,7 @@ import('./components/membership/membership_monthly').then(module => module.defau
  import('./components/footerlinks/termCondition').then(module => module.default)
  )
  const PrivacyPolicy = asyncComponent(() =>
- import('./components/footerlinks/privacyPolicy').then(module => module.default)
+ import('./components/footerlinks/privacy-policies').then(module => module.default)
  )
  const Media = asyncComponent(() =>
  import('./components/footerlinks/mediaRelease').then(module => module.default)
@@ -376,6 +376,7 @@ import('./components/membership/membership_monthly').then(module => module.defau
  <Route path={`${process.env.PUBLIC_URL}/lp_app/:id`} component={landingPageForAndroid} /> 
  <Route path={`${process.env.PUBLIC_URL}/app-terms-and-condition.html`} component={TermCondition} /> 
  <Route path={`${process.env.PUBLIC_URL}/app-policies.html`} component={BeldaraPolicies} />
+ <Route path={`${process.env.PUBLIC_URL}/privacy-policies.html`} component={BeldaraPolicies} />
  <Route path={`${process.env.PUBLIC_URL}/lp-offer-app/:id`} component={landingOfferPageForAndroid} />
  <Route path={`${process.env.PUBLIC_URL}/app-terms-and-condition.html`} component={TermCondition} />
  <Route path={`${process.env.PUBLIC_URL}/beldara-first-app.html`} component={BeldaraFirst} />

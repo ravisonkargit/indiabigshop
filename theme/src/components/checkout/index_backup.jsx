@@ -223,7 +223,7 @@ class checkOut extends Component {
     get_payment = () => {
         $(".chkValidate").select().css({border:'none'})
         axios.post(
-        "https://api.beldara.com/common/upd_add_buyer.php",
+        "https://api.indiabigshop.com/common/upd_add_buyer.php",
         {
           security_token: "",
           plateform_type: "",
@@ -291,7 +291,7 @@ class checkOut extends Component {
                 this.get_payment()
             }else{
                 axios.post(
-                "https://api.beldara.com/common/check_and_reg.php",
+                "https://api.indiabigshop.com/common/check_and_reg.php",
                 {
                 security_token: "",
                 plateform_type: "",
@@ -310,7 +310,7 @@ class checkOut extends Component {
                 if (response.data.statusId == 1){
                     setCookie('mhinpbn', response.data.result.sellerid, '365')
 
-                    axios.post("https://api.beldara.com/common/map_cart.php",{
+                    axios.post("https://api.indiabigshop.com/common/map_cart.php",{
                     security_token: "",
                     plateform_type: "",
                     sellerid: response.data.result.sellerid,

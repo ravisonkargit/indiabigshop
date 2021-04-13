@@ -320,7 +320,7 @@ router.post("/createOrderCharge", (req, res) => {
               var post_data = JSON.stringify(parameters_to_send);
               console.log(parameters_to_send, 274);
               var options = {
-                hostname: "api.beldara.com",
+                hostname: "api.indiabigshop.com",
                 port: 443,
                 path: `/common/captureRecurringPayment.php`,
                 method: "POST",
