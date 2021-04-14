@@ -123,7 +123,7 @@ export const CLEAR_ALL_STATE = 'CLEAR_ALL_STATE'
 export const RECEIVE_LANGUAGE_CONTENT = 'RECEIVE_LANGUAGE_CONTENT'
 
 //Seller Url
-export const SellerUrl = 'https://seller.beldara.com'
+export const SellerUrl = 'https://seller.indiabigshop.com'
 
 //Beldara Url
 export const Url = 'https://indiabigshop.com'

@@ -265,7 +265,7 @@ class Login extends Component {
                 <div className="body" >
                  <form className="form-signin" onSubmit={this.loginSubmit}>
                     <div className="text-center mb-4">
-                        <img className="mb-4" src="/assets/images/icon/logo/beldara_logo.png" alt="Beldara.com" width="172" height="50" />
+                        <img className="mb-4" src="/assets/images/icon/logo/ibs.png" alt="Beldara.com" width="172" height="50" />
                     </div>
                     <p className="error d-none"></p>
                     <div class="alert alert-warning d-none" id="otp_err" role="alert"></div>
@@ -298,8 +298,8 @@ class Login extends Component {
                             <button className="btn btn-lg btn-primary btn-block text-capitalize" style={{ backgroundColor: '#f5821f', border: '1px solid #f5821f' }} type="submit">Sign in</button>
                             
                         </div>
-                    <p className="text-dark">By continuing, you agree to Beldara's <a href="/t" target="_blank">Conditions of Use</a> and <a href="" target="_blank">Privacy Notice.</a> </p>
-                    <div className="a-divider a-divider-break"><h5>New to Beldara?</h5></div>
+                    <p className="text-dark">By continuing, you agree to IndiaBigShop's <a href="/t" target="_blank">Conditions of Use</a> and <a href="" target="_blank">Privacy Notice.</a> </p>
+                    <div className="a-divider a-divider-break"><h5>New to IndiaBigShop?</h5></div>
                         <p>
                           <div className="form-group text-center">
                                 {/* <a className="btn btn-lg btn-primary btn-block text-capitalize" href="/register.html" style={{backgroundColor:'#00aeef',border:'1px solid #00aeef'}} type="">Create your Beldara Account</a> */}
@@ -307,7 +307,7 @@ class Login extends Component {
                             </div> 
                         </p>
                         <p className="mt-5 text-center">
-                            © 2019, Beldara.com, All rights reserved.
+                            © 2021, IndiaBigShop.com, All rights reserved.
                         </p>
                     </form>
                 </div>

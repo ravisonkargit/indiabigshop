@@ -138,7 +138,7 @@ class SideBar extends Component {
                     {" "}
                     <img
                       src="https://img.beldara.com/assets/images/user_icon1.png"
-                      alt="login with beldara"
+                      alt="login with IndiaBiShop"
                     />{" "}
                     Login
                   </a>
@@ -155,7 +155,7 @@ class SideBar extends Component {
                 >
                   {" "}
                   <img
-                    src="https://img.beldara.com/assets/images/category_image1.png"
+                    src="https://img.indiabigshop.com/assets/images/category_image1.png"
                     alt="Category Image"
                   />{" "}
                   category
@@ -220,8 +220,8 @@ class SideBar extends Component {
               <li>
                 <a href={`${process.env.PUBLIC_URL}/auction.html`}>
                   <img
-                    src="https://img.beldara.com/assets/images/auction_icon1.png"
-                    alt="Auction on beldara"
+                    src="https://img.beldaracom/assets/images/auction_icon1.png"
+                    alt="Auction on IndiaBiShop"
                   />{" "}
                   AUCTION
                 </a>
@@ -231,7 +231,7 @@ class SideBar extends Component {
                 <a href={`${process.env.PUBLIC_URL}/cart.html`}>
                   <img
                     src="https://img.beldara.com/assets/images/cart_icon1.png"
-                    alt="cart on beldara"
+                    alt="cart on IndiaBiShop"
                   />{" "}
                   My Cart
                 </a>
@@ -241,7 +241,7 @@ class SideBar extends Component {
                 <a href={`${process.env.PUBLIC_URL}/offers.html`}>
                   <img
                     src="https://img.beldara.com/assets/images/offer_icon1.png"
-                    alt="offers on beldara"
+                    alt="offers on IndiaBiShop"
                   />{" "}
                   Offers
                 </a>
@@ -283,7 +283,7 @@ class SideBar extends Component {
                     <a href="http://b4b.in/normal?id=0">
                       <img
                         src="https://img.beldara.com/assets/images/mobile_icon_android1.png"
-                        alt="beldara android app"
+                        alt="IndiaBiShop android app"
                       />{" "}
                       OPEN IN APP
                     </a>
@@ -299,7 +299,7 @@ class SideBar extends Component {
                 <a className="d-flex">
                   <img
                     src="https://img.beldara.com/assets/images/phone_icon1.png"
-                    alt="phone on beldara"
+                    alt="phone on IndiaBiShop"
                   />
                   {isMobile ? (
                     this.props.changeCountry != "" &&
@@ -335,7 +335,7 @@ class SideBar extends Component {
                 <a href={`${process.env.PUBLIC_URL}/about.html`}>
                   <img
                     src="https://img.beldara.com/assets/images/about_icon1.png"
-                    alt="About on beldara"
+                    alt="About on IndiaBiShop"
                   />{" "}
                   About Us
                 </a>

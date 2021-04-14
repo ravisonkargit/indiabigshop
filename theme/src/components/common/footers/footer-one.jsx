@@ -152,6 +152,7 @@ class FooterOne extends Component {
         }
       )
       .then((response) => {
+      console.log(response.data.result)
         setCookie("mhinpbnb", response.data.result, "365");
       })
       .catch((error) => {

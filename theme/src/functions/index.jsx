@@ -255,7 +255,7 @@ export async function setCookie(cname, cvalue, exdays) {
     document.cookie = cname + "=" + (cvalue || "")  + expires + ";path=/;";
   }
   else{
-    document.cookie = cname + "=" + (cvalue || "")  + expires + ";SameSite=None;domain=.beldara.com;path=/;Secure";
+    document.cookie = cname + "=" + (cvalue || "")  + expires + ";SameSite=None;domain=.indiabigshop.com;path=/;Secure";
   }
   }
 

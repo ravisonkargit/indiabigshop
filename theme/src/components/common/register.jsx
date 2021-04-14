@@ -73,6 +73,8 @@ class Register extends Component {
       });
     }
 
+    console.log(this.props.location.state.link);
+
     if (this.props.location.state.link)
       await this.setState({
         link: this.props.location.state.link,
@@ -218,6 +220,13 @@ class Register extends Component {
         )
         .then((response) => {
           //   response.data.result;
+          if (response.data.status == "Success") {
+            this.props.history.push({
+              // pathname: "/cart.html",
+              // pathname: "/start-order/"+ Math.random().toString(36).replace(/[^a-z]+/g, "").substr(0, 8) +".html",
+              pathname: "/start-order.html",
+            });
+          }
 
           if (response.data.status === "Failed") {
             //console.log(response.data)
@@ -350,6 +359,7 @@ class Register extends Component {
       .addClass("d-none")
       .removeClass("d-block alert alert-danger");
     if (this.validator.allValid()) {
+      console.log("login");
       axios
         .post(
           "https://api.indiabigshop.com/common/otp_verify.php",
@@ -404,9 +414,9 @@ class Register extends Component {
   };
 
   redirect_to_start_order = () => {
-    console.log(this.state.link)
+    console.log(this.props.location.state.link);
     this.props.history.push({
-      pathname: this.state.link,
+      pathname: this.props.location.state.link,
       state: {
         totalCartValue: this.state.totalCartValue,
         totalProductCost: this.state.totalProductCost,
@@ -693,7 +703,7 @@ class Register extends Component {
                           }}
                           type="submit"
                         >
-                          Enter OTP
+                          Verify OTP
                         </button>
                       </div>
                       {/* <div className="d-flex justify-content-end">

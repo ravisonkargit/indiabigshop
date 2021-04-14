@@ -133,47 +133,19 @@ class ProductListItem extends Component {
       getCookie("mhinpbnb")
     );
     $("#btn_" + productid).css("opacity", "0.6");
+    store.dispatch(
+      getCartLength(ls.get("log_id"), getCookie("mhinpbnb")))
+    this.createCart(
+      productid,
+      qty,
+      amount,
+      currency,
+      eachunit,
+      product_currency,
+      product_sellerid
+    )  
     // console.log(id, productid, qty, amount, currency, eachunit, product_currency, product_sellerid,'validate');
-    if (ls.get("sellerid")){
-      store.dispatch(
-        getCartLength(ls.get("log_id"), getCookie("mhinpbnb")))
-      this.createCart(
-        productid,
-        qty,
-        amount,
-        currency,
-        eachunit,
-        product_currency,
-        product_sellerid
-      )   
-      
-      
-    }else{
-      this.props.history.push({
-        pathname: "/register.html",
-        state: {
-          totalCartValue: this.state.totalCartValue,
-          totalProductCost: parseFloat(this.state.totalProductCost).toFixed(2),
-          totalShippingCost: this.state.totalShippingCost,
-          finalShippingCost: this.state.finalShippingCost,
-          cartItems: this.state.cartItems,
-          countryName: this.state.shippingCountryName,
-          symbol: this.state.symbol,
-          cartId: this.state.cartid,
-          //pixeldata: pixeldata,
-          shippingCharges: this.state.shippingCharges,
-          inrValue: this.state.inrValue,
-          // link:
-          //   "/start-order/" +
-          //   Math.random()
-          //     .toString(36)
-          //     .replace(/[^a-z]+/g, "")
-          //     .substr(0, 8) +
-          //   ".html",
-          link: "/start-order.html",
-        },
-      });
-    }
+    
   
   }
 
@@ -219,30 +191,62 @@ class ProductListItem extends Component {
         // this.goToExpressCheckout(productid, qty, product_currency, product_sellerid)
         //window.location.href="/cart.html";
         // window.location.href="/start-order/" + Math.random().toString(36).replace(/[^a-z]+/g, "").substr(0, 8) +".html"
-        this.props.history.push({
-          // pathname: "/cart.html",
-          // pathname: "/start-order/"+ Math.random().toString(36).replace(/[^a-z]+/g, "").substr(0, 8) +".html",
-          pathname: "/start-order.html",
-          state: {
-            totalCartValue: this.state.totalCartValue,
-            totalProductCost: parseFloat(this.state.totalProductCost).toFixed(
-              2
-            ),
-            totalShippingCost: this.state.totalShippingCost,
-            finalShippingCost: this.state.totalShippingCost,
-            cartItems: this.state.cartItems,
-            countryName: this.state.shippingCountryName,
-            symbol: this.state.symbol,
-            cartid: this.state.cartid,
-            //pixeldata: pixeldata,
-            shippingCharges: this.state.shippingCharges,
-            inrValue: this.state.inrValue,
-            totalCartStaticValue: this.state.totalCartStaticValue,
-            //cashback_amount_inr: cashback_amount_inr,
-            //cashback_amount_usd: cashback_amount_usd,
-            txn_type: this.state.txn_type,
-          },
-        });
+        if (ls.get("sellerid")){   
+          console.log(ls.get("sellerid"))
+          this.props.history.push({
+            // pathname: "/cart.html",
+            // pathname: "/start-order/"+ Math.random().toString(36).replace(/[^a-z]+/g, "").substr(0, 8) +".html",
+            pathname: "/start-order.html",
+            state: {
+              totalCartValue: this.state.totalCartValue,
+              totalProductCost: parseFloat(this.state.totalProductCost).toFixed(
+                2
+              ),
+              totalShippingCost: this.state.totalShippingCost,
+              finalShippingCost: this.state.totalShippingCost,
+              cartItems: this.state.cartItems,
+              countryName: this.state.shippingCountryName,
+              symbol: this.state.symbol,
+              cartid: this.state.cartid,
+              //pixeldata: pixeldata,
+              shippingCharges: this.state.shippingCharges,
+              inrValue: this.state.inrValue,
+              totalCartStaticValue: this.state.totalCartStaticValue,
+              //cashback_amount_inr: cashback_amount_inr,
+              //cashback_amount_usd: cashback_amount_usd,
+              txn_type: this.state.txn_type,
+            },
+          });
+          
+        }
+        else{
+          console.log("jkdhb")
+          this.props.history.push({
+            pathname: "/register.html",
+            state: {
+              totalCartValue: this.state.totalCartValue,
+              totalProductCost: parseFloat(this.state.totalProductCost).toFixed(2),
+              totalShippingCost: this.state.totalShippingCost,
+              finalShippingCost: this.state.finalShippingCost,
+              cartItems: this.state.cartItems,
+              countryName: this.state.shippingCountryName,
+              symbol: this.state.symbol,
+              cartId: this.state.cartid,
+              //pixeldata: pixeldata,
+              shippingCharges: this.state.shippingCharges,
+              inrValue: this.state.inrValue,
+              // link:
+              //   "/start-order/" +
+              //   Math.random()
+              //     .toString(36)
+              //     .replace(/[^a-z]+/g, "")
+              //     .substr(0, 8) +
+              //   ".html",
+              link: "/start-order.html",
+            },
+          });
+        }
+       
       })
       .catch((error) => {
         const result = error.response;
